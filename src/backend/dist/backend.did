@@ -1,0 +1,722 @@
+type http_request_result = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type http_header = 
+ record {
+   name: text;
+   value: text;
+ };
+type WhatsAppTemplateStatus = 
+ variant {
+   approved;
+   paused;
+   pending;
+   rejected;
+ };
+type WhatsAppTemplateId = nat;
+type WhatsAppTemplateCategory = 
+ variant {
+   follow_up;
+   lead_outreach;
+   proposal_sharing;
+ };
+type WhatsAppTemplate = 
+ record {
+   approvedAt: opt int;
+   body: text;
+   category: WhatsAppTemplateCategory;
+   createdAt: int;
+   id: WhatsAppTemplateId;
+   name: text;
+   rejectionReason: opt text;
+   replyRate: nat;
+   status: WhatsAppTemplateStatus;
+   submittedAt: opt int;
+   usageCount: nat;
+   variables: vec text;
+ };
+type WeeklyAction = 
+ record {
+   action: text;
+   category:
+    variant {
+      collect_reviews;
+      launch_ad;
+      local_seo;
+      post_content;
+      run_offer;
+      upsell;
+    };
+   estimatedImpact: text;
+   rationale: text;
+ };
+type WebsiteTemplate = 
+ record {
+   clientId: ClientId;
+   id: TemplateId;
+   lastSaved: Timestamp;
+   sections: TemplateSections;
+   templateId: text;
+   templateName: text;
+ };
+type WarmupPhase = 
+ variant {
+   phase1;
+   phase2;
+   phase3;
+   unlimited;
+ };
+type UserSubscription = 
+ record {
+   leadCredits: nat;
+   plan: SubscriptionPlan;
+   stripeCustomerId: text;
+   subscriptionStatus: SubscriptionStatus;
+ };
+type UserRole = 
+ variant {
+   admin;
+   guest;
+   user;
+ };
+type UpdateLeadInput = 
+ record {
+   address: text;
+   businessName: text;
+   city: text;
+   id: LeadId;
+   industry: text;
+   leadScore: nat;
+   notes: text;
+   phone: text;
+   rating: float64;
+   status: LeadStatus;
+   website: text;
+ };
+type UpdateClientMetricsInput = 
+ record {
+   id: ClientId;
+   metrics: ClientMetrics;
+   reportDate: Timestamp;
+ };
+type TransformationOutput = 
+ record {
+   body: blob;
+   headers: vec http_header;
+   status: nat;
+ };
+type TransformationInput = 
+ record {
+   context: blob;
+   response: http_request_result;
+ };
+type Timestamp = int;
+type TemplateSections = 
+ record {
+   cta: text;
+   features: text;
+   footer: text;
+   hero: text;
+   testimonials: text;
+ };
+type TemplateId = nat;
+type SuggestionPriority = 
+ variant {
+   high;
+   low;
+   medium;
+ };
+type SuggestionId = nat;
+type SubscriptionStatus = 
+ variant {
+   active;
+   canceled;
+   inactive;
+   pastDue;
+   trialing;
+ };
+type SubscriptionPlan = 
+ variant {
+   enterprise;
+   pro;
+   starter;
+ };
+type SeoAuditRecord = 
+ record {
+   blogOutlines:
+    vec
+     record {
+       outline: vec text;
+       targetKeyword: text;
+       title: text;
+       wordCount: nat;
+     };
+   createdAt: int;
+   headingScore: nat;
+   id: SeoAuditId;
+   items: vec SeoAuditItem;
+   keywordDensityScore: nat;
+   metaScore: nat;
+   mobileFriendlyScore: nat;
+   pageSpeedScore: nat;
+   titleScore: nat;
+   url: text;
+ };
+type SeoAuditItem = 
+ record {
+   itemLabel: text;
+   status: variant {
+             fail;
+             pass;
+             warning;
+           };
+   suggestion: text;
+ };
+type SeoAuditId = nat;
+type SenderType = 
+ variant {
+   email_domain;
+   whatsapp;
+ };
+type SenderIdentityId = nat;
+type SenderIdentity = 
+ record {
+   blockedCount: nat;
+   createdAt: Timestamp;
+   id: SenderIdentityId;
+   identifier: text;
+   reputationScore: nat;
+   senderType: SenderType;
+   totalBounced: nat;
+   totalDelivered: nat;
+   totalOptOut: nat;
+   totalReplied: nat;
+   totalSent: nat;
+   warmupPhase: WarmupPhase;
+ };
+type ScriptType = 
+ variant {
+   call_script;
+   chat_suggestion;
+   email_sequence;
+ };
+type ScraperJob = 
+ record {
+   city: text;
+   completedAt: opt Timestamp;
+   createdAt: Timestamp;
+   id: nat;
+   leadsGenerated: nat;
+   niche: text;
+   processed: nat;
+   progress: nat;
+   status: text;
+   totalFound: nat;
+ };
+type SaveTemplateInput = 
+ record {
+   clientId: ClientId;
+   sections: TemplateSections;
+   templateId: text;
+   templateName: text;
+ };
+type ProposalId = nat;
+type Proposal = 
+ record {
+   adsStrategy: text;
+   businessName: text;
+   generatedAt: Timestamp;
+   id: ProposalId;
+   leadId: LeadId;
+   niche: text;
+   pricingBreakdown: text;
+   seoStrategy: text;
+   websiteStrategy: text;
+ };
+type PriorityTag = 
+ variant {
+   high;
+   low;
+   medium;
+ };
+type OutreachMessage = 
+ record {
+   bounceReason: text;
+   businessName: text;
+   channel: text;
+   consentChecked: bool;
+   dayNumber: nat;
+   deliveredAt: opt Timestamp;
+   detectedProblem: text;
+   id: nat;
+   leadId: LeadId;
+   personalizedMessage: text;
+   repliedAt: opt Timestamp;
+   retryCount: nat;
+   scheduledAt: Timestamp;
+   senderId: opt SenderIdentityId;
+   sentAt: opt Timestamp;
+   status: text;
+   templateType: text;
+ };
+type OutreachCampaign = 
+ record {
+   businessName: text;
+   channels: vec text;
+   completedAt: opt Timestamp;
+   deliveredCount: nat;
+   id: nat;
+   leadId: LeadId;
+   repliedCount: nat;
+   startedAt: Timestamp;
+   status: text;
+   totalMessages: nat;
+ };
+type OnboardingPrefs = 
+ record {
+   city: text;
+   completedOnboarding: bool;
+   niche: text;
+   targetBudget: nat;
+ };
+type NoteType = 
+ variant {
+   note;
+   reminder;
+ };
+type NoteId = nat;
+type Note = 
+ record {
+   completed: bool;
+   content: text;
+   createdAt: Timestamp;
+   dueDate: opt Timestamp;
+   id: NoteId;
+   leadId: LeadId;
+   noteType: NoteType;
+ };
+type LeadStatus = 
+ variant {
+   closed;
+   contacted;
+   new;
+   proposal;
+ };
+type LeadScoreBreakdown = 
+ record {
+   domainAge: nat;
+   reviews: nat;
+   seo: nat;
+   social: nat;
+   website: nat;
+ };
+type LeadId = nat;
+type Lead = 
+ record {
+   address: text;
+   attemptCount: nat;
+   businessName: text;
+   city: text;
+   consentStatus: opt ConsentStatus;
+   createdAt: Timestamp;
+   id: LeadId;
+   industry: text;
+   leadScore: nat;
+   leadSource: text;
+   notes: text;
+   optedOut: bool;
+   phone: text;
+   priorityTag: opt PriorityTag;
+   rating: float64;
+   referredBy: opt LeadId;
+   scoreBreakdown: opt LeadScoreBreakdown;
+   status: LeadStatus;
+   updatedAt: Timestamp;
+   website: text;
+ };
+type LandingPageStatus = 
+ variant {
+   archived;
+   draft;
+   published;
+ };
+type LandingPageSection = 
+ record {
+   beforeAfter: record {
+                  after: text;
+                  before: text;
+                };
+   ctaText: text;
+   formTitle: text;
+   hero: text;
+   painPoints: vec text;
+   subheadline: text;
+   testimonials: vec record {
+                       business: text;
+                       name: text;
+                       quote: text;
+                     };
+ };
+type LandingPageNiche = 
+ variant {
+   agency;
+   cafe;
+   education;
+   gym;
+   medical;
+   plumber;
+   real_estate;
+   restaurant;
+   salon;
+ };
+type LandingPageId = nat;
+type LandingPage = 
+ record {
+   city: text;
+   createdAt: int;
+   estimatedConversionRate: nat;
+   estimatedLeadScore: nat;
+   id: LandingPageId;
+   leadsCaptured: nat;
+   niche: LandingPageNiche;
+   publishedAt: opt int;
+   sections: LandingPageSection;
+   serviceDescription: text;
+   status: LandingPageStatus;
+   targetBudget: text;
+ };
+type ImportRowStatus = 
+ variant {
+   duplicate;
+   invalid;
+   valid;
+ };
+type ImportRowResult = 
+ record {
+   category: text;
+   city: text;
+   email: text;
+   name: text;
+   phone: text;
+   reason: text;
+   rowIndex: nat;
+   status: ImportRowStatus;
+   website: text;
+ };
+type ImportRecord = 
+ record {
+   duplicateCount: nat;
+   filename: text;
+   id: ImportId;
+   importedCount: nat;
+   invalidCount: nat;
+   timestamp: Timestamp;
+   totalRows: nat;
+   userId: text;
+   validCount: nat;
+ };
+type ImportId = nat;
+type GrowthSuggestion = 
+ record {
+   category: text;
+   clientId: ClientId;
+   description: text;
+   dismissed: bool;
+   estimatedImpact: text;
+   id: SuggestionId;
+   implemented: bool;
+   priority: SuggestionPriority;
+   title: text;
+   weekOf: Timestamp;
+ };
+type GrowthReportId = nat;
+type GrowthReport = 
+ record {
+   clientId: nat;
+   conversionRate: nat;
+   createdAt: int;
+   id: GrowthReportId;
+   leadsGenerated: nat;
+   marketingSuggestions: vec text;
+   monthOf: text;
+   nextActions: vec text;
+   reportNarrative: text;
+   revenueImpact: nat;
+   revenueStrategies: vec text;
+   weekOf: text;
+   weeklyActions: vec WeeklyAction;
+ };
+type GamificationState = 
+ record {
+   creditsEarned: nat;
+   currentMilestone: nat;
+   dailyStreak: nat;
+   lastActionDate: text;
+   totalActions: nat;
+   unlockedFeatures: vec text;
+ };
+type GA4Dashboard = 
+ record {
+   avgBounceRate: float64;
+   conversions: int;
+   isLive: bool;
+   topPages: vec record {
+                   text;
+                   int;
+                 };
+   totalSessions: int;
+   totalUsers: int;
+   trafficSources: vec record {
+                         text;
+                         int;
+                       };
+ };
+type GA4CredentialStatus = 
+ record {
+   isConfigured: bool;
+   lastUpdated: opt int;
+   propertyId: opt text;
+ };
+type DeliveryStats = 
+ record {
+   blockedCount: nat;
+   bouncedCount: nat;
+   date: text;
+   deliveredCount: nat;
+   id: DeliverabilityStatId;
+   identityId: SenderIdentityId;
+   optOutCount: nat;
+   repliedCount: nat;
+ };
+type DeliverabilityStatId = nat;
+type CreateSuggestionInput = 
+ record {
+   category: text;
+   clientId: ClientId;
+   description: text;
+   estimatedImpact: text;
+   priority: SuggestionPriority;
+   title: text;
+   weekOf: Timestamp;
+ };
+type CreateProposalInput = 
+ record {
+   businessName: text;
+   leadId: LeadId;
+   niche: text;
+ };
+type CreateOutreachMessageInput = 
+ record {
+   businessName: text;
+   channel: text;
+   dayNumber: nat;
+   detectedProblem: text;
+   leadId: LeadId;
+   personalizedMessage: text;
+   scheduledAt: Timestamp;
+   templateType: text;
+ };
+type CreateOutreachCampaignInput = 
+ record {
+   businessName: text;
+   channels: vec text;
+   leadId: LeadId;
+ };
+type CreateNoteInput = 
+ record {
+   content: text;
+   dueDate: opt Timestamp;
+   leadId: LeadId;
+   noteType: NoteType;
+ };
+type CreateLeadInput = 
+ record {
+   address: text;
+   businessName: text;
+   city: text;
+   industry: text;
+   leadScore: nat;
+   notes: text;
+   phone: text;
+   rating: float64;
+   website: text;
+ };
+type CreateClientInput = 
+ record {
+   businessName: text;
+   leadId: LeadId;
+   startDate: Timestamp;
+ };
+type ConversionScriptId = nat;
+type ConversionScript = 
+ record {
+   budgetTier: text;
+   closingTalk: text;
+   createdAt: int;
+   discoveryQuestions: vec text;
+   id: ConversionScriptId;
+   objectionHandlers:
+    vec record {
+          directResponse: text;
+          objection: text;
+          softResponse: text;
+        };
+   opener: text;
+   painPoint: text;
+   scriptType: ScriptType;
+   serviceType: text;
+   valueProp: text;
+ };
+type ConsentType = 
+ variant {
+   form_submission;
+   manual_override;
+   qr_optin;
+   reply_first;
+ };
+type ConsentStatus = 
+ variant {
+   granted;
+   pending;
+   withdrawn;
+ };
+type ConsentLogId = nat;
+type ConsentLog = 
+ record {
+   consentType: ConsentType;
+   email: text;
+   id: ConsentLogId;
+   messageTemplate: text;
+   notes: text;
+   phone: text;
+   status: ConsentStatus;
+   timestamp: Timestamp;
+   userId: text;
+ };
+type ClientMetrics = 
+ record {
+   conversions: nat;
+   leads: nat;
+   revenue: float64;
+   traffic: nat;
+ };
+type ClientId = nat;
+type Client = 
+ record {
+   businessName: text;
+   id: ClientId;
+   leadId: LeadId;
+   metrics: ClientMetrics;
+   reportDate: Timestamp;
+   startDate: Timestamp;
+ };
+service : {
+  _initializeAccessControl: () -> ();
+  addSenderIdentity: (identifier: text, senderType: SenderType) ->
+   (SenderIdentity);
+  assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  checkOptOutStatus: (leadId: LeadId) -> (bool) query;
+  claimMilestoneReward: (milestoneIndex: nat) -> (bool);
+  clearGA4Credentials: () -> ();
+  completeNote: (id: NoteId) -> (bool);
+  completeOnboarding: () -> ();
+  createClient: (input: CreateClientInput) -> (Client);
+  createConversionScript: (serviceType: text, painPoint: text, budgetTier:
+   text) -> (ConversionScript);
+  createGrowthSuggestion: (input: CreateSuggestionInput) ->
+   (GrowthSuggestion);
+  createLandingPage: (niche: LandingPageNiche, city: text, serviceDesc: 
+   text, targetBudget: text) -> (LandingPage);
+  createLead: (input: CreateLeadInput) -> (Lead);
+  createNote: (input: CreateNoteInput) -> (Note);
+  createOutreachCampaign: (input: CreateOutreachCampaignInput) ->
+   (OutreachCampaign);
+  createOutreachMessage: (input: CreateOutreachMessageInput) ->
+   (OutreachMessage);
+  createScraperJob: (niche: text, city: text) -> (ScraperJob);
+  createWhatsAppTemplate: (name: text, category: WhatsAppTemplateCategory,
+   body: text, variables: vec text) -> (WhatsAppTemplate);
+  deleteClient: (id: ClientId) -> (bool);
+  deleteLead: (id: LeadId) -> (bool);
+  deleteNote: (id: NoteId) -> (bool);
+  deleteProposal: (id: ProposalId) -> (bool);
+  dismissSuggestion: (id: SuggestionId) -> (bool);
+  generateGrowthReport: (clientId: nat, weekOf: text, monthOf: text,
+   leadsGenerated: nat, conversionRate: nat, revenueImpact: nat) ->
+   (GrowthReport);
+  generateProposal: (input: CreateProposalInput) -> (Proposal);
+  getCallerUserRole: () -> (UserRole) query;
+  getCampaignsByLead: (leadId: LeadId) -> (vec OutreachCampaign) query;
+  getClient: (id: ClientId) -> (opt Client) query;
+  getConsentLogs: () -> (vec ConsentLog) query;
+  getDeliverabilityMetrics: (identityId: SenderIdentityId) ->
+   (vec DeliveryStats) query;
+  getGA4CredentialStatus: () -> (GA4CredentialStatus) query;
+  getGA4Dashboard: (days: nat) -> (variant {
+                                     err: text;
+                                     ok: GA4Dashboard;
+                                   });
+  getGamificationState: () -> (GamificationState) query;
+  getImportHistory: () -> (vec ImportRecord) query;
+  getLandingPage: (id: LandingPageId) -> (opt LandingPage) query;
+  getLead: (id: LeadId) -> (opt Lead) query;
+  getMySubscription: () -> (opt UserSubscription) query;
+  getNote: (id: NoteId) -> (opt Note) query;
+  getOnboardingPrefs: () -> (opt OnboardingPrefs) query;
+  getOutreachMessagesByLead: (leadId: LeadId) -> (vec OutreachMessage) query;
+  getProposal: (id: ProposalId) -> (opt Proposal) query;
+  getScraperJob: (id: nat) -> (opt ScraperJob) query;
+  getSenderIdentities: () -> (vec SenderIdentity) query;
+  getSubscriptionByUser: (userId: principal) -> (opt UserSubscription);
+  getWebsiteTemplate: (clientId: ClientId) -> (opt WebsiteTemplate) query;
+  importCSVLeads: (rows: vec ImportRowResult, filename: text, userId:
+   text) -> (ImportRecord);
+  isCallerAdmin: () -> (bool) query;
+  listAllCampaigns: () -> (vec OutreachCampaign) query;
+  listAllOutreachMessages: () -> (vec OutreachMessage) query;
+  listClients: () -> (vec Client) query;
+  listConversionScripts: () -> (vec ConversionScript) query;
+  listGrowthReports: (clientId: nat) -> (vec GrowthReport) query;
+  listGrowthSuggestions: (clientId: ClientId) -> (vec GrowthSuggestion) query;
+  listLandingPages: () -> (vec LandingPage) query;
+  listLeads: () -> (vec Lead) query;
+  listLeadsByStatus: (status: LeadStatus) -> (vec Lead) query;
+  listNotesByLead: (leadId: LeadId) -> (vec Note) query;
+  listProposalsByLead: (leadId: LeadId) -> (vec Proposal) query;
+  listScraperJobs: () -> (vec ScraperJob) query;
+  listSeoAudits: () -> (vec SeoAuditRecord) query;
+  listWhatsAppTemplates: () -> (vec WhatsAppTemplate) query;
+  markSuggestionImplemented: (id: SuggestionId) -> (bool);
+  moveLead: (id: LeadId, status: LeadStatus) -> (bool);
+  publishLandingPage: (id: LandingPageId) -> (bool);
+  recordConsentLog: (phone: text, email: text, consentType: ConsentType,
+   template: text, userId: text, notes: text) -> (ConsentLogId);
+  recordDailyAction: (actionType: text) -> (GamificationState);
+  recordDeliveryStats: (identityId: SenderIdentityId, date: text, delivered:
+   nat, replied: nat, bounced: nat, optOut: nat, blocked: nat) ->
+   (DeliverabilityStatId);
+  runSeoAudit: (url: text) -> (SeoAuditRecord);
+  saveOnboardingPrefs: (niche: text, city: text, targetBudget: nat) -> ();
+  saveWebsiteTemplate: (input: SaveTemplateInput) -> (WebsiteTemplate);
+  setGA4Credentials: (propertyId: text, apiKey: text) -> ();
+  submitTemplateForApproval: (id: WhatsAppTemplateId) -> (bool);
+  transform: (input: TransformationInput) -> (TransformationOutput) query;
+  transformGA4: (input: TransformationInput) -> (TransformationOutput) query;
+  updateCampaignStats: (id: nat, deliveredCount: nat, repliedCount: nat,
+   status: text) -> (OutreachCampaign);
+  updateClientMetrics: (input: UpdateClientMetricsInput) -> (bool);
+  updateConsentStatus: (id: ConsentLogId, status: ConsentStatus) -> (bool);
+  updateLead: (input: UpdateLeadInput) -> (bool);
+  updateOutreachMessageStatus: (id: nat, status: text, timestamp:
+   opt Timestamp) -> (OutreachMessage);
+  updateScraperJobProgress: (id: nat, processed: nat, progress: nat, status:
+   text) -> (ScraperJob);
+  updateSenderReputation: (id: SenderIdentityId, delivered: nat, replied:
+   nat, bounced: nat, optOut: nat) -> (bool);
+  updateTemplateApprovalStatus: (id: WhatsAppTemplateId, status:
+   WhatsAppTemplateStatus, rejectionReason: opt text) -> (bool);
+  upsertMySubscription: (sub: UserSubscription) -> ();
+}
