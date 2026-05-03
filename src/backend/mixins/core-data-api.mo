@@ -271,16 +271,24 @@ mixin (
 
   // ── Subscriptions ─────────────────────────────────────────────────────────
 
+  public query func getPlanLimits(plan : T.SubscriptionPlan) : async T.PlanLimits {
+    Lib.getPlanLimits(plan);
+  };
+
   public query ({ caller }) func getMySubscription() : async ?T.UserSubscription {
     switch (Lib.getSubscription(subscriptions, caller)) {
       case (?sub) { ?sub };
       case null {
-        // Default starter plan for new users (50 lead credits)
+        // Default growth plan for new users (150 daily lead credits)
         ?{
-          plan = #starter;
-          leadCredits = 50;
+          plan = #growth;
+          leadCredits = 150;
           subscriptionStatus = #active;
           stripeCustomerId = "";
+          monthlyPrice = 29900;
+          yearlyPrice = 299900;
+          billingCycle = #monthly;
+          trialExpiresAt = null;
         };
       };
     };

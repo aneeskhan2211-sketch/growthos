@@ -371,7 +371,7 @@ module {
     ];
   };
 
-  func buildBlogOutlines(url : Text) : [{ title : Text; outline : [Text]; targetKeyword : Text; wordCount : Nat }] {
+  func buildBlogOutlines(_url : Text) : [{ title : Text; outline : [Text]; targetKeyword : Text; wordCount : Nat }] {
     [
       {
         title = "How to Get More Local Customers from Google Search in 2024";

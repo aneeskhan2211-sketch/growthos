@@ -195,9 +195,11 @@ module {
   // ── Subscription ──────────────────────────────────────────────────────────
 
   public type SubscriptionPlan = {
+    #free;
     #starter;
+    #growth;
     #pro;
-    #enterprise;
+    #agency;
   };
 
   public type SubscriptionStatus = {
@@ -208,10 +210,34 @@ module {
     #canceled;
   };
 
+  public type BillingCycle = {
+    #monthly;
+    #yearly;
+  };
+
+  public type PlanLimits = {
+    dailyLeads : Nat;
+    aiPitchGenerator : Bool;
+    autoFollowUp : Bool;
+    crmPipeline : Bool;
+    seoChecklist : Bool;
+    aiProposalGenerator : Bool;
+    campaignBuilder : Bool;
+    advancedAnalytics : Bool;
+    whiteLabelReports : Bool;
+    teamAccess : Bool;
+    unlimitedLeads : Bool;
+    premiumAutomation : Bool;
+  };
+
   public type UserSubscription = {
     plan : SubscriptionPlan;
     leadCredits : Nat;
     subscriptionStatus : SubscriptionStatus;
     stripeCustomerId : Text;
+    monthlyPrice : Nat;
+    yearlyPrice : Nat;
+    billingCycle : BillingCycle;
+    trialExpiresAt : ?Int;
   };
 };

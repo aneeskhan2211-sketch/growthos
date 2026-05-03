@@ -21,6 +21,8 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { PAGE_META } from "@/config/metaTags";
+import { useMetaTags } from "@/hooks/useMetaTags";
 import { cn } from "@/lib/utils";
 import {
   AlertCircle,
@@ -1359,6 +1361,7 @@ function QuickAddLeadDialog({
 // ─── Main page ───────────────────────────────────────────────────────────────
 
 export default function CRMPage() {
+  useMetaTags(PAGE_META["/crm"]);
   const { data: backendLeads = [] } = useLeads();
   const { data: backendNotes = [] } = useAllNotes();
   const { data: allMessages = [] } = useOutreachMessages();

@@ -2,9 +2,25 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Link, useRouterState } from "@tanstack/react-router";
-import { CreditCard, X } from "lucide-react";
+import {
+  Bell,
+  Briefcase,
+  CalendarDays,
+  CreditCard,
+  Eye,
+  FileText,
+  FlaskConical,
+  Globe,
+  Mail,
+  Settings2,
+  TrendingUp,
+  Users,
+  X,
+} from "lucide-react";
 import type React from "react";
+import { useState } from "react";
 import { SubscriptionPlan } from "../backend";
+import { useUnreadCount } from "../hooks/useNotifications";
 import { useSubscription } from "../hooks/useSubscription";
 
 // ─── Custom SVG Icons ─────────────────────────────────────────────────────────
@@ -495,6 +511,170 @@ const IconSettings = () => (
   </svg>
 );
 
+const IconReferral = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M8 10.5 C5.8 10.5 4 8.7 4 6.5 L4 3.5 L12 3.5 L12 6.5 C12 8.7 10.2 10.5 8 10.5 Z"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M6 12.5 L10 12.5 M8 10.5 L8 12.5"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+    />
+    <path
+      d="M4 5 L2.5 5 L2.5 7.5 C2.5 9 3.2 9.8 4 10.2"
+      stroke="currentColor"
+      strokeWidth="1.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      opacity="0.7"
+    />
+    <path
+      d="M12 5 L13.5 5 L13.5 7.5 C13.5 9 12.8 9.8 12 10.2"
+      stroke="currentColor"
+      strokeWidth="1.1"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      opacity="0.7"
+    />
+  </svg>
+);
+
+const IconShieldCheck = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M8 1.5 L13 3.5 L13 7.5 C13 10.5 10.8 13.1 8 14 C5.2 13.1 3 10.5 3 7.5 L3 3.5 Z"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinejoin="round"
+    />
+    <path
+      d="M5.5 8 L7 9.5 L10.5 6"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+// ─── Growth Engine Icons ──────────────────────────────────────────────────────
+
+const IconWebsiteHealth = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="8" cy="8" r="5.5" stroke="currentColor" strokeWidth="1.25" />
+    <path
+      d="M2.5 8 L4.5 8 L6 5 L8 11 L10 7 L11.5 8 L13.5 8"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const IconGrowthEngine = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M2 11 L5 8 L7.5 10 L10 6 L13 9"
+      stroke="currentColor"
+      strokeWidth="1.4"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+    <circle cx="13" cy="4" r="2" stroke="currentColor" strokeWidth="1.2" />
+    <path
+      d="M13 6 L13 9"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconAIOptimizer = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.25" />
+    <path
+      d="M8 2 L8 3.5 M8 12.5 L8 14 M2 8 L3.5 8 M12.5 8 L14 8"
+      stroke="currentColor"
+      strokeWidth="1.2"
+      strokeLinecap="round"
+    />
+    <path
+      d="M4 4 L5 5 M11 11 L12 12 M4 12 L5 11 M11 5 L12 4"
+      stroke="currentColor"
+      strokeWidth="1"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const IconViralLoop = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    aria-hidden="true"
+  >
+    <path
+      d="M8 2 C5 2 3 4 3 6 C3 9 6 10 8 10"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+    />
+    <path
+      d="M8 10 C10 10 13 9 13 6 C13 4 11 2 8 2"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeDasharray="2 1.2"
+    />
+    <path
+      d="M6 8 L8 10 L6 12"
+      stroke="currentColor"
+      strokeWidth="1.25"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
 // ─── Nav Items Config ─────────────────────────────────────────────────────────
 
 interface NavItem {
@@ -506,8 +686,65 @@ interface NavItem {
   badgeVariant?: "ai" | "new";
 }
 
+interface NavGroup {
+  groupLabel: string;
+  GroupIcon: () => React.ReactElement;
+  items: NavItem[];
+}
+
+const GROWTH_ENGINE_GROUP: NavGroup = {
+  groupLabel: "Growth Engine",
+  GroupIcon: IconGrowthEngine,
+  items: [
+    {
+      label: "Analytics",
+      Icon: IconAnalytics,
+      path: "/growth-engine/analytics",
+      ocid: "nav.growth-engine.analytics",
+      badge: "New",
+      badgeVariant: "new",
+    },
+    {
+      label: "AI Optimizer",
+      Icon: IconAIOptimizer,
+      path: "/growth-engine/ai-optimizer",
+      ocid: "nav.growth-engine.ai-optimizer",
+      badge: "AI",
+      badgeVariant: "ai",
+    },
+    {
+      label: "Viral Loop",
+      Icon: IconViralLoop,
+      path: "/growth-engine/viral-loop",
+      ocid: "nav.growth-engine.viral-loop",
+      badge: "New",
+      badgeVariant: "new",
+    },
+  ],
+};
+
 const PRIMARY_NAV: NavItem[] = [
   { label: "Dashboard", Icon: IconDashboard, path: "/", ocid: "nav.dashboard" },
+  {
+    label: "My Profile",
+    Icon: IconClients,
+    path: "/profile",
+    ocid: "nav.profile",
+  },
+  {
+    label: "Business Profile",
+    Icon: IconProposals,
+    path: "/profile/business",
+    ocid: "nav.profile.business",
+  },
+  {
+    label: "Account Settings",
+    Icon: () => (
+      <Settings2 width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/settings/profile",
+    ocid: "nav.account-settings",
+  },
   {
     label: "Lead Engine",
     Icon: IconLeadEngine,
@@ -523,6 +760,14 @@ const PRIMARY_NAV: NavItem[] = [
     ocid: "nav.campaigns",
   },
   { label: "SEO Center", Icon: IconSEO, path: "/seo", ocid: "nav.seo" },
+  {
+    label: "Website Health",
+    Icon: IconWebsiteHealth,
+    path: "/website-health",
+    ocid: "nav.website-health",
+    badge: "New",
+    badgeVariant: "new",
+  },
   {
     label: "Analytics",
     Icon: IconAnalytics,
@@ -586,7 +831,269 @@ const PRIMARY_NAV: NavItem[] = [
     path: "/settings",
     ocid: "nav.settings",
   },
+  {
+    label: "Refer & Earn",
+    Icon: IconReferral,
+    path: "/referral",
+    ocid: "nav.referral",
+    badge: "New",
+    badgeVariant: "new",
+  },
+  {
+    label: "Trust Hub",
+    Icon: IconShieldCheck,
+    path: "/trust-hub",
+    ocid: "nav.trust-hub",
+    badge: "New",
+    badgeVariant: "new",
+  },
+  {
+    label: "Sequences",
+    Icon: () => <Mail width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/onboarding-sequences",
+    ocid: "nav.onboarding-sequences",
+  },
+  {
+    label: "Test Labs",
+    Icon: () => (
+      <FlaskConical width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/admin/ab-tests",
+    ocid: "nav.ab-tests",
+    badge: "New",
+    badgeVariant: "new",
+  },
+  {
+    label: "Notifications",
+    Icon: () => <Bell width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/notifications",
+    ocid: "nav.notifications",
+  },
+  {
+    label: "Notification Analytics",
+    Icon: () => <Bell width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/retention-analytics",
+    ocid: "nav.retention-analytics",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "SaaS Metrics",
+    Icon: () => (
+      <TrendingUp width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/saas-metrics",
+    ocid: "nav.saas-metrics",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Investor Report",
+    Icon: () => (
+      <FileText width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/investor-report",
+    ocid: "nav.investor-report",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Competitor Intel",
+    Icon: () => <Eye width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/competitor-intel",
+    ocid: "nav.competitor-intel",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Case Studies",
+    Icon: () => (
+      <Briefcase width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/case-studies",
+    ocid: "nav.case-studies",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Content Calendar",
+    Icon: () => (
+      <CalendarDays width={16} height={16} strokeWidth={1.5} aria-hidden />
+    ),
+    path: "/content-calendar",
+    ocid: "nav.content-calendar",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Affiliate",
+    Icon: () => <Users width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/affiliate",
+    ocid: "nav.affiliate",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "SEO Generator",
+    Icon: () => <Globe width={16} height={16} strokeWidth={1.5} aria-hidden />,
+    path: "/seo-generator",
+    ocid: "nav.seo-generator",
+    badge: "New",
+    badgeVariant: "new" as const,
+  },
+  {
+    label: "Upgrade Plan",
+    Icon: IconBilling,
+    path: "/checkout",
+    ocid: "nav.checkout",
+  },
 ];
+
+// ─── Growth Engine Group Component ───────────────────────────────────────────
+
+function GrowthEngineGroup({
+  group,
+  isActive,
+  collapsed,
+  onClose,
+}: {
+  group: NavGroup;
+  isActive: (path: string) => boolean;
+  collapsed: boolean;
+  onClose?: () => void;
+}) {
+  const isAnyActive = group.items.some((item) => isActive(item.path));
+  const [open, setOpen] = useState(isAnyActive);
+
+  return (
+    <div>
+      {/* Group header */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        data-ocid="nav.growth-engine.group"
+        className={cn(
+          "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-smooth group relative mt-2",
+          isAnyActive
+            ? "gradient-sidebar-active text-sidebar-primary"
+            : "text-sidebar-foreground/50 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+        )}
+      >
+        {isAnyActive && (
+          <span className="absolute left-0 inset-y-1.5 w-0.5 rounded-full bg-sidebar-primary" />
+        )}
+        <span
+          className={cn(
+            "shrink-0",
+            isAnyActive
+              ? "text-sidebar-primary"
+              : "text-sidebar-foreground/40 group-hover:text-sidebar-foreground/70",
+          )}
+        >
+          <group.GroupIcon />
+        </span>
+        {!collapsed && (
+          <>
+            <span className="flex-1 min-w-0 truncate text-left">
+              {group.groupLabel}
+            </span>
+            <span
+              className={cn(
+                "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
+                "bg-primary/15 text-primary",
+              )}
+            >
+              New
+            </span>
+            <svg
+              width="12"
+              height="12"
+              viewBox="0 0 12 12"
+              fill="none"
+              aria-hidden="true"
+              role="img"
+              className={cn(
+                "shrink-0 transition-transform duration-200",
+                open ? "rotate-180" : "",
+              )}
+            >
+              <title>chevron</title>
+              <path
+                d="M2 4 L6 8 L10 4"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </>
+        )}
+      </button>
+
+      {/* Sub-items */}
+      {(open || collapsed) && (
+        <div
+          className={
+            collapsed
+              ? "space-y-0.5"
+              : "ml-4 border-l border-sidebar-border/40 pl-2 space-y-0.5 mt-0.5"
+          }
+        >
+          {group.items.map((item) => {
+            const active = isActive(item.path);
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                data-ocid={item.ocid}
+                onClick={onClose}
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-smooth group relative",
+                  active
+                    ? "gradient-sidebar-active text-sidebar-primary"
+                    : "text-sidebar-foreground/40 hover:bg-sidebar-accent hover:text-sidebar-foreground",
+                )}
+              >
+                {active && (
+                  <span className="absolute left-0 inset-y-1.5 w-0.5 rounded-full bg-sidebar-primary" />
+                )}
+                <span
+                  className={cn(
+                    "shrink-0",
+                    active
+                      ? "text-sidebar-primary"
+                      : "text-sidebar-foreground/30 group-hover:text-sidebar-foreground/60",
+                  )}
+                >
+                  <item.Icon />
+                </span>
+                {!collapsed && (
+                  <>
+                    <span className="flex-1 min-w-0 truncate text-xs">
+                      {item.label}
+                    </span>
+                    {item.badge && (
+                      <span
+                        className={cn(
+                          "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
+                          item.badgeVariant === "ai"
+                            ? "bg-primary/15 text-primary"
+                            : "bg-success/15 text-success",
+                        )}
+                      >
+                        {item.badge}
+                      </span>
+                    )}
+                  </>
+                )}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 // ─── Component ───────────────────────────────────────────────────────────────
 
@@ -599,22 +1106,25 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
   const { data: subscription } = useSubscription();
+  const { data: unreadCount = 0 } = useUnreadCount();
 
   const isActive = (path: string) =>
     path === "/" ? currentPath === "/" : currentPath.startsWith(path);
 
   const planLabel =
-    subscription?.plan === SubscriptionPlan.pro
-      ? "Agency Pro"
-      : subscription?.plan === SubscriptionPlan.starter
-        ? "Starter"
-        : subscription?.plan === SubscriptionPlan.enterprise
-          ? "Enterprise"
-          : "Free";
+    subscription?.plan === SubscriptionPlan.agency
+      ? "Agency"
+      : subscription?.plan === SubscriptionPlan.pro
+        ? "Pro"
+        : subscription?.plan === SubscriptionPlan.growth
+          ? "Growth"
+          : subscription?.plan === SubscriptionPlan.starter
+            ? "Starter"
+            : "Free";
 
   const isProPlan =
     subscription?.plan === SubscriptionPlan.pro ||
-    subscription?.plan === SubscriptionPlan.enterprise;
+    subscription?.plan === SubscriptionPlan.agency;
 
   return (
     <aside
@@ -625,7 +1135,11 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
     >
       {/* Logo */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-sidebar-border shrink-0">
-        <div className="flex items-center gap-2.5 min-w-0">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 min-w-0 cursor-pointer"
+          aria-label="GrowthOS home"
+        >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary shrink-0 shadow-glow-primary">
             <IconCampaigns />
           </div>
@@ -634,7 +1148,7 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
               GrowthOS
             </span>
           )}
-        </div>
+        </Link>
         {/* Mobile close */}
         {onClose && !collapsed && (
           <Button
@@ -653,6 +1167,7 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
       <nav className="flex-1 py-3 px-2 space-y-0.5 overflow-y-auto scrollbar-thin">
         {PRIMARY_NAV.map((item) => {
           const active = isActive(item.path);
+          const isNotificationsItem = item.path === "/notifications";
           return (
             <Link
               key={item.path}
@@ -685,7 +1200,15 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
               {!collapsed && (
                 <>
                   <span className="flex-1 min-w-0 truncate">{item.label}</span>
-                  {item.badge && (
+                  {/* Unread badge for notifications nav item */}
+                  {isNotificationsItem && unreadCount > 0 ? (
+                    <span
+                      className="shrink-0 min-w-[18px] h-[18px] rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center px-1 tabular-nums"
+                      aria-label={`${unreadCount} unread`}
+                    >
+                      {unreadCount > 99 ? "99+" : unreadCount}
+                    </span>
+                  ) : item.badge ? (
                     <span
                       className={cn(
                         "text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded",
@@ -696,12 +1219,20 @@ export function Sidebar({ collapsed = false, onClose }: SidebarProps) {
                     >
                       {item.badge}
                     </span>
-                  )}
+                  ) : null}
                 </>
               )}
             </Link>
           );
         })}
+
+        {/* Growth Engine Group */}
+        <GrowthEngineGroup
+          group={GROWTH_ENGINE_GROUP}
+          isActive={isActive}
+          collapsed={collapsed}
+          onClose={onClose}
+        />
       </nav>
 
       {/* Plan badge + credits */}

@@ -2,13 +2,16 @@ import { useActor } from "@caffeineai/core-infrastructure";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createActor } from "../backend";
 import type { UserSubscription } from "../backend";
-import { SubscriptionPlan, SubscriptionStatus } from "../backend";
+import { BillingCycle, SubscriptionPlan, SubscriptionStatus } from "../backend";
 
 const mockSubscription: UserSubscription = {
-  plan: SubscriptionPlan.pro,
+  plan: SubscriptionPlan.growth,
   leadCredits: BigInt(47),
   subscriptionStatus: SubscriptionStatus.active,
   stripeCustomerId: "cus_mock123",
+  billingCycle: BillingCycle.monthly,
+  monthlyPrice: BigInt(299),
+  yearlyPrice: BigInt(239),
 };
 
 export function useSubscription() {

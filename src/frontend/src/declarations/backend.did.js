@@ -8,6 +8,20 @@
 
 import { IDL } from '@icp-sdk/core/candid';
 
+export const GatedFeatureName = IDL.Variant({
+  'advanced_analytics' : IDL.Null,
+  'bulk_send' : IDL.Null,
+  'export_leads' : IDL.Null,
+});
+export const Timestamp = IDL.Int;
+export const FeatureUnlockSession = IDL.Record({
+  'expiresAt' : Timestamp,
+  'unlockedAt' : Timestamp,
+  'userId' : IDL.Text,
+  'usageCount' : IDL.Nat,
+  'featureName' : GatedFeatureName,
+});
+export const MilestoneId = IDL.Text;
 export const SenderType = IDL.Variant({
   'whatsapp' : IDL.Null,
   'email_domain' : IDL.Null,
@@ -19,7 +33,6 @@ export const WarmupPhase = IDL.Variant({
   'phase2' : IDL.Null,
   'phase3' : IDL.Null,
 });
-export const Timestamp = IDL.Int;
 export const SenderIdentity = IDL.Record({
   'id' : SenderIdentityId,
   'reputationScore' : IDL.Nat,
@@ -39,8 +52,44 @@ export const UserRole = IDL.Variant({
   'user' : IDL.Null,
   'guest' : IDL.Null,
 });
+export const ChurnRisk = IDL.Variant({
+  'high' : IDL.Null,
+  'none' : IDL.Null,
+  'medium' : IDL.Null,
+});
+export const FeatureUnlockCheck = IDL.Record({
+  'requiredInvites' : IDL.Nat,
+  'expiresAt' : IDL.Opt(Timestamp),
+  'usageCount' : IDL.Nat,
+  'currentInvites' : IDL.Nat,
+  'isUnlocked' : IDL.Bool,
+  'featureName' : GatedFeatureName,
+});
 export const LeadId = IDL.Nat;
 export const NoteId = IDL.Nat;
+export const ResultMetric = IDL.Record({
+  'after' : IDL.Text,
+  'metricLabel' : IDL.Text,
+  'before' : IDL.Text,
+});
+export const CaseStudy = IDL.Record({
+  'id' : IDL.Text,
+  'isPublished' : IDL.Bool,
+  'clientCity' : IDL.Text,
+  'clientName' : IDL.Text,
+  'userId' : IDL.Text,
+  'testimonialQuote' : IDL.Opt(IDL.Text),
+  'createdAt' : IDL.Int,
+  'shareToken' : IDL.Text,
+  'clientNiche' : IDL.Text,
+  'resultMetrics' : IDL.Vec(ResultMetric),
+  'actionsToken' : IDL.Vec(IDL.Text),
+  'problemStatement' : IDL.Text,
+});
+export const CheckoutSession = IDL.Record({
+  'url' : IDL.Text,
+  'sessionId' : IDL.Text,
+});
 export const CreateClientInput = IDL.Record({
   'businessName' : IDL.Text,
   'leadId' : LeadId,
@@ -211,6 +260,25 @@ export const Lead = IDL.Record({
   'priorityTag' : IDL.Opt(PriorityTag),
   'industry' : IDL.Text,
 });
+export const MarketplaceListingType = IDL.Variant({
+  'buyLeads' : IDL.Null,
+  'hireFreelancer' : IDL.Null,
+  'sellService' : IDL.Null,
+});
+export const MarketplaceListing = IDL.Record({
+  'title' : IDL.Text,
+  'listingId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'tags' : IDL.Vec(IDL.Text),
+  'description' : IDL.Text,
+  'isActive' : IDL.Bool,
+  'listingType' : MarketplaceListingType,
+  'sellerName' : IDL.Text,
+  'sellerId' : IDL.Text,
+  'price' : IDL.Nat,
+  'reviewCount' : IDL.Nat,
+  'avgRating' : IDL.Nat,
+});
 export const NoteType = IDL.Variant({
   'reminder' : IDL.Null,
   'note' : IDL.Null,
@@ -276,6 +344,27 @@ export const OutreachMessage = IDL.Record({
   'consentChecked' : IDL.Bool,
   'scheduledAt' : Timestamp,
 });
+export const RazorpayOrder = IDL.Record({
+  'receipt' : IDL.Text,
+  'orderId' : IDL.Text,
+  'currency' : IDL.Text,
+  'amount' : IDL.Nat,
+});
+export const ReferralStatus = IDL.Variant({
+  'created' : IDL.Null,
+  'completed' : IDL.Null,
+  'signedUp' : IDL.Null,
+});
+export const ReferralRecord = IDL.Record({
+  'id' : IDL.Nat,
+  'status' : ReferralStatus,
+  'completedAt' : IDL.Opt(Timestamp),
+  'referredUserId' : IDL.Opt(IDL.Principal),
+  'referralCode' : IDL.Text,
+  'rewardClaimed' : IDL.Bool,
+  'createdAt' : Timestamp,
+  'referrerId' : IDL.Principal,
+});
 export const ScraperJob = IDL.Record({
   'id' : IDL.Nat,
   'status' : IDL.Text,
@@ -315,6 +404,90 @@ export const WhatsAppTemplate = IDL.Record({
   'replyRate' : IDL.Nat,
 });
 export const ProposalId = IDL.Nat;
+export const FinalizedChallengeResult = IDL.Record({
+  'creditsAwarded' : IDL.Nat,
+  'isoWeek' : IDL.Text,
+  'displayName' : IDL.Text,
+  'city' : IDL.Text,
+  'userId' : IDL.Text,
+  'finalRank' : IDL.Nat,
+  'badgeAwarded' : IDL.Text,
+});
+export const AutoReportStatus = IDL.Variant({
+  'sent' : IDL.Null,
+  'draft' : IDL.Null,
+  'ready' : IDL.Null,
+});
+export const AutoReport = IDL.Record({
+  'roi' : IDL.Nat,
+  'status' : AutoReportStatus,
+  'clientId' : ClientId,
+  'nextSteps' : IDL.Vec(IDL.Text),
+  'topChannel' : IDL.Text,
+  'generatedAt' : IDL.Int,
+  'sentAt' : IDL.Opt(IDL.Int),
+  'reportPeriod' : IDL.Text,
+  'leadsGenerated' : IDL.Nat,
+  'conversions' : IDL.Nat,
+  'revenueImpact' : IDL.Nat,
+  'reportId' : IDL.Text,
+});
+export const GrowthPlanItemStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'done' : IDL.Null,
+  'approved' : IDL.Null,
+});
+export const GrowthPlanItemEffort = IDL.Variant({
+  'deep' : IDL.Null,
+  'quick' : IDL.Null,
+  'medium' : IDL.Null,
+});
+export const GrowthPlanItem = IDL.Record({
+  'status' : GrowthPlanItemStatus,
+  'title' : IDL.Text,
+  'description' : IDL.Text,
+  'effort' : GrowthPlanItemEffort,
+  'priorityScore' : IDL.Nat,
+  'estimatedRevenue' : IDL.Nat,
+});
+export const ClientGrowthPlanStatus = IDL.Variant({
+  'pending' : IDL.Null,
+  'approved' : IDL.Null,
+  'executing' : IDL.Null,
+});
+export const ClientGrowthPlan = IDL.Record({
+  'clientId' : ClientId,
+  'adsPlan' : IDL.Vec(GrowthPlanItem),
+  'seoPlan' : IDL.Vec(GrowthPlanItem),
+  'planId' : IDL.Text,
+  'generatedAt' : IDL.Int,
+  'approvalStatus' : ClientGrowthPlanStatus,
+  'contentIdeas' : IDL.Vec(GrowthPlanItem),
+  'weekOf' : IDL.Int,
+});
+export const ContentPostPublic = IDL.Record({
+  'id' : IDL.Text,
+  'postType' : IDL.Text,
+  'hashtags' : IDL.Vec(IDL.Text),
+  'body' : IDL.Text,
+  'city' : IDL.Text,
+  'hook' : IDL.Text,
+  'isPosted' : IDL.Bool,
+  'callToAction' : IDL.Text,
+  'niche' : IDL.Text,
+  'caption' : IDL.Text,
+  'scheduledDay' : IDL.Nat,
+});
+export const ContentCalendarPublic = IDL.Record({
+  'id' : IDL.Text,
+  'city' : IDL.Text,
+  'userId' : IDL.Text,
+  'goal' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'niche' : IDL.Text,
+  'posts' : IDL.Vec(ContentPostPublic),
+  'monthYear' : IDL.Text,
+});
 export const GrowthReportId = IDL.Nat;
 export const WeeklyAction = IDL.Record({
   'action' : IDL.Text,
@@ -344,6 +517,27 @@ export const GrowthReport = IDL.Record({
   'reportNarrative' : IDL.Text,
   'weekOf' : IDL.Text,
 });
+export const InvestorReport = IDL.Record({
+  'arr' : IDL.Nat,
+  'cac' : IDL.Nat,
+  'ltv' : IDL.Nat,
+  'mrr' : IDL.Nat,
+  'nrr' : IDL.Float64,
+  'newCustomers' : IDL.Nat,
+  'churnedMrr' : IDL.Nat,
+  'disclaimers' : IDL.Vec(IDL.Text),
+  'monthlyChurnRate' : IDL.Float64,
+  'funnelData' : IDL.Vec(IDL.Text),
+  'generatedAt' : IDL.Int,
+  'churnedCustomers' : IDL.Nat,
+  'cacPaybackMonths' : IDL.Float64,
+  'newMrr' : IDL.Nat,
+  'ltvCacRatio' : IDL.Float64,
+  'cohortData' : IDL.Vec(IDL.Text),
+  'healthAlerts' : IDL.Vec(IDL.Text),
+  'totalCustomers' : IDL.Nat,
+  'expansionMrr' : IDL.Nat,
+});
 export const CreateProposalInput = IDL.Record({
   'businessName' : IDL.Text,
   'leadId' : LeadId,
@@ -359,6 +553,325 @@ export const Proposal = IDL.Record({
   'websiteStrategy' : IDL.Text,
   'adsStrategy' : IDL.Text,
   'pricingBreakdown' : IDL.Text,
+});
+export const SeoPageRequest = IDL.Record({
+  'city' : IDL.Text,
+  'niche' : IDL.Text,
+});
+export const SeoPagePublic = IDL.Record({
+  'id' : IDL.Text,
+  'isPublished' : IDL.Bool,
+  'pricingHint' : IDL.Text,
+  'city' : IDL.Text,
+  'headline' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'slug' : IDL.Text,
+  'caseExample' : IDL.Record({ 'after' : IDL.Text, 'before' : IDL.Text }),
+  'painPoints' : IDL.Vec(IDL.Text),
+  'niche' : IDL.Text,
+  'benefits' : IDL.Vec(IDL.Text),
+  'subheadline' : IDL.Text,
+});
+export const ShareWinType = IDL.Variant({
+  'streak' : IDL.Null,
+  'deal' : IDL.Null,
+  'leads' : IDL.Null,
+});
+export const ShareableWin = IDL.Record({
+  'displayName' : IDL.Text,
+  'metricValue' : IDL.Nat,
+  'city' : IDL.Text,
+  'date' : IDL.Text,
+  'winType' : ShareWinType,
+});
+export const AbTestName = IDL.Variant({
+  'nudge_copy_ab' : IDL.Null,
+  'paywall_timing_ab' : IDL.Null,
+});
+export const AbVariantId = IDL.Text;
+export const AbVariantStats = IDL.Record({
+  'impressions' : IDL.Nat,
+  'conversionRatePct' : IDL.Float64,
+  'variantId' : AbVariantId,
+  'conversions' : IDL.Nat,
+});
+export const AbTestResult = IDL.Record({
+  'lastResetAt' : IDL.Int,
+  'testName' : AbTestName,
+  'variants' : IDL.Vec(AbVariantStats),
+  'isActive' : IDL.Bool,
+  'winningVariant' : IDL.Opt(AbVariantId),
+});
+export const AccountabilityStateView = IDL.Record({
+  'targetLeads' : IDL.Nat,
+  'targetFollowups' : IDL.Nat,
+  'todayComplete' : IDL.Bool,
+  'targetDeals' : IDL.Nat,
+  'dailyLeadsContacted' : IDL.Nat,
+  'dailyFollowupsDone' : IDL.Nat,
+  'dailyDealsClosed' : IDL.Nat,
+  'lastTaskDate' : IDL.Int,
+  'streakMilestones' : IDL.Vec(IDL.Nat),
+  'currentStreak' : IDL.Nat,
+});
+export const WHEvent = IDL.Record({
+  'metadata' : IDL.Text,
+  'userId' : IDL.Text,
+  'createdAt' : Timestamp,
+  'eventName' : IDL.Text,
+});
+export const CommissionRecord = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'referredUserId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'referrerId' : IDL.Text,
+  'commissionAmount' : IDL.Nat,
+  'planAmount' : IDL.Nat,
+  'commissionRate' : IDL.Float64,
+  'paidAt' : IDL.Opt(IDL.Int),
+  'planTier' : IDL.Text,
+});
+export const AffiliateStats = IDL.Record({
+  'totalReferrals' : IDL.Nat,
+  'paidEarnings' : IDL.Nat,
+  'pendingEarnings' : IDL.Nat,
+  'commissionHistory' : IDL.Vec(CommissionRecord),
+  'conversionRate' : IDL.Float64,
+  'totalEarnings' : IDL.Nat,
+});
+export const AnalyticsEventType = IDL.Variant({
+  'city_selected' : IDL.Null,
+  'pitch_sent' : IDL.Null,
+  'get_clients_clicked' : IDL.Null,
+  'payment_failed' : IDL.Null,
+  'onboarding_started' : IDL.Null,
+  'payment_started' : IDL.Null,
+  'reply_received' : IDL.Null,
+  'leads_generated' : IDL.Null,
+  'feature_locked_clicked' : IDL.Null,
+  'onboarding_completed' : IDL.Null,
+  'plan_selected' : IDL.Null,
+  'app_opened' : IDL.Null,
+  'user_churn_risk' : IDL.Null,
+  'niche_selected' : IDL.Null,
+  'paywall_viewed' : IDL.Null,
+  'payment_success' : IDL.Null,
+  'proposal_created' : IDL.Null,
+});
+export const AnalyticsEvent = IDL.Record({
+  'id' : IDL.Nat,
+  'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+  'userId' : IDL.Text,
+  'timestamp' : IDL.Int,
+  'eventType' : AnalyticsEventType,
+});
+export const AuditId = IDL.Nat;
+export const RawMetrics = IDL.Record({
+  'hasContactForm' : IDL.Bool,
+  'hasOpeningHours' : IDL.Bool,
+  'hasHSTS' : IDL.Bool,
+  'robotsTxtFound' : IDL.Bool,
+  'imagesMissingAlt' : IDL.Int,
+  'hasH1' : IDL.Bool,
+  'hasAddress' : IDL.Bool,
+  'hasTestimonials' : IDL.Bool,
+  'titleLength' : IDL.Int,
+  'sitemapFound' : IDL.Bool,
+  'hasXContentType' : IDL.Bool,
+  'imageCount' : IDL.Int,
+  'hasViewport' : IDL.Bool,
+  'internalLinkCount' : IDL.Int,
+  'hasWhatsAppLink' : IDL.Bool,
+  'httpsEnabled' : IDL.Bool,
+  'hasTitle' : IDL.Bool,
+  'hasCanonical' : IDL.Bool,
+  'hasPhoneNumber' : IDL.Bool,
+  'hasCTA' : IDL.Bool,
+  'hasBusinessName' : IDL.Bool,
+  'renderBlockingScripts' : IDL.Int,
+  'hasXFrame' : IDL.Bool,
+  'hasMixedContent' : IDL.Bool,
+  'hasGoogleMap' : IDL.Bool,
+  'metaDescLength' : IDL.Int,
+  'hasMediaQueries' : IDL.Bool,
+  'hasMetaDesc' : IDL.Bool,
+});
+export const FixDifficulty = IDL.Variant({
+  'Easy' : IDL.Null,
+  'Hard' : IDL.Null,
+  'Medium' : IDL.Null,
+});
+export const FixCategory = IDL.Variant({
+  'Cta' : IDL.Null,
+  'Seo' : IDL.Null,
+  'Speed' : IDL.Null,
+  'Security' : IDL.Null,
+  'Images' : IDL.Null,
+  'WhatsApp' : IDL.Null,
+  'Content' : IDL.Null,
+  'Mobile' : IDL.Null,
+});
+export const IssueSeverity = IDL.Variant({
+  'Critical' : IDL.Null,
+  'Minor' : IDL.Null,
+  'Warning' : IDL.Null,
+});
+export const FixType = IDL.Variant({
+  'developer_needed' : IDL.Null,
+  'one_click' : IDL.Null,
+  'guided' : IDL.Null,
+});
+export const AuditIssue = IDL.Record({
+  'estimatedLossMax' : IDL.Nat,
+  'estimatedLossMin' : IDL.Nat,
+  'aiFixSuggestion' : IDL.Text,
+  'businessImpact' : IDL.Text,
+  'difficulty' : FixDifficulty,
+  'fixCategory' : FixCategory,
+  'severity' : IssueSeverity,
+  'fixType' : FixType,
+  'problem' : IDL.Text,
+});
+export const CompetitorRecord = IDL.Record({
+  'conversionScore' : IDL.Nat,
+  'overallScore' : IDL.Nat,
+  'mobileScore' : IDL.Nat,
+  'seoScore' : IDL.Nat,
+  'securityScore' : IDL.Nat,
+  'speedScore' : IDL.Nat,
+  'competitorName' : IDL.Text,
+});
+export const CategoryScores = IDL.Record({
+  'seo' : IDL.Nat,
+  'content' : IDL.Nat,
+  'security' : IDL.Nat,
+  'speed' : IDL.Nat,
+  'mobile' : IDL.Nat,
+  'conversion' : IDL.Nat,
+});
+export const AuditRecord = IDL.Record({
+  'id' : AuditId,
+  'url' : IDL.Text,
+  'rawMetrics' : IDL.Opt(RawMetrics),
+  'overallScore' : IDL.Nat,
+  'userId' : IDL.Principal,
+  'createdAt' : Timestamp,
+  'issues' : IDL.Vec(AuditIssue),
+  'scanDurationMs' : IDL.Int,
+  'competitors' : IDL.Vec(CompetitorRecord),
+  'monitorActive' : IDL.Bool,
+  'categoryScores' : CategoryScores,
+  'lastMonitorScanAt' : IDL.Int,
+});
+export const AutoAgencyActionType = IDL.Variant({
+  'dealSuggested' : IDL.Null,
+  'outreachSent' : IDL.Null,
+  'followupSent' : IDL.Null,
+  'leadFound' : IDL.Null,
+  'reportGenerated' : IDL.Null,
+});
+export const AutoAgencyAction = IDL.Record({
+  'leadName' : IDL.Text,
+  'actionType' : AutoAgencyActionType,
+  'description' : IDL.Text,
+  'timestamp' : IDL.Int,
+  'outcome' : IDL.Text,
+  'actionId' : IDL.Text,
+});
+export const AutoAgencyStateView = IDL.Record({
+  'dailyOutreachSent' : IDL.Nat,
+  'toggleEnabled' : IDL.Bool,
+  'dailyLeadsGenerated' : IDL.Nat,
+  'runCount' : IDL.Nat,
+  'lastActivityFeed' : IDL.Vec(AutoAgencyAction),
+  'lastRunTime' : IDL.Int,
+  'nextRunTime' : IDL.Int,
+  'dailyFollowupsSent' : IDL.Nat,
+});
+export const ChallengeParticipant = IDL.Record({
+  'leadsCount' : IDL.Nat,
+  'isoWeek' : IDL.Text,
+  'displayName' : IDL.Text,
+  'city' : IDL.Text,
+  'userId' : IDL.Text,
+  'joinedAt' : Timestamp,
+  'rank' : IDL.Nat,
+  'rewarded' : IDL.Bool,
+});
+export const StripePlan = IDL.Record({
+  'id' : IDL.Text,
+  'interval' : IDL.Text,
+  'name' : IDL.Text,
+  'currency' : IDL.Text,
+  'amount' : IDL.Nat,
+});
+export const PlanTier = IDL.Variant({
+  'Pro' : IDL.Null,
+  'Starter' : IDL.Null,
+  'Free' : IDL.Null,
+  'Growth' : IDL.Null,
+  'Agency' : IDL.Null,
+});
+export const UserChurnRiskRow = IDL.Record({
+  'userId' : IDL.Principal,
+  'risk' : ChurnRisk,
+  'openPlanRevenue' : IDL.Nat,
+  'daysSinceLastAction' : IDL.Nat,
+  'openPlan' : PlanTier,
+  'lastEventType' : IDL.Text,
+});
+export const ChallengeBadge = IDL.Variant({
+  'bronze' : IDL.Null,
+  'gold' : IDL.Null,
+  'none' : IDL.Null,
+  'silver' : IDL.Null,
+});
+export const LeaderboardEntry = IDL.Record({
+  'leadsCount' : IDL.Nat,
+  'displayName' : IDL.Text,
+  'city' : IDL.Text,
+  'userId' : IDL.Text,
+  'rank' : IDL.Nat,
+  'badge' : ChallengeBadge,
+});
+export const CohortRetentionRow = IDL.Record({
+  'd1' : IDL.Float64,
+  'd7' : IDL.Float64,
+  'd30' : IDL.Float64,
+  'd60' : IDL.Float64,
+  'retainedD1' : IDL.Nat,
+  'retainedD7' : IDL.Nat,
+  'week' : IDL.Text,
+  'cohortSize' : IDL.Nat,
+  'retainedD30' : IDL.Nat,
+  'retainedD60' : IDL.Nat,
+});
+export const SeoSignals = IDL.Record({
+  'metaPresent' : IDL.Bool,
+  'h1Count' : IDL.Nat,
+  'titlePresent' : IDL.Bool,
+  'schemaPresent' : IDL.Bool,
+  'internalLinks' : IDL.Nat,
+});
+export const CompetitorProfile = IDL.Record({
+  'url' : IDL.Text,
+  'pageSpeed' : IDL.Opt(IDL.Nat),
+  'estimatedTraffic' : IDL.Text,
+  'lastScannedAt' : IDL.Int,
+  'socialLinks' : IDL.Vec(IDL.Text),
+  'name' : IDL.Opt(IDL.Text),
+  'seoSignals' : SeoSignals,
+  'ctaPresent' : IDL.Bool,
+  'whatsappPresent' : IDL.Bool,
+});
+export const CompetitorIntelReport = IDL.Record({
+  'userId' : IDL.Text,
+  'keywordGaps' : IDL.Vec(IDL.Text),
+  'lastUpdatedAt' : IDL.Int,
+  'competitors' : IDL.Vec(CompetitorProfile),
+  'yourUrl' : IDL.Text,
+  'adSpendEstimate' : IDL.Text,
 });
 export const ConsentLogId = IDL.Nat;
 export const ConsentType = IDL.Variant({
@@ -378,6 +891,16 @@ export const ConsentLog = IDL.Record({
   'phone' : IDL.Text,
   'consentType' : ConsentType,
 });
+export const DealSuggestion = IDL.Record({
+  'suggestionId' : IDL.Text,
+  'pricingTier' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'closeProbability' : IDL.Nat,
+  'leadId' : LeadId,
+  'suggestedPitch' : IDL.Text,
+  'suggestedPrice' : IDL.Nat,
+  'bestContactTime' : IDL.Text,
+});
 export const DeliverabilityStatId = IDL.Nat;
 export const DeliveryStats = IDL.Record({
   'id' : DeliverabilityStatId,
@@ -388,6 +911,57 @@ export const DeliveryStats = IDL.Record({
   'identityId' : SenderIdentityId,
   'bouncedCount' : IDL.Nat,
   'repliedCount' : IDL.Nat,
+});
+export const WeekTheme = IDL.Variant({
+  'habit_building' : IDL.Null,
+  'scale_upgrade' : IDL.Null,
+  'activation' : IDL.Null,
+  'conversion' : IDL.Null,
+});
+export const CopyType = IDL.Variant({
+  'reward' : IDL.Null,
+  'urgency' : IDL.Null,
+  'fomo' : IDL.Null,
+  'money_visibility' : IDL.Null,
+});
+export const DripSequenceDay = IDL.Record({
+  'weekNumber' : IDL.Nat,
+  'weekTheme' : WeekTheme,
+  'personalizationTokens' : IDL.Vec(IDL.Text),
+  'dayNumber' : IDL.Nat,
+  'message' : IDL.Text,
+  'copyType' : CopyType,
+});
+export const FunnelStepDetail = IDL.Record({
+  'step' : IDL.Text,
+  'dropoffPercent' : IDL.Float64,
+  'avgSecondsToNextStep' : IDL.Opt(IDL.Nat),
+  'users' : IDL.Nat,
+  'conversions' : IDL.Nat,
+});
+export const EnhancedFunnelMetrics = IDL.Record({
+  'paidUsers' : IDL.Nat,
+  'freeToPaidConversion' : IDL.Float64,
+  'steps' : IDL.Vec(FunnelStepDetail),
+  'avgDaysToFirstPayment' : IDL.Opt(IDL.Float64),
+  'totalUsers' : IDL.Nat,
+});
+export const EventDrillDown = IDL.Record({
+  'totalCount' : IDL.Nat,
+  'nextEventBreakdown' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64)),
+  'eventName' : IDL.Text,
+});
+export const FunnelStep = IDL.Record({
+  'dropOffRate' : IDL.Float64,
+  'count' : IDL.Nat,
+  'stepName' : IDL.Text,
+  'conversionRate' : IDL.Float64,
+});
+export const FunnelMetrics = IDL.Record({
+  'paidUsers' : IDL.Nat,
+  'freeToPaidConversion' : IDL.Float64,
+  'steps' : IDL.Vec(FunnelStep),
+  'totalUsers' : IDL.Nat,
 });
 export const GA4CredentialStatus = IDL.Record({
   'lastUpdated' : IDL.Opt(IDL.Int),
@@ -411,6 +985,19 @@ export const GamificationState = IDL.Record({
   'dailyStreak' : IDL.Nat,
   'unlockedFeatures' : IDL.Vec(IDL.Text),
 });
+export const GrowthOverview = IDL.Record({
+  'dau' : IDL.Nat,
+  'mau' : IDL.Nat,
+  'wau' : IDL.Nat,
+  'retentionD30' : IDL.Float64,
+  'computedAt' : IDL.Int,
+  'mrrEstimatedInr' : IDL.Nat,
+  'retentionD1' : IDL.Float64,
+  'retentionD7' : IDL.Float64,
+  'newSignupsLast30' : IDL.Nat,
+  'newSignupsLast7' : IDL.Nat,
+  'freeToPaidConversionPct' : IDL.Float64,
+});
 export const ImportId = IDL.Nat;
 export const ImportRecord = IDL.Record({
   'id' : ImportId,
@@ -423,10 +1010,76 @@ export const ImportRecord = IDL.Record({
   'timestamp' : Timestamp,
   'invalidCount' : IDL.Nat,
 });
+export const SpendChannel = IDL.Variant({
+  'referral' : IDL.Null,
+  'metaAds' : IDL.Null,
+  'other' : IDL.Null,
+  'googleAds' : IDL.Null,
+});
+export const MarketingSpend = IDL.Record({
+  'id' : IDL.Nat,
+  'month' : IDL.Text,
+  'amountRs' : IDL.Nat,
+  'recordedBy' : IDL.Principal,
+  'timestamp' : IDL.Nat,
+  'channel' : SpendChannel,
+});
+export const MilestoneStatus = IDL.Variant({
+  'locked' : IDL.Null,
+  'unlocked' : IDL.Null,
+  'claimed' : IDL.Null,
+});
+export const MilestoneInfo = IDL.Record({
+  'status' : MilestoneStatus,
+  'title' : IDL.Text,
+  'expiresAt' : IDL.Opt(Timestamp),
+  'activatedAt' : IDL.Opt(Timestamp),
+  'currentInvites' : IDL.Nat,
+  'description' : IDL.Text,
+  'milestoneId' : MilestoneId,
+  'inviteThreshold' : IDL.Nat,
+});
+export const MonitorRecord = IDL.Record({
+  'url' : IDL.Text,
+  'lastScanAt' : IDL.Int,
+  'active' : IDL.Bool,
+  'userId' : IDL.Principal,
+  'frequency' : IDL.Text,
+});
+export const ActivitySegment = IDL.Variant({
+  'Medium' : IDL.Null,
+  'HighIntent' : IDL.Null,
+  'LowActivity' : IDL.Null,
+});
+export const UserActivityScore = IDL.Record({
+  'lastMessageSentAt' : IDL.Opt(IDL.Int),
+  'computedAt' : IDL.Int,
+  'userId' : IDL.Text,
+  'lastProposalCreatedAt' : IDL.Opt(IDL.Int),
+  'lastReplyReceivedAt' : IDL.Opt(IDL.Int),
+  'segment' : ActivitySegment,
+});
+export const OfferType = IDL.Variant({
+  'limited_discount' : IDL.Null,
+  'bonus_credits' : IDL.Null,
+  'free_trial_2d' : IDL.Null,
+});
+export const PricingRecommendation = IDL.Record({
+  'computedAt' : IDL.Int,
+  'offerLabel' : IDL.Text,
+  'userId' : IDL.Text,
+  'shownAt' : IDL.Opt(IDL.Int),
+  'currentPlan' : IDL.Text,
+  'segment' : ActivitySegment,
+  'acceptedAt' : IDL.Opt(IDL.Int),
+  'recommendedOffer' : OfferType,
+});
 export const SubscriptionPlan = IDL.Variant({
   'pro' : IDL.Null,
-  'enterprise' : IDL.Null,
+  'growth' : IDL.Null,
   'starter' : IDL.Null,
+  'free' : IDL.Null,
+  'agency' : IDL.Null,
 });
 export const SubscriptionStatus = IDL.Variant({
   'active' : IDL.Null,
@@ -435,17 +1088,391 @@ export const SubscriptionStatus = IDL.Variant({
   'pastDue' : IDL.Null,
   'trialing' : IDL.Null,
 });
+export const BillingCycle = IDL.Variant({
+  'monthly' : IDL.Null,
+  'yearly' : IDL.Null,
+});
 export const UserSubscription = IDL.Record({
   'plan' : SubscriptionPlan,
   'leadCredits' : IDL.Nat,
+  'yearlyPrice' : IDL.Nat,
   'subscriptionStatus' : SubscriptionStatus,
+  'billingCycle' : BillingCycle,
   'stripeCustomerId' : IDL.Text,
+  'monthlyPrice' : IDL.Nat,
+  'trialExpiresAt' : IDL.Opt(IDL.Int),
+});
+export const NicheFunnelMetrics = IDL.Record({
+  'city' : IDL.Text,
+  'niche' : IDL.Text,
+  'counts' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+});
+export const UserSegment = IDL.Variant({
+  'Medium' : IDL.Null,
+  'HighIntent' : IDL.Null,
+  'LowActivity' : IDL.Null,
+});
+export const NudgeType = IDL.Variant({
+  'reward' : IDL.Null,
+  'urgency' : IDL.Null,
+  'fomo' : IDL.Null,
+  'money_visibility' : IDL.Null,
+});
+export const NudgePerformanceStat = IDL.Record({
+  'actionCount' : IDL.Nat,
+  'actionRatePct' : IDL.Float64,
+  'userSegment' : UserSegment,
+  'sentCount' : IDL.Nat,
+  'nudgeType' : NudgeType,
+  'conversionLiftPct' : IDL.Float64,
+});
+export const NudgeVariantType = IDL.Variant({
+  'reward' : IDL.Null,
+  'urgency' : IDL.Null,
+  'fomo' : IDL.Null,
+});
+export const NudgePerformanceMetrics = IDL.Record({
+  'totalActedOn' : IDL.Nat,
+  'actionRatePct' : IDL.Float64,
+  'variantType' : NudgeVariantType,
+  'totalSent' : IDL.Nat,
+  'variantId' : IDL.Text,
+  'conversionLiftPct' : IDL.Float64,
+  'totalOpened' : IDL.Nat,
+  'openRatePct' : IDL.Float64,
+});
+export const Segment = IDL.Variant({
+  'Medium' : IDL.Null,
+  'HighIntent' : IDL.Null,
+  'LowActivity' : IDL.Null,
+});
+export const NudgePerformanceRow = IDL.Record({
+  'opened' : IDL.Nat,
+  'sent' : IDL.Nat,
+  'variantId' : IDL.Text,
+  'segment' : Segment,
+  'conversionRate' : IDL.Float64,
+  'isWinner' : IDL.Bool,
+  'copyType' : IDL.Text,
+  'actionTaken' : IDL.Nat,
+  'openRate' : IDL.Float64,
 });
 export const OnboardingPrefs = IDL.Record({
   'city' : IDL.Text,
   'targetBudget' : IDL.Nat,
   'niche' : IDL.Text,
   'completedOnboarding' : IDL.Bool,
+});
+export const OnboardingTourState = IDL.Record({
+  'completedAt' : IDL.Opt(IDL.Int),
+  'startedAt' : IDL.Int,
+  'skipped' : IDL.Bool,
+  'userId' : IDL.Text,
+  'completed' : IDL.Bool,
+  'currentStep' : IDL.Nat,
+  'completedSteps' : IDL.Vec(IDL.Nat),
+});
+export const PageSpeedResult = IDL.Record({
+  'cls' : IDL.Float64,
+  'fcp' : IDL.Float64,
+  'fid' : IDL.Float64,
+  'lcp' : IDL.Float64,
+  'tbt' : IDL.Float64,
+  'tti' : IDL.Float64,
+  'url' : IDL.Text,
+  'fetchedAt' : IDL.Int,
+  'opportunities' : IDL.Vec(IDL.Text),
+  'mobileScore' : IDL.Nat,
+  'desktopScore' : IDL.Nat,
+  'diagnostics' : IDL.Vec(IDL.Text),
+});
+export const PaywallTimingVariant = IDL.Variant({
+  'after_value_moment' : IDL.Null,
+  'immediate' : IDL.Null,
+});
+export const PaywallState = IDL.Record({
+  'userId' : IDL.Text,
+  'abVariant' : PaywallTimingVariant,
+  'hasExperiencedValueMoment' : IDL.Bool,
+  'paywallShownAfterValue' : IDL.Bool,
+  'paywallShownAt' : IDL.Opt(IDL.Int),
+});
+export const PerformanceScore = IDL.Record({
+  'activityScore' : IDL.Nat,
+  'overallScore' : IDL.Nat,
+  'userId' : IDL.Text,
+  'rank' : IDL.Text,
+  'estimatedMonthlyRevenue' : IDL.Nat,
+  'updatedAt' : IDL.Int,
+  'conversionRate' : IDL.Nat,
+  'percentileRank' : IDL.Nat,
+  'revenueScore' : IDL.Nat,
+});
+export const PlanLimits = IDL.Record({
+  'seoChecklist' : IDL.Bool,
+  'premiumAutomation' : IDL.Bool,
+  'campaignBuilder' : IDL.Bool,
+  'unlimitedLeads' : IDL.Bool,
+  'advancedAnalytics' : IDL.Bool,
+  'whiteLabelReports' : IDL.Bool,
+  'crmPipeline' : IDL.Bool,
+  'dailyLeads' : IDL.Nat,
+  'autoFollowUp' : IDL.Bool,
+  'aiProposalGenerator' : IDL.Bool,
+  'teamAccess' : IDL.Bool,
+  'aiPitchGenerator' : IDL.Bool,
+});
+export const LiveEventEntry = IDL.Record({
+  'eventId' : IDL.Nat,
+  'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+  'userId' : IDL.Text,
+  'timestamp' : IDL.Int,
+  'eventType' : IDL.Text,
+});
+export const ReferralFunnelStep = IDL.Record({
+  'conversionPct' : IDL.Float64,
+  'count' : IDL.Nat,
+  'stepName' : IDL.Text,
+});
+export const ReferralFunnelStats = IDL.Record({
+  'totalLinksGenerated' : IDL.Nat,
+  'totalRewardsClaimed' : IDL.Nat,
+  'steps' : IDL.Vec(ReferralFunnelStep),
+});
+export const ReferralStats = IDL.Record({
+  'creditsEarned' : IDL.Nat,
+  'completed' : IDL.Nat,
+  'signedUp' : IDL.Nat,
+  'trialDaysEarned' : IDL.Nat,
+  'totalInvited' : IDL.Nat,
+});
+export const TriggerType = IDL.Variant({
+  'drip_day_10' : IDL.Null,
+  'drip_day_11' : IDL.Null,
+  'drip_day_12' : IDL.Null,
+  'drip_day_13' : IDL.Null,
+  'drip_day_14' : IDL.Null,
+  'drip_day_15' : IDL.Null,
+  'drip_day_16' : IDL.Null,
+  'drip_day_17' : IDL.Null,
+  'drip_day_18' : IDL.Null,
+  'drip_day_19' : IDL.Null,
+  'drip_day_20' : IDL.Null,
+  'drip_day_21' : IDL.Null,
+  'drip_day_22' : IDL.Null,
+  'drip_day_23' : IDL.Null,
+  'drip_day_24' : IDL.Null,
+  'drip_day_25' : IDL.Null,
+  'drip_day_26' : IDL.Null,
+  'drip_day_27' : IDL.Null,
+  'drip_day_28' : IDL.Null,
+  'drip_day_0' : IDL.Null,
+  'drip_day_1' : IDL.Null,
+  'drip_day_2' : IDL.Null,
+  'drip_day_3' : IDL.Null,
+  'drip_day_4' : IDL.Null,
+  'drip_day_5' : IDL.Null,
+  'drip_day_6' : IDL.Null,
+  'drip_day_7' : IDL.Null,
+  'drip_day_8' : IDL.Null,
+  'drip_day_9' : IDL.Null,
+  'on_limit_reached' : IDL.Null,
+  'on_inactivity_24h' : IDL.Null,
+  'on_inactivity_48h' : IDL.Null,
+  'on_new_reply' : IDL.Null,
+  'on_streak_milestone' : IDL.Null,
+  'on_followup_due' : IDL.Null,
+});
+export const TriggerStats = IDL.Record({
+  'actionCount' : IDL.Nat,
+  'count' : IDL.Nat,
+  'actionRate' : IDL.Float64,
+  'triggerType' : TriggerType,
+  'openCount' : IDL.Nat,
+  'openRate' : IDL.Float64,
+});
+export const CohortDayStats = IDL.Record({
+  'day' : IDL.Nat,
+  'returnedCount' : IDL.Nat,
+  'usersNotified' : IDL.Nat,
+});
+export const CopyTypeStats = IDL.Record({
+  'actionCount' : IDL.Nat,
+  'count' : IDL.Nat,
+  'actionRate' : IDL.Float64,
+  'openCount' : IDL.Nat,
+  'copyType' : CopyType,
+  'openRate' : IDL.Float64,
+});
+export const RetentionAnalytics = IDL.Record({
+  'totalNotificationsSent' : IDL.Nat,
+  'byTriggerType' : IDL.Vec(TriggerStats),
+  'totalActionsCompleted' : IDL.Nat,
+  'conversionRate' : IDL.Float64,
+  'totalOpened' : IDL.Nat,
+  'returnRate' : IDL.Float64,
+  'cohortByDay' : IDL.Vec(CohortDayStats),
+  'openRate' : IDL.Float64,
+  'byCopyType' : IDL.Vec(CopyTypeStats),
+});
+export const RetentionData = IDL.Record({
+  'creditsEarned' : IDL.Nat,
+  'weeklyLeadsGenerated' : IDL.Nat,
+  'userId' : IDL.Text,
+  'lastActiveDate' : IDL.Text,
+  'weeklyRepliesReceived' : IDL.Nat,
+  'longestStreak' : IDL.Nat,
+  'lastSessionAt' : IDL.Int,
+  'churnRisk' : ChurnRisk,
+  'currentStreak' : IDL.Nat,
+  'lastCreditClaim' : IDL.Int,
+  'weeklyProposalsSent' : IDL.Nat,
+});
+export const RevenuePrediction = IDL.Record({
+  'monthlyEstimate' : IDL.Nat,
+  'pipelineValue' : IDL.Nat,
+  'generatedAt' : IDL.Int,
+  'hotLeadsCount' : IDL.Nat,
+  'predictionBasis' : IDL.Text,
+  'missedOppCount' : IDL.Nat,
+  'weeklyEstimate' : IDL.Nat,
+  'closingThisWeek' : IDL.Nat,
+});
+export const AlertSeverity = IDL.Variant({
+  'warning' : IDL.Null,
+  'info' : IDL.Null,
+  'critical' : IDL.Null,
+});
+export const HealthAlert = IDL.Record({
+  'metric' : IDL.Text,
+  'actual' : IDL.Text,
+  'alert' : IDL.Text,
+  'threshold' : IDL.Text,
+  'alertId' : IDL.Text,
+  'timestamp' : IDL.Nat,
+  'severity' : AlertSeverity,
+});
+export const TierLtv = IDL.Record({
+  'ltv' : IDL.Nat,
+  'avgRetentionMonths' : IDL.Float64,
+  'tier' : PlanTier,
+  'amountRs' : IDL.Nat,
+  'userCount' : IDL.Nat,
+});
+export const LtvBreakdown = IDL.Record({
+  'byTier' : IDL.Vec(TierLtv),
+  'blendedLtv' : IDL.Nat,
+});
+export const CacBreakdown = IDL.Record({
+  'cac' : IDL.Nat,
+  'referral' : IDL.Nat,
+  'metaAds' : IDL.Nat,
+  'newPaidCustomers' : IDL.Nat,
+  'other' : IDL.Nat,
+  'googleAds' : IDL.Nat,
+  'totalSpend' : IDL.Nat,
+});
+export const HealthStatus = IDL.Variant({
+  'loss' : IDL.Null,
+  'healthy' : IDL.Null,
+  'moderate' : IDL.Null,
+});
+export const SaasMetricsResponse = IDL.Record({
+  'arr' : IDL.Nat,
+  'ltv' : LtvBreakdown,
+  'mrr' : IDL.Nat,
+  'nrr' : IDL.Float64,
+  'activeUsers' : IDL.Nat,
+  'newCustomers' : IDL.Nat,
+  'churnedMrr' : IDL.Nat,
+  'totalPayingCustomers' : IDL.Nat,
+  'monthlyChurnRate' : IDL.Float64,
+  'monthlyGrowthRate' : IDL.Float64,
+  'revenueChurnRate' : IDL.Float64,
+  'churnedCustomers' : IDL.Nat,
+  'cacPaybackMonths' : IDL.Float64,
+  'closingMrr' : IDL.Nat,
+  'newMrr' : IDL.Nat,
+  'ltvCacRatio' : IDL.Float64,
+  'cacByChannel' : CacBreakdown,
+  'dateRange' : IDL.Record({ 'to' : IDL.Nat, 'from' : IDL.Nat }),
+  'expansionMrr' : IDL.Nat,
+  'ltvCacStatus' : HealthStatus,
+});
+export const SubscriptionEventKind = IDL.Variant({
+  'plan_cancelled' : IDL.Null,
+  'plan_upgraded' : IDL.Null,
+  'plan_purchased' : IDL.Null,
+  'plan_downgraded' : IDL.Null,
+});
+export const SubscriptionEvent = IDL.Record({
+  'id' : IDL.Nat,
+  'prevPlanTier' : IDL.Opt(PlanTier),
+  'userId' : IDL.Principal,
+  'amountRs' : IDL.Nat,
+  'prevAmountRs' : IDL.Opt(IDL.Nat),
+  'timestamp' : IDL.Nat,
+  'planTier' : PlanTier,
+  'eventKind' : SubscriptionEventKind,
+});
+export const SubscriptionStatus__1 = IDL.Record({
+  'status' : IDL.Text,
+  'tier' : IDL.Text,
+  'currentPeriodEnd' : IDL.Opt(IDL.Int),
+});
+export const TrafficSourceBreakdown = IDL.Record({
+  'periodDays' : IDL.Nat,
+  'directCount' : IDL.Nat,
+  'directPct' : IDL.Float64,
+  'referralPct' : IDL.Float64,
+  'organicCount' : IDL.Nat,
+  'referralCount' : IDL.Nat,
+  'adsPct' : IDL.Float64,
+  'adsCount' : IDL.Nat,
+  'organicPct' : IDL.Float64,
+});
+export const UserJourneyEvent = IDL.Record({
+  'eventId' : IDL.Nat,
+  'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+  'timestamp' : IDL.Int,
+  'timeSincePrevMs' : IDL.Opt(IDL.Int),
+  'eventType' : IDL.Text,
+});
+export const UserJourneyTimeline = IDL.Record({
+  'userId' : IDL.Text,
+  'events' : IDL.Vec(UserJourneyEvent),
+});
+export const FrequencySettings = IDL.Record({
+  'maxPerDay' : IDL.Nat,
+  'quietHoursEnabled' : IDL.Bool,
+  'inactivityReductionEnabled' : IDL.Bool,
+  'quietHoursStart' : IDL.Nat,
+  'quietHoursEnd' : IDL.Nat,
+});
+export const UserNotificationPrefs = IDL.Record({
+  'lastNotificationDate' : IDL.Opt(IDL.Int),
+  'frequencySettings' : FrequencySettings,
+  'userId' : IDL.Text,
+  'whatsappOptIn' : IDL.Bool,
+  'whatsappConsentDate' : IDL.Opt(IDL.Int),
+  'enabledTriggers' : IDL.Vec(TriggerType),
+  'notificationsSentToday' : IDL.Nat,
+  'whatsappOptOutDate' : IDL.Opt(IDL.Int),
+});
+export const UserSegmentDistribution = IDL.Record({
+  'totalScored' : IDL.Nat,
+  'scoredAt' : IDL.Nat,
+  'highIntent' : IDL.Nat,
+  'mediumActivity' : IDL.Nat,
+  'excludedChurned' : IDL.Nat,
+  'lowActivity' : IDL.Nat,
+});
+export const WatiConsent = IDL.Record({
+  'optOutAt' : IDL.Opt(IDL.Int),
+  'userId' : IDL.Text,
+  'consentGiven' : IDL.Bool,
+  'consentAt' : IDL.Int,
+  'phone' : IDL.Text,
 });
 export const TemplateId = IDL.Nat;
 export const TemplateSections = IDL.Record({
@@ -463,6 +1490,27 @@ export const WebsiteTemplate = IDL.Record({
   'sections' : TemplateSections,
   'lastSaved' : Timestamp,
 });
+export const WeeklyReportData = IDL.Record({
+  'url' : IDL.Text,
+  'resolvedIssueCount' : IDL.Nat,
+  'scoreDelta' : IDL.Int,
+  'userId' : IDL.Principal,
+  'generatedAt' : Timestamp,
+  'topRecommendation' : IDL.Text,
+  'newIssueCount' : IDL.Nat,
+  'latestScore' : IDL.Nat,
+  'previousScore' : IDL.Nat,
+});
+export const WhatsAppStopCondition = IDL.Variant({
+  'user_opted_out' : IDL.Null,
+  'user_replied' : IDL.Null,
+  'sequence_completed' : IDL.Null,
+});
+export const WhatsAppMessage = IDL.Record({
+  'dayNumber' : IDL.Nat,
+  'message' : IDL.Text,
+  'stopConditions' : IDL.Vec(WhatsAppStopCondition),
+});
 export const ImportRowStatus = IDL.Variant({
   'valid' : IDL.Null,
   'invalid' : IDL.Null,
@@ -478,6 +1526,47 @@ export const ImportRowResult = IDL.Record({
   'category' : IDL.Text,
   'phone' : IDL.Text,
   'reason' : IDL.Text,
+});
+export const AuditLead = IDL.Record({
+  'id' : IDL.Nat,
+  'leadName' : IDL.Text,
+  'city' : IDL.Text,
+  'whatsappSentAt' : IDL.Opt(Timestamp),
+  'submittedAt' : Timestamp,
+  'niche' : IDL.Text,
+  'phone' : IDL.Text,
+  'budgetRange' : IDL.Text,
+  'salonType' : IDL.Text,
+});
+export const GatedFeatureAdminStat = IDL.Record({
+  'totalUsageCount' : IDL.Nat,
+  'activeUserCount' : IDL.Nat,
+  'featureName' : IDL.Text,
+});
+export const NotificationRecord = IDL.Record({
+  'id' : IDL.Text,
+  'title' : IDL.Text,
+  'actionUrl' : IDL.Opt(IDL.Text),
+  'metadata' : IDL.Opt(IDL.Text),
+  'body' : IDL.Text,
+  'userId' : IDL.Text,
+  'createdAt' : IDL.Int,
+  'type' : IDL.Text,
+  'isRead' : IDL.Bool,
+});
+export const SocialProofActivityType = IDL.Variant({
+  'referral_signup' : IDL.Null,
+  'leads_generated' : IDL.Null,
+  'deal_closed' : IDL.Null,
+  'pitches_sent' : IDL.Null,
+});
+export const SocialProofEntry = IDL.Record({
+  'id' : IDL.Nat,
+  'activityType' : SocialProofActivityType,
+  'metricValue' : IDL.Nat,
+  'city' : IDL.Text,
+  'userDisplayName' : IDL.Text,
+  'timestamp' : Timestamp,
 });
 export const SeoAuditId = IDL.Nat;
 export const SeoAuditItem = IDL.Record({
@@ -509,11 +1598,34 @@ export const SeoAuditRecord = IDL.Record({
   'items' : IDL.Vec(SeoAuditItem),
   'keywordDensityScore' : IDL.Nat,
 });
-export const SaveTemplateInput = IDL.Record({
-  'clientId' : ClientId,
-  'templateId' : IDL.Text,
+export const TrafficSource = IDL.Variant({
+  'ads' : IDL.Null,
+  'referral' : IDL.Null,
+  'organic' : IDL.Null,
+  'direct' : IDL.Null,
+});
+export const TrafficSourceAttribution = IDL.Record({
+  'referralCode' : IDL.Opt(IDL.Text),
+  'source' : TrafficSource,
+  'userId' : IDL.Text,
+  'signedUpAt' : Timestamp,
+});
+export const UserPricingRow = IDL.Record({
+  'offerLabel' : IDL.Text,
+  'userId' : IDL.Text,
+  'shownAt' : IDL.Opt(IDL.Int),
+  'currentPlan' : IDL.Text,
+  'segment' : ActivitySegment,
+  'recommendedOffer' : OfferType,
+});
+export const WatiMessage = IDL.Record({
+  'id' : IDL.Text,
+  'status' : IDL.Text,
+  'userId' : IDL.Text,
   'templateName' : IDL.Text,
-  'sections' : TemplateSections,
+  'sentAt' : IDL.Int,
+  'phone' : IDL.Text,
+  'params' : IDL.Vec(IDL.Text),
 });
 export const http_header = IDL.Record({
   'value' : IDL.Text,
@@ -532,6 +1644,70 @@ export const TransformationOutput = IDL.Record({
   'status' : IDL.Nat,
   'body' : IDL.Vec(IDL.Nat8),
   'headers' : IDL.Vec(http_header),
+});
+export const HeatmapEventKind = IDL.Variant({
+  'tap' : IDL.Null,
+  'scrollDepth' : IDL.Null,
+  'deadClick' : IDL.Null,
+  'screenTime' : IDL.Null,
+  'rageTap' : IDL.Null,
+});
+export const NicheFunnelEventType = IDL.Variant({
+  'audit_sent' : IDL.Null,
+  'form_submit' : IDL.Null,
+  'landing_view' : IDL.Null,
+  'whatsapp_sent' : IDL.Null,
+  'call_booked' : IDL.Null,
+  'whatsapp_click' : IDL.Null,
+  'share_clicked' : IDL.Null,
+});
+export const NudgeDelivery = IDL.Record({
+  'id' : IDL.Nat,
+  'userId' : IDL.Text,
+  'sentAt' : Timestamp,
+  'userSegment' : UserSegment,
+  'actionTakenAt' : IDL.Opt(Timestamp),
+  'nudgeType' : NudgeType,
+  'converted' : IDL.Bool,
+});
+export const SaveTemplateInput = IDL.Record({
+  'clientId' : ClientId,
+  'templateId' : IDL.Text,
+  'templateName' : IDL.Text,
+  'sections' : TemplateSections,
+});
+export const ReferralFunnelEventType = IDL.Variant({
+  'landing_view' : IDL.Null,
+  'reward_claimed' : IDL.Null,
+  'signup_started' : IDL.Null,
+  'link_generated' : IDL.Null,
+  'share_clicked' : IDL.Null,
+  'signup_completed' : IDL.Null,
+});
+export const NudgeEvent = IDL.Record({
+  'id' : IDL.Nat,
+  'actedOnAt' : IDL.Opt(IDL.Int),
+  'userId' : IDL.Text,
+  'variantType' : NudgeVariantType,
+  'sentAt' : IDL.Int,
+  'variantId' : IDL.Text,
+  'segment' : ActivitySegment,
+  'openedAt' : IDL.Opt(IDL.Int),
+});
+export const ScanLimitRecord = IDL.Record({
+  'scansThisWeek' : IDL.Nat,
+  'userId' : IDL.Principal,
+  'weekStartedAt' : Timestamp,
+  'planTier' : PlanTier,
+});
+export const CaseStudyUpdate = IDL.Record({
+  'clientCity' : IDL.Opt(IDL.Text),
+  'clientName' : IDL.Opt(IDL.Text),
+  'testimonialQuote' : IDL.Opt(IDL.Text),
+  'clientNiche' : IDL.Opt(IDL.Text),
+  'resultMetrics' : IDL.Opt(IDL.Vec(ResultMetric)),
+  'actionsToken' : IDL.Opt(IDL.Vec(IDL.Text)),
+  'problemStatement' : IDL.Opt(IDL.Text),
 });
 export const UpdateClientMetricsInput = IDL.Record({
   'id' : ClientId,
@@ -554,13 +1730,63 @@ export const UpdateLeadInput = IDL.Record({
 
 export const idlService = IDL.Service({
   '_initializeAccessControl' : IDL.Func([], [], []),
+  'activateFeatureUnlock' : IDL.Func(
+      [GatedFeatureName],
+      [FeatureUnlockSession],
+      [],
+    ),
+  'activateMilestone' : IDL.Func([MilestoneId], [IDL.Bool], []),
+  'addMonitoredUrl' : IDL.Func([IDL.Text], [], []),
   'addSenderIdentity' : IDL.Func([IDL.Text, SenderType], [SenderIdentity], []),
   'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+  'awardCredits' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+  'awardWeeklyRewards' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+      [],
+    ),
+  'canSendNotification' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+  'cancelSubscription' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'checkChurnRisk' : IDL.Func([IDL.Text], [ChurnRisk], ['query']),
+  'checkFeatureUnlock' : IDL.Func(
+      [GatedFeatureName],
+      [FeatureUnlockCheck],
+      ['query'],
+    ),
   'checkOptOutStatus' : IDL.Func([LeadId], [IDL.Bool], ['query']),
+  'checkValueMoment' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
   'claimMilestoneReward' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'claimReferralByCode' : IDL.Func([IDL.Text], [IDL.Bool], []),
   'clearGA4Credentials' : IDL.Func([], [], []),
   'completeNote' : IDL.Func([NoteId], [IDL.Bool], []),
   'completeOnboarding' : IDL.Func([], [], []),
+  'completeOnboardingTour' : IDL.Func(
+      [],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'createCaseStudy' : IDL.Func(
+      [
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Text,
+        IDL.Vec(IDL.Text),
+        IDL.Vec(ResultMetric),
+        IDL.Opt(IDL.Text),
+      ],
+      [IDL.Variant({ 'ok' : CaseStudy, 'err' : IDL.Text })],
+      [],
+    ),
+  'createCheckoutSession' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : CheckoutSession, 'err' : IDL.Text })],
+      [],
+    ),
   'createClient' : IDL.Func([CreateClientInput], [Client], []),
   'createConversionScript' : IDL.Func(
       [IDL.Text, IDL.Text, IDL.Text],
@@ -578,7 +1804,17 @@ export const idlService = IDL.Service({
       [],
     ),
   'createLead' : IDL.Func([CreateLeadInput], [Lead], []),
+  'createMarketplaceListing' : IDL.Func(
+      [MarketplaceListingType, IDL.Text, IDL.Text, IDL.Nat, IDL.Vec(IDL.Text)],
+      [MarketplaceListing],
+      [],
+    ),
   'createNote' : IDL.Func([CreateNoteInput], [Note], []),
+  'createNotification' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+      [IDL.Text],
+      [],
+    ),
   'createOutreachCampaign' : IDL.Func(
       [CreateOutreachCampaignInput],
       [OutreachCampaign],
@@ -589,36 +1825,169 @@ export const idlService = IDL.Service({
       [OutreachMessage],
       [],
     ),
+  'createRazorpayOrder' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : RazorpayOrder, 'err' : IDL.Text })],
+      [],
+    ),
+  'createReferral' : IDL.Func([], [ReferralRecord], []),
   'createScraperJob' : IDL.Func([IDL.Text, IDL.Text], [ScraperJob], []),
   'createWhatsAppTemplate' : IDL.Func(
       [IDL.Text, WhatsAppTemplateCategory, IDL.Text, IDL.Vec(IDL.Text)],
       [WhatsAppTemplate],
       [],
     ),
+  'deleteCaseStudy' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'deleteClient' : IDL.Func([ClientId], [IDL.Bool], []),
+  'deleteContentCalendar' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'deleteLead' : IDL.Func([LeadId], [IDL.Bool], []),
   'deleteNote' : IDL.Func([NoteId], [IDL.Bool], []),
+  'deleteNotification' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'deleteProposal' : IDL.Func([ProposalId], [IDL.Bool], []),
+  'deleteSeoPage' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'dismissSuggestion' : IDL.Func([SuggestionId], [IDL.Bool], []),
+  'finalizeChallengeWeek' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(FinalizedChallengeResult)],
+      [],
+    ),
+  'generateAutoReport' : IDL.Func([ClientId, IDL.Text], [AutoReport], []),
+  'generateClientGrowthPlan' : IDL.Func([ClientId], [ClientGrowthPlan], []),
+  'generateContentCalendar' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : ContentCalendarPublic, 'err' : IDL.Text })],
+      [],
+    ),
   'generateGrowthReport' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Nat],
       [GrowthReport],
       [],
     ),
+  'generateInvestorReport' : IDL.Func(
+      [],
+      [IDL.Variant({ 'ok' : InvestorReport, 'err' : IDL.Text })],
+      [],
+    ),
   'generateProposal' : IDL.Func([CreateProposalInput], [Proposal], []),
+  'generateSeoPages' : IDL.Func(
+      [IDL.Vec(SeoPageRequest)],
+      [IDL.Variant({ 'ok' : IDL.Vec(SeoPagePublic), 'err' : IDL.Text })],
+      [],
+    ),
+  'generateShareableWin' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+      [ShareableWin],
+      ['query'],
+    ),
+  'getAbTestResult' : IDL.Func(
+      [AbTestName],
+      [IDL.Opt(AbTestResult)],
+      ['query'],
+    ),
+  'getAbVariant' : IDL.Func([AbTestName], [AbVariantId], []),
+  'getAccountabilityState' : IDL.Func([], [AccountabilityStateView], ['query']),
+  'getAdminEvents' : IDL.Func([], [IDL.Vec(WHEvent)], ['query']),
+  'getAffiliateStats' : IDL.Func([], [AffiliateStats], ['query']),
+  'getAnalyticsEvents' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(AnalyticsEvent)],
+      ['query'],
+    ),
+  'getAuditHistory' : IDL.Func([IDL.Text], [IDL.Vec(AuditRecord)], ['query']),
+  'getAutoAgencyState' : IDL.Func([], [AutoAgencyStateView], ['query']),
+  'getAutoReport' : IDL.Func([ClientId], [IDL.Opt(AutoReport)], ['query']),
   'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
   'getCampaignsByLead' : IDL.Func(
       [LeadId],
       [IDL.Vec(OutreachCampaign)],
       ['query'],
     ),
+  'getCaseStudy' : IDL.Func([IDL.Text], [IDL.Opt(CaseStudy)], ['query']),
+  'getChallengeParticipants' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(ChallengeParticipant)],
+      ['query'],
+    ),
+  'getCheckoutConfig' : IDL.Func(
+      [],
+      [
+        IDL.Record({
+          'plans' : IDL.Vec(StripePlan),
+          'publishableKey' : IDL.Text,
+        }),
+      ],
+      ['query'],
+    ),
+  'getChurnRiskUsers' : IDL.Func([], [IDL.Vec(UserChurnRiskRow)], ['query']),
+  'getChurnStatus' : IDL.Func(
+      [],
+      [
+        IDL.Record({
+          'isAtRisk' : IDL.Bool,
+          'pendingHotLeads' : IDL.Nat,
+          'daysSinceLastSession' : IDL.Nat,
+        }),
+      ],
+      ['query'],
+    ),
+  'getCityLeaderboard' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Vec(LeaderboardEntry)],
+      ['query'],
+    ),
   'getClient' : IDL.Func([ClientId], [IDL.Opt(Client)], ['query']),
+  'getClientGrowthPlan' : IDL.Func(
+      [ClientId],
+      [IDL.Opt(ClientGrowthPlan)],
+      ['query'],
+    ),
+  'getCohortRetention' : IDL.Func(
+      [IDL.Opt(IDL.Nat)],
+      [IDL.Vec(CohortRetentionRow)],
+      ['query'],
+    ),
+  'getCompetitorComparison' : IDL.Func(
+      [IDL.Vec(IDL.Text)],
+      [IDL.Vec(CompetitorRecord)],
+      [],
+    ),
+  'getCompetitorIntelReport' : IDL.Func(
+      [],
+      [IDL.Opt(CompetitorIntelReport)],
+      ['query'],
+    ),
   'getConsentLogs' : IDL.Func([], [IDL.Vec(ConsentLog)], ['query']),
+  'getContentCalendar' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(ContentCalendarPublic)],
+      ['query'],
+    ),
+  'getDealSuggestions' : IDL.Func([], [IDL.Vec(DealSuggestion)], ['query']),
   'getDeliverabilityMetrics' : IDL.Func(
       [SenderIdentityId],
       [IDL.Vec(DeliveryStats)],
       ['query'],
     ),
+  'getDripMessage' : IDL.Func([IDL.Nat], [IDL.Opt(DripSequenceDay)], ['query']),
+  'getEnhancedFunnelMetrics' : IDL.Func([], [EnhancedFunnelMetrics], ['query']),
+  'getEventDrillDown' : IDL.Func([IDL.Text], [EventDrillDown], ['query']),
+  'getFunnelMetrics' : IDL.Func([], [FunnelMetrics], ['query']),
   'getGA4CredentialStatus' : IDL.Func([], [GA4CredentialStatus], ['query']),
   'getGA4Dashboard' : IDL.Func(
       [IDL.Nat],
@@ -626,27 +1995,162 @@ export const idlService = IDL.Service({
       [],
     ),
   'getGamificationState' : IDL.Func([], [GamificationState], ['query']),
+  'getGrowthOverview' : IDL.Func([], [GrowthOverview], ['query']),
+  'getHeatmapSummary' : IDL.Func(
+      [],
+      [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+      ['query'],
+    ),
   'getImportHistory' : IDL.Func([], [IDL.Vec(ImportRecord)], ['query']),
   'getLandingPage' : IDL.Func(
       [LandingPageId],
       [IDL.Opt(LandingPage)],
       ['query'],
     ),
+  'getLatestAudit' : IDL.Func([IDL.Text], [IDL.Opt(AuditRecord)], ['query']),
+  'getLatestReport' : IDL.Func([], [IDL.Opt(InvestorReport)], ['query']),
   'getLead' : IDL.Func([LeadId], [IDL.Opt(Lead)], ['query']),
+  'getMarketingSpend' : IDL.Func(
+      [IDL.Opt(IDL.Text)],
+      [IDL.Vec(MarketingSpend)],
+      ['query'],
+    ),
+  'getMarketplaceListings' : IDL.Func(
+      [],
+      [IDL.Vec(MarketplaceListing)],
+      ['query'],
+    ),
+  'getMilestoneStatus' : IDL.Func([], [IDL.Vec(MilestoneInfo)], ['query']),
+  'getMonitoredUrls' : IDL.Func([], [IDL.Vec(MonitorRecord)], ['query']),
+  'getMonitoredUrlsNeedingRescan' : IDL.Func(
+      [],
+      [IDL.Vec(MonitorRecord)],
+      ['query'],
+    ),
+  'getMyActivityScore' : IDL.Func([], [UserActivityScore], []),
+  'getMyPricingRecommendation' : IDL.Func([], [PricingRecommendation], []),
   'getMySubscription' : IDL.Func([], [IDL.Opt(UserSubscription)], ['query']),
+  'getNicheFunnelMetrics' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [NicheFunnelMetrics],
+      ['query'],
+    ),
   'getNote' : IDL.Func([NoteId], [IDL.Opt(Note)], ['query']),
+  'getNudgeDeliveryStats' : IDL.Func(
+      [],
+      [IDL.Vec(NudgePerformanceStat)],
+      ['query'],
+    ),
+  'getNudgeMetricsBySegment' : IDL.Func(
+      [ActivitySegment],
+      [IDL.Vec(NudgePerformanceMetrics)],
+      ['query'],
+    ),
+  'getNudgePerformanceBySegment' : IDL.Func(
+      [IDL.Opt(Segment)],
+      [IDL.Vec(NudgePerformanceRow)],
+      ['query'],
+    ),
+  'getNudgePerformanceMetrics' : IDL.Func(
+      [],
+      [IDL.Vec(NudgePerformanceMetrics)],
+      ['query'],
+    ),
   'getOnboardingPrefs' : IDL.Func([], [IDL.Opt(OnboardingPrefs)], ['query']),
+  'getOnboardingState' : IDL.Func([], [OnboardingTourState], []),
   'getOutreachMessagesByLead' : IDL.Func(
       [LeadId],
       [IDL.Vec(OutreachMessage)],
       ['query'],
     ),
+  'getPageSpeedHistory' : IDL.Func(
+      [IDL.Text],
+      [IDL.Vec(PageSpeedResult)],
+      ['query'],
+    ),
+  'getPaywallState' : IDL.Func([IDL.Text], [IDL.Opt(PaywallState)], ['query']),
+  'getPerformanceScore' : IDL.Func([], [PerformanceScore], ['query']),
+  'getPlanLimits' : IDL.Func([SubscriptionPlan], [PlanLimits], ['query']),
   'getProposal' : IDL.Func([ProposalId], [IDL.Opt(Proposal)], ['query']),
+  'getPublicCaseStudy' : IDL.Func([IDL.Text], [IDL.Opt(CaseStudy)], ['query']),
+  'getRazorpayConfig' : IDL.Func(
+      [],
+      [
+        IDL.Variant({
+          'ok' : IDL.Record({ 'currency' : IDL.Text, 'keyId' : IDL.Text }),
+          'err' : IDL.Text,
+        }),
+      ],
+      ['query'],
+    ),
+  'getRealTimeEventStream' : IDL.Func([], [IDL.Vec(LiveEventEntry)], ['query']),
+  'getReferralFunnelStats' : IDL.Func([], [ReferralFunnelStats], ['query']),
+  'getReferralStats' : IDL.Func([], [ReferralStats], ['query']),
+  'getRetentionAnalytics' : IDL.Func([], [RetentionAnalytics], ['query']),
+  'getRetentionData' : IDL.Func(
+      [IDL.Text],
+      [IDL.Opt(RetentionData)],
+      ['query'],
+    ),
+  'getRevenuePrediction' : IDL.Func([], [RevenuePrediction], ['query']),
+  'getSaasHealthAlerts' : IDL.Func([], [IDL.Vec(HealthAlert)], ['query']),
+  'getSaasMetrics' : IDL.Func(
+      [IDL.Opt(IDL.Nat)],
+      [SaasMetricsResponse],
+      ['query'],
+    ),
   'getScraperJob' : IDL.Func([IDL.Nat], [IDL.Opt(ScraperJob)], ['query']),
   'getSenderIdentities' : IDL.Func([], [IDL.Vec(SenderIdentity)], ['query']),
+  'getSeoPage' : IDL.Func([IDL.Text], [IDL.Opt(SeoPagePublic)], ['query']),
   'getSubscriptionByUser' : IDL.Func(
       [IDL.Principal],
       [IDL.Opt(UserSubscription)],
+      [],
+    ),
+  'getSubscriptionHistory' : IDL.Func(
+      [IDL.Opt(IDL.Principal)],
+      [IDL.Vec(SubscriptionEvent)],
+      ['query'],
+    ),
+  'getSubscriptionStatus' : IDL.Func([], [SubscriptionStatus__1], ['query']),
+  'getTrafficSourceBreakdown' : IDL.Func(
+      [IDL.Nat],
+      [TrafficSourceBreakdown],
+      ['query'],
+    ),
+  'getUnreadCount' : IDL.Func([], [IDL.Nat], ['query']),
+  'getUserActivityScore' : IDL.Func([IDL.Text], [UserActivityScore], []),
+  'getUserJourneyTimeline' : IDL.Func(
+      [IDL.Text],
+      [UserJourneyTimeline],
+      ['query'],
+    ),
+  'getUserNotificationPrefs' : IDL.Func([], [UserNotificationPrefs], ['query']),
+  'getUserSegments' : IDL.Func([], [UserSegmentDistribution], ['query']),
+  'getWatiConfig' : IDL.Func(
+      [],
+      [
+        IDL.Opt(
+          IDL.Record({ 'baseUrl' : IDL.Text, 'businessPhoneId' : IDL.Text })
+        ),
+      ],
+      ['query'],
+    ),
+  'getWatiConsent' : IDL.Func([], [IDL.Opt(WatiConsent)], ['query']),
+  'getWatiTemplates' : IDL.Func(
+      [],
+      [
+        IDL.Variant({
+          'ok' : IDL.Vec(
+            IDL.Record({
+              'status' : IDL.Text,
+              'name' : IDL.Text,
+              'category' : IDL.Text,
+            })
+          ),
+          'err' : IDL.Text,
+        }),
+      ],
       [],
     ),
   'getWebsiteTemplate' : IDL.Func(
@@ -654,22 +2158,47 @@ export const idlService = IDL.Service({
       [IDL.Opt(WebsiteTemplate)],
       ['query'],
     ),
+  'getWeeklyReportData' : IDL.Func([], [IDL.Opt(WeeklyReportData)], ['query']),
+  'getWhatsAppSequence' : IDL.Func([], [IDL.Vec(WhatsAppMessage)], ['query']),
+  'handleStripeWebhook' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'importCSVLeads' : IDL.Func(
       [IDL.Vec(ImportRowResult), IDL.Text, IDL.Text],
       [ImportRecord],
       [],
     ),
   'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+  'joinChallenge' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
   'listAllCampaigns' : IDL.Func([], [IDL.Vec(OutreachCampaign)], ['query']),
   'listAllOutreachMessages' : IDL.Func(
       [],
       [IDL.Vec(OutreachMessage)],
       ['query'],
     ),
+  'listAuditLeads' : IDL.Func([], [IDL.Vec(AuditLead)], ['query']),
+  'listCaseStudies' : IDL.Func([], [IDL.Vec(CaseStudy)], ['query']),
   'listClients' : IDL.Func([], [IDL.Vec(Client)], ['query']),
+  'listCommissions' : IDL.Func(
+      [IDL.Opt(IDL.Text)],
+      [IDL.Vec(CommissionRecord)],
+      ['query'],
+    ),
+  'listContentCalendars' : IDL.Func(
+      [],
+      [IDL.Vec(ContentCalendarPublic)],
+      ['query'],
+    ),
   'listConversionScripts' : IDL.Func(
       [],
       [IDL.Vec(ConversionScript)],
+      ['query'],
+    ),
+  'listGatedFeatureAdminStats' : IDL.Func(
+      [],
+      [IDL.Vec(GatedFeatureAdminStat)],
       ['query'],
     ),
   'listGrowthReports' : IDL.Func([IDL.Nat], [IDL.Vec(GrowthReport)], ['query']),
@@ -682,17 +2211,102 @@ export const idlService = IDL.Service({
   'listLeads' : IDL.Func([], [IDL.Vec(Lead)], ['query']),
   'listLeadsByStatus' : IDL.Func([LeadStatus], [IDL.Vec(Lead)], ['query']),
   'listNotesByLead' : IDL.Func([LeadId], [IDL.Vec(Note)], ['query']),
+  'listNotifications' : IDL.Func(
+      [IDL.Nat, IDL.Bool],
+      [IDL.Vec(NotificationRecord)],
+      ['query'],
+    ),
+  'listPayoutRequests' : IDL.Func(
+      [],
+      [
+        IDL.Vec(
+          IDL.Record({
+            'status' : IDL.Text,
+            'requestId' : IDL.Text,
+            'createdAt' : IDL.Int,
+            'amount' : IDL.Nat,
+          })
+        ),
+      ],
+      ['query'],
+    ),
   'listProposalsByLead' : IDL.Func([LeadId], [IDL.Vec(Proposal)], ['query']),
+  'listRecentSocialProof' : IDL.Func(
+      [],
+      [IDL.Vec(SocialProofEntry)],
+      ['query'],
+    ),
   'listScraperJobs' : IDL.Func([], [IDL.Vec(ScraperJob)], ['query']),
   'listSeoAudits' : IDL.Func([], [IDL.Vec(SeoAuditRecord)], ['query']),
+  'listSeoPages' : IDL.Func([], [IDL.Vec(SeoPagePublic)], ['query']),
+  'listTrafficAttributions' : IDL.Func(
+      [],
+      [IDL.Vec(TrafficSourceAttribution)],
+      ['query'],
+    ),
+  'listUserPricingRows' : IDL.Func([], [IDL.Vec(UserPricingRow)], ['query']),
+  'listUserReferrals' : IDL.Func([], [IDL.Vec(ReferralRecord)], ['query']),
+  'listWatiMessages' : IDL.Func([IDL.Nat], [IDL.Vec(WatiMessage)], ['query']),
   'listWhatsAppTemplates' : IDL.Func(
       [],
       [IDL.Vec(WhatsAppTemplate)],
       ['query'],
     ),
+  'markAllRead' : IDL.Func(
+      [],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'markCommissionPaid' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'markNudgeActedOn' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'markNudgeActionTaken' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
+  'markNudgeOpened' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'markPostPosted' : IDL.Func(
+      [IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'markRead' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'markReportSent' : IDL.Func([ClientId], [], []),
   'markSuggestionImplemented' : IDL.Func([SuggestionId], [IDL.Bool], []),
   'moveLead' : IDL.Func([LeadId, LeadStatus], [IDL.Bool], []),
+  'publishCaseStudy' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'publishLandingPage' : IDL.Func([LandingPageId], [IDL.Bool], []),
+  'publishSeoPage' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'razorpayTransform' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'recordAbConversion' : IDL.Func([AbTestName, AbVariantId], [], []),
+  'recordAbImpression' : IDL.Func([AbTestName, AbVariantId], [], []),
+  'recordActionCompleted' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'recordAnalyticsEvent' : IDL.Func(
+      [IDL.Text, AnalyticsEventType, IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text))],
+      [IDL.Nat],
+      [],
+    ),
+  'recordCommission' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Nat],
+      [IDL.Variant({ 'ok' : CommissionRecord, 'err' : IDL.Text })],
+      [],
+    ),
   'recordConsentLog' : IDL.Func(
       [IDL.Text, IDL.Text, ConsentType, IDL.Text, IDL.Text, IDL.Text],
       [ConsentLogId],
@@ -704,12 +2318,131 @@ export const idlService = IDL.Service({
       [DeliverabilityStatId],
       [],
     ),
+  'recordFeatureUnlockUsed' : IDL.Func([GatedFeatureName], [], []),
+  'recordHeatmapEvent' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, HeatmapEventKind, IDL.Nat, IDL.Nat],
+      [IDL.Nat],
+      [],
+    ),
+  'recordMarketingSpend' : IDL.Func(
+      [IDL.Text, SpendChannel, IDL.Nat],
+      [IDL.Nat],
+      [],
+    ),
+  'recordNicheFunnelEvent' : IDL.Func(
+      [IDL.Text, NicheFunnelEventType, IDL.Text, IDL.Text, IDL.Opt(IDL.Nat)],
+      [],
+      [],
+    ),
+  'recordNotificationOpened' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+  'recordNudgeDelivery' : IDL.Func(
+      [IDL.Text, NudgeType, UserSegment],
+      [NudgeDelivery],
+      [],
+    ),
+  'recordOfferShown' : IDL.Func([], [], []),
+  'recordPaywallShown' : IDL.Func([IDL.Text], [PaywallState], []),
+  'recordShareClick' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'recordSocialProofEntry' : IDL.Func(
+      [IDL.Text, IDL.Text, SocialProofActivityType, IDL.Nat],
+      [SocialProofEntry],
+      [],
+    ),
+  'recordSubscriptionEvent' : IDL.Func(
+      [SubscriptionEventKind, PlanTier, IDL.Opt(PlanTier)],
+      [IDL.Nat],
+      [],
+    ),
+  'recordTrafficSourceAttribution' : IDL.Func(
+      [IDL.Text, TrafficSource, IDL.Opt(IDL.Text)],
+      [],
+      [],
+    ),
+  'refreshDealSuggestions' : IDL.Func([], [], []),
+  'requestPayout' : IDL.Func(
+      [IDL.Text],
+      [
+        IDL.Variant({
+          'ok' : IDL.Record({ 'requestId' : IDL.Text }),
+          'err' : IDL.Text,
+        }),
+      ],
+      [],
+    ),
+  'resetAbTest' : IDL.Func([AbTestName], [], []),
+  'resetOnboardingTour' : IDL.Func(
+      [],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'runAgencyCycle' : IDL.Func([], [], []),
+  'runCompetitorScan' : IDL.Func(
+      [IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Variant({ 'ok' : CompetitorIntelReport, 'err' : IDL.Text })],
+      [],
+    ),
+  'runPageSpeedScan' : IDL.Func(
+      [IDL.Text],
+      [IDL.Variant({ 'ok' : PageSpeedResult, 'err' : IDL.Text })],
+      [],
+    ),
   'runSeoAudit' : IDL.Func([IDL.Text], [SeoAuditRecord], []),
+  'saveCompetitorUrls' : IDL.Func(
+      [IDL.Text, IDL.Vec(IDL.Text)],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'saveOnboardingPrefs' : IDL.Func([IDL.Text, IDL.Text, IDL.Nat], [], []),
+  'saveWatiConfig' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'saveWebsiteTemplate' : IDL.Func([SaveTemplateInput], [WebsiteTemplate], []),
+  'sendWatiTemplate' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+      [
+        IDL.Variant({
+          'ok' : IDL.Record({ 'messageId' : IDL.Text }),
+          'err' : IDL.Text,
+        }),
+      ],
+      [],
+    ),
+  'setAutoAgencyEnabled' : IDL.Func([IDL.Bool], [], []),
   'setGA4Credentials' : IDL.Func([IDL.Text, IDL.Text], [], []),
+  'setUserNotificationPrefs' : IDL.Func(
+      [FrequencySettings, IDL.Vec(TriggerType)],
+      [],
+      [],
+    ),
+  'setWhatsAppConsent' : IDL.Func([IDL.Text, IDL.Bool], [], []),
+  'skipOnboardingTour' : IDL.Func(
+      [],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
+  'submitAudit' : IDL.Func([IDL.Text], [AuditRecord], []),
+  'submitAuditLead' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [AuditLead],
+      [],
+    ),
   'submitTemplateForApproval' : IDL.Func([WhatsAppTemplateId], [IDL.Bool], []),
+  'trackReferralFunnelEvent' : IDL.Func(
+      [ReferralFunnelEventType, IDL.Text, IDL.Opt(IDL.Text), IDL.Opt(IDL.Text)],
+      [],
+      [],
+    ),
+  'trackReferralLandingView' : IDL.Func([IDL.Text], [], []),
+  'trackShareClick' : IDL.Func([IDL.Text, IDL.Text, IDL.Opt(IDL.Text)], [], []),
+  'trackWebsiteHealthEvent' : IDL.Func([IDL.Text, IDL.Text], [], []),
   'transform' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'transformCompetitorIntel' : IDL.Func(
       [TransformationInput],
       [TransformationOutput],
       ['query'],
@@ -719,9 +2452,38 @@ export const idlService = IDL.Service({
       [TransformationOutput],
       ['query'],
     ),
+  'transformPageSpeed' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'transformPaymentsWhatsapp' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'transformWebsiteHealth' : IDL.Func(
+      [TransformationInput],
+      [TransformationOutput],
+      ['query'],
+    ),
+  'triggerNudgeForUser' : IDL.Func([IDL.Text], [IDL.Opt(NudgeEvent)], []),
+  'triggerSystemNotifications' : IDL.Func([], [IDL.Nat], []),
+  'updateAuditScanLimit' : IDL.Func([], [ScanLimitRecord], []),
   'updateCampaignStats' : IDL.Func(
       [IDL.Nat, IDL.Nat, IDL.Nat, IDL.Text],
       [OutreachCampaign],
+      [],
+    ),
+  'updateCaseStudy' : IDL.Func(
+      [IDL.Text, CaseStudyUpdate],
+      [IDL.Variant({ 'ok' : CaseStudy, 'err' : IDL.Text })],
+      [],
+    ),
+  'updateChallengeLeadsCount' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+  'updateChallengeProgress' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+      [],
       [],
     ),
   'updateClientMetrics' : IDL.Func([UpdateClientMetricsInput], [IDL.Bool], []),
@@ -730,10 +2492,23 @@ export const idlService = IDL.Service({
       [IDL.Bool],
       [],
     ),
+  'updateDailyProgress' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [], []),
+  'updateLastSession' : IDL.Func([], [], []),
   'updateLead' : IDL.Func([UpdateLeadInput], [IDL.Bool], []),
+  'updateMonitoredUrl' : IDL.Func([IDL.Text, IDL.Bool], [], []),
+  'updateOnboardingStep' : IDL.Func(
+      [IDL.Nat],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'updateOutreachMessageStatus' : IDL.Func(
       [IDL.Nat, IDL.Text, IDL.Opt(Timestamp)],
       [OutreachMessage],
+      [],
+    ),
+  'updateRetentionData' : IDL.Func(
+      [IDL.Text, IDL.Nat, IDL.Nat, IDL.Nat],
+      [],
       [],
     ),
   'updateScraperJobProgress' : IDL.Func(
@@ -751,12 +2526,36 @@ export const idlService = IDL.Service({
       [IDL.Bool],
       [],
     ),
+  'updateWatiConsent' : IDL.Func(
+      [IDL.Text, IDL.Bool],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
   'upsertMySubscription' : IDL.Func([UserSubscription], [], []),
+  'verifyRazorpayPayment' : IDL.Func(
+      [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+      [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+      [],
+    ),
 });
 
 export const idlInitArgs = [];
 
 export const idlFactory = ({ IDL }) => {
+  const GatedFeatureName = IDL.Variant({
+    'advanced_analytics' : IDL.Null,
+    'bulk_send' : IDL.Null,
+    'export_leads' : IDL.Null,
+  });
+  const Timestamp = IDL.Int;
+  const FeatureUnlockSession = IDL.Record({
+    'expiresAt' : Timestamp,
+    'unlockedAt' : Timestamp,
+    'userId' : IDL.Text,
+    'usageCount' : IDL.Nat,
+    'featureName' : GatedFeatureName,
+  });
+  const MilestoneId = IDL.Text;
   const SenderType = IDL.Variant({
     'whatsapp' : IDL.Null,
     'email_domain' : IDL.Null,
@@ -768,7 +2567,6 @@ export const idlFactory = ({ IDL }) => {
     'phase2' : IDL.Null,
     'phase3' : IDL.Null,
   });
-  const Timestamp = IDL.Int;
   const SenderIdentity = IDL.Record({
     'id' : SenderIdentityId,
     'reputationScore' : IDL.Nat,
@@ -788,8 +2586,44 @@ export const idlFactory = ({ IDL }) => {
     'user' : IDL.Null,
     'guest' : IDL.Null,
   });
+  const ChurnRisk = IDL.Variant({
+    'high' : IDL.Null,
+    'none' : IDL.Null,
+    'medium' : IDL.Null,
+  });
+  const FeatureUnlockCheck = IDL.Record({
+    'requiredInvites' : IDL.Nat,
+    'expiresAt' : IDL.Opt(Timestamp),
+    'usageCount' : IDL.Nat,
+    'currentInvites' : IDL.Nat,
+    'isUnlocked' : IDL.Bool,
+    'featureName' : GatedFeatureName,
+  });
   const LeadId = IDL.Nat;
   const NoteId = IDL.Nat;
+  const ResultMetric = IDL.Record({
+    'after' : IDL.Text,
+    'metricLabel' : IDL.Text,
+    'before' : IDL.Text,
+  });
+  const CaseStudy = IDL.Record({
+    'id' : IDL.Text,
+    'isPublished' : IDL.Bool,
+    'clientCity' : IDL.Text,
+    'clientName' : IDL.Text,
+    'userId' : IDL.Text,
+    'testimonialQuote' : IDL.Opt(IDL.Text),
+    'createdAt' : IDL.Int,
+    'shareToken' : IDL.Text,
+    'clientNiche' : IDL.Text,
+    'resultMetrics' : IDL.Vec(ResultMetric),
+    'actionsToken' : IDL.Vec(IDL.Text),
+    'problemStatement' : IDL.Text,
+  });
+  const CheckoutSession = IDL.Record({
+    'url' : IDL.Text,
+    'sessionId' : IDL.Text,
+  });
   const CreateClientInput = IDL.Record({
     'businessName' : IDL.Text,
     'leadId' : LeadId,
@@ -964,6 +2798,25 @@ export const idlFactory = ({ IDL }) => {
     'priorityTag' : IDL.Opt(PriorityTag),
     'industry' : IDL.Text,
   });
+  const MarketplaceListingType = IDL.Variant({
+    'buyLeads' : IDL.Null,
+    'hireFreelancer' : IDL.Null,
+    'sellService' : IDL.Null,
+  });
+  const MarketplaceListing = IDL.Record({
+    'title' : IDL.Text,
+    'listingId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'tags' : IDL.Vec(IDL.Text),
+    'description' : IDL.Text,
+    'isActive' : IDL.Bool,
+    'listingType' : MarketplaceListingType,
+    'sellerName' : IDL.Text,
+    'sellerId' : IDL.Text,
+    'price' : IDL.Nat,
+    'reviewCount' : IDL.Nat,
+    'avgRating' : IDL.Nat,
+  });
   const NoteType = IDL.Variant({ 'reminder' : IDL.Null, 'note' : IDL.Null });
   const CreateNoteInput = IDL.Record({
     'content' : IDL.Text,
@@ -1026,6 +2879,27 @@ export const idlFactory = ({ IDL }) => {
     'consentChecked' : IDL.Bool,
     'scheduledAt' : Timestamp,
   });
+  const RazorpayOrder = IDL.Record({
+    'receipt' : IDL.Text,
+    'orderId' : IDL.Text,
+    'currency' : IDL.Text,
+    'amount' : IDL.Nat,
+  });
+  const ReferralStatus = IDL.Variant({
+    'created' : IDL.Null,
+    'completed' : IDL.Null,
+    'signedUp' : IDL.Null,
+  });
+  const ReferralRecord = IDL.Record({
+    'id' : IDL.Nat,
+    'status' : ReferralStatus,
+    'completedAt' : IDL.Opt(Timestamp),
+    'referredUserId' : IDL.Opt(IDL.Principal),
+    'referralCode' : IDL.Text,
+    'rewardClaimed' : IDL.Bool,
+    'createdAt' : Timestamp,
+    'referrerId' : IDL.Principal,
+  });
   const ScraperJob = IDL.Record({
     'id' : IDL.Nat,
     'status' : IDL.Text,
@@ -1065,6 +2939,90 @@ export const idlFactory = ({ IDL }) => {
     'replyRate' : IDL.Nat,
   });
   const ProposalId = IDL.Nat;
+  const FinalizedChallengeResult = IDL.Record({
+    'creditsAwarded' : IDL.Nat,
+    'isoWeek' : IDL.Text,
+    'displayName' : IDL.Text,
+    'city' : IDL.Text,
+    'userId' : IDL.Text,
+    'finalRank' : IDL.Nat,
+    'badgeAwarded' : IDL.Text,
+  });
+  const AutoReportStatus = IDL.Variant({
+    'sent' : IDL.Null,
+    'draft' : IDL.Null,
+    'ready' : IDL.Null,
+  });
+  const AutoReport = IDL.Record({
+    'roi' : IDL.Nat,
+    'status' : AutoReportStatus,
+    'clientId' : ClientId,
+    'nextSteps' : IDL.Vec(IDL.Text),
+    'topChannel' : IDL.Text,
+    'generatedAt' : IDL.Int,
+    'sentAt' : IDL.Opt(IDL.Int),
+    'reportPeriod' : IDL.Text,
+    'leadsGenerated' : IDL.Nat,
+    'conversions' : IDL.Nat,
+    'revenueImpact' : IDL.Nat,
+    'reportId' : IDL.Text,
+  });
+  const GrowthPlanItemStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'done' : IDL.Null,
+    'approved' : IDL.Null,
+  });
+  const GrowthPlanItemEffort = IDL.Variant({
+    'deep' : IDL.Null,
+    'quick' : IDL.Null,
+    'medium' : IDL.Null,
+  });
+  const GrowthPlanItem = IDL.Record({
+    'status' : GrowthPlanItemStatus,
+    'title' : IDL.Text,
+    'description' : IDL.Text,
+    'effort' : GrowthPlanItemEffort,
+    'priorityScore' : IDL.Nat,
+    'estimatedRevenue' : IDL.Nat,
+  });
+  const ClientGrowthPlanStatus = IDL.Variant({
+    'pending' : IDL.Null,
+    'approved' : IDL.Null,
+    'executing' : IDL.Null,
+  });
+  const ClientGrowthPlan = IDL.Record({
+    'clientId' : ClientId,
+    'adsPlan' : IDL.Vec(GrowthPlanItem),
+    'seoPlan' : IDL.Vec(GrowthPlanItem),
+    'planId' : IDL.Text,
+    'generatedAt' : IDL.Int,
+    'approvalStatus' : ClientGrowthPlanStatus,
+    'contentIdeas' : IDL.Vec(GrowthPlanItem),
+    'weekOf' : IDL.Int,
+  });
+  const ContentPostPublic = IDL.Record({
+    'id' : IDL.Text,
+    'postType' : IDL.Text,
+    'hashtags' : IDL.Vec(IDL.Text),
+    'body' : IDL.Text,
+    'city' : IDL.Text,
+    'hook' : IDL.Text,
+    'isPosted' : IDL.Bool,
+    'callToAction' : IDL.Text,
+    'niche' : IDL.Text,
+    'caption' : IDL.Text,
+    'scheduledDay' : IDL.Nat,
+  });
+  const ContentCalendarPublic = IDL.Record({
+    'id' : IDL.Text,
+    'city' : IDL.Text,
+    'userId' : IDL.Text,
+    'goal' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'niche' : IDL.Text,
+    'posts' : IDL.Vec(ContentPostPublic),
+    'monthYear' : IDL.Text,
+  });
   const GrowthReportId = IDL.Nat;
   const WeeklyAction = IDL.Record({
     'action' : IDL.Text,
@@ -1094,6 +3052,27 @@ export const idlFactory = ({ IDL }) => {
     'reportNarrative' : IDL.Text,
     'weekOf' : IDL.Text,
   });
+  const InvestorReport = IDL.Record({
+    'arr' : IDL.Nat,
+    'cac' : IDL.Nat,
+    'ltv' : IDL.Nat,
+    'mrr' : IDL.Nat,
+    'nrr' : IDL.Float64,
+    'newCustomers' : IDL.Nat,
+    'churnedMrr' : IDL.Nat,
+    'disclaimers' : IDL.Vec(IDL.Text),
+    'monthlyChurnRate' : IDL.Float64,
+    'funnelData' : IDL.Vec(IDL.Text),
+    'generatedAt' : IDL.Int,
+    'churnedCustomers' : IDL.Nat,
+    'cacPaybackMonths' : IDL.Float64,
+    'newMrr' : IDL.Nat,
+    'ltvCacRatio' : IDL.Float64,
+    'cohortData' : IDL.Vec(IDL.Text),
+    'healthAlerts' : IDL.Vec(IDL.Text),
+    'totalCustomers' : IDL.Nat,
+    'expansionMrr' : IDL.Nat,
+  });
   const CreateProposalInput = IDL.Record({
     'businessName' : IDL.Text,
     'leadId' : LeadId,
@@ -1109,6 +3088,322 @@ export const idlFactory = ({ IDL }) => {
     'websiteStrategy' : IDL.Text,
     'adsStrategy' : IDL.Text,
     'pricingBreakdown' : IDL.Text,
+  });
+  const SeoPageRequest = IDL.Record({ 'city' : IDL.Text, 'niche' : IDL.Text });
+  const SeoPagePublic = IDL.Record({
+    'id' : IDL.Text,
+    'isPublished' : IDL.Bool,
+    'pricingHint' : IDL.Text,
+    'city' : IDL.Text,
+    'headline' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'slug' : IDL.Text,
+    'caseExample' : IDL.Record({ 'after' : IDL.Text, 'before' : IDL.Text }),
+    'painPoints' : IDL.Vec(IDL.Text),
+    'niche' : IDL.Text,
+    'benefits' : IDL.Vec(IDL.Text),
+    'subheadline' : IDL.Text,
+  });
+  const ShareWinType = IDL.Variant({
+    'streak' : IDL.Null,
+    'deal' : IDL.Null,
+    'leads' : IDL.Null,
+  });
+  const ShareableWin = IDL.Record({
+    'displayName' : IDL.Text,
+    'metricValue' : IDL.Nat,
+    'city' : IDL.Text,
+    'date' : IDL.Text,
+    'winType' : ShareWinType,
+  });
+  const AbTestName = IDL.Variant({
+    'nudge_copy_ab' : IDL.Null,
+    'paywall_timing_ab' : IDL.Null,
+  });
+  const AbVariantId = IDL.Text;
+  const AbVariantStats = IDL.Record({
+    'impressions' : IDL.Nat,
+    'conversionRatePct' : IDL.Float64,
+    'variantId' : AbVariantId,
+    'conversions' : IDL.Nat,
+  });
+  const AbTestResult = IDL.Record({
+    'lastResetAt' : IDL.Int,
+    'testName' : AbTestName,
+    'variants' : IDL.Vec(AbVariantStats),
+    'isActive' : IDL.Bool,
+    'winningVariant' : IDL.Opt(AbVariantId),
+  });
+  const AccountabilityStateView = IDL.Record({
+    'targetLeads' : IDL.Nat,
+    'targetFollowups' : IDL.Nat,
+    'todayComplete' : IDL.Bool,
+    'targetDeals' : IDL.Nat,
+    'dailyLeadsContacted' : IDL.Nat,
+    'dailyFollowupsDone' : IDL.Nat,
+    'dailyDealsClosed' : IDL.Nat,
+    'lastTaskDate' : IDL.Int,
+    'streakMilestones' : IDL.Vec(IDL.Nat),
+    'currentStreak' : IDL.Nat,
+  });
+  const WHEvent = IDL.Record({
+    'metadata' : IDL.Text,
+    'userId' : IDL.Text,
+    'createdAt' : Timestamp,
+    'eventName' : IDL.Text,
+  });
+  const CommissionRecord = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'referredUserId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'referrerId' : IDL.Text,
+    'commissionAmount' : IDL.Nat,
+    'planAmount' : IDL.Nat,
+    'commissionRate' : IDL.Float64,
+    'paidAt' : IDL.Opt(IDL.Int),
+    'planTier' : IDL.Text,
+  });
+  const AffiliateStats = IDL.Record({
+    'totalReferrals' : IDL.Nat,
+    'paidEarnings' : IDL.Nat,
+    'pendingEarnings' : IDL.Nat,
+    'commissionHistory' : IDL.Vec(CommissionRecord),
+    'conversionRate' : IDL.Float64,
+    'totalEarnings' : IDL.Nat,
+  });
+  const AnalyticsEventType = IDL.Variant({
+    'city_selected' : IDL.Null,
+    'pitch_sent' : IDL.Null,
+    'get_clients_clicked' : IDL.Null,
+    'payment_failed' : IDL.Null,
+    'onboarding_started' : IDL.Null,
+    'payment_started' : IDL.Null,
+    'reply_received' : IDL.Null,
+    'leads_generated' : IDL.Null,
+    'feature_locked_clicked' : IDL.Null,
+    'onboarding_completed' : IDL.Null,
+    'plan_selected' : IDL.Null,
+    'app_opened' : IDL.Null,
+    'user_churn_risk' : IDL.Null,
+    'niche_selected' : IDL.Null,
+    'paywall_viewed' : IDL.Null,
+    'payment_success' : IDL.Null,
+    'proposal_created' : IDL.Null,
+  });
+  const AnalyticsEvent = IDL.Record({
+    'id' : IDL.Nat,
+    'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+    'userId' : IDL.Text,
+    'timestamp' : IDL.Int,
+    'eventType' : AnalyticsEventType,
+  });
+  const AuditId = IDL.Nat;
+  const RawMetrics = IDL.Record({
+    'hasContactForm' : IDL.Bool,
+    'hasOpeningHours' : IDL.Bool,
+    'hasHSTS' : IDL.Bool,
+    'robotsTxtFound' : IDL.Bool,
+    'imagesMissingAlt' : IDL.Int,
+    'hasH1' : IDL.Bool,
+    'hasAddress' : IDL.Bool,
+    'hasTestimonials' : IDL.Bool,
+    'titleLength' : IDL.Int,
+    'sitemapFound' : IDL.Bool,
+    'hasXContentType' : IDL.Bool,
+    'imageCount' : IDL.Int,
+    'hasViewport' : IDL.Bool,
+    'internalLinkCount' : IDL.Int,
+    'hasWhatsAppLink' : IDL.Bool,
+    'httpsEnabled' : IDL.Bool,
+    'hasTitle' : IDL.Bool,
+    'hasCanonical' : IDL.Bool,
+    'hasPhoneNumber' : IDL.Bool,
+    'hasCTA' : IDL.Bool,
+    'hasBusinessName' : IDL.Bool,
+    'renderBlockingScripts' : IDL.Int,
+    'hasXFrame' : IDL.Bool,
+    'hasMixedContent' : IDL.Bool,
+    'hasGoogleMap' : IDL.Bool,
+    'metaDescLength' : IDL.Int,
+    'hasMediaQueries' : IDL.Bool,
+    'hasMetaDesc' : IDL.Bool,
+  });
+  const FixDifficulty = IDL.Variant({
+    'Easy' : IDL.Null,
+    'Hard' : IDL.Null,
+    'Medium' : IDL.Null,
+  });
+  const FixCategory = IDL.Variant({
+    'Cta' : IDL.Null,
+    'Seo' : IDL.Null,
+    'Speed' : IDL.Null,
+    'Security' : IDL.Null,
+    'Images' : IDL.Null,
+    'WhatsApp' : IDL.Null,
+    'Content' : IDL.Null,
+    'Mobile' : IDL.Null,
+  });
+  const IssueSeverity = IDL.Variant({
+    'Critical' : IDL.Null,
+    'Minor' : IDL.Null,
+    'Warning' : IDL.Null,
+  });
+  const FixType = IDL.Variant({
+    'developer_needed' : IDL.Null,
+    'one_click' : IDL.Null,
+    'guided' : IDL.Null,
+  });
+  const AuditIssue = IDL.Record({
+    'estimatedLossMax' : IDL.Nat,
+    'estimatedLossMin' : IDL.Nat,
+    'aiFixSuggestion' : IDL.Text,
+    'businessImpact' : IDL.Text,
+    'difficulty' : FixDifficulty,
+    'fixCategory' : FixCategory,
+    'severity' : IssueSeverity,
+    'fixType' : FixType,
+    'problem' : IDL.Text,
+  });
+  const CompetitorRecord = IDL.Record({
+    'conversionScore' : IDL.Nat,
+    'overallScore' : IDL.Nat,
+    'mobileScore' : IDL.Nat,
+    'seoScore' : IDL.Nat,
+    'securityScore' : IDL.Nat,
+    'speedScore' : IDL.Nat,
+    'competitorName' : IDL.Text,
+  });
+  const CategoryScores = IDL.Record({
+    'seo' : IDL.Nat,
+    'content' : IDL.Nat,
+    'security' : IDL.Nat,
+    'speed' : IDL.Nat,
+    'mobile' : IDL.Nat,
+    'conversion' : IDL.Nat,
+  });
+  const AuditRecord = IDL.Record({
+    'id' : AuditId,
+    'url' : IDL.Text,
+    'rawMetrics' : IDL.Opt(RawMetrics),
+    'overallScore' : IDL.Nat,
+    'userId' : IDL.Principal,
+    'createdAt' : Timestamp,
+    'issues' : IDL.Vec(AuditIssue),
+    'scanDurationMs' : IDL.Int,
+    'competitors' : IDL.Vec(CompetitorRecord),
+    'monitorActive' : IDL.Bool,
+    'categoryScores' : CategoryScores,
+    'lastMonitorScanAt' : IDL.Int,
+  });
+  const AutoAgencyActionType = IDL.Variant({
+    'dealSuggested' : IDL.Null,
+    'outreachSent' : IDL.Null,
+    'followupSent' : IDL.Null,
+    'leadFound' : IDL.Null,
+    'reportGenerated' : IDL.Null,
+  });
+  const AutoAgencyAction = IDL.Record({
+    'leadName' : IDL.Text,
+    'actionType' : AutoAgencyActionType,
+    'description' : IDL.Text,
+    'timestamp' : IDL.Int,
+    'outcome' : IDL.Text,
+    'actionId' : IDL.Text,
+  });
+  const AutoAgencyStateView = IDL.Record({
+    'dailyOutreachSent' : IDL.Nat,
+    'toggleEnabled' : IDL.Bool,
+    'dailyLeadsGenerated' : IDL.Nat,
+    'runCount' : IDL.Nat,
+    'lastActivityFeed' : IDL.Vec(AutoAgencyAction),
+    'lastRunTime' : IDL.Int,
+    'nextRunTime' : IDL.Int,
+    'dailyFollowupsSent' : IDL.Nat,
+  });
+  const ChallengeParticipant = IDL.Record({
+    'leadsCount' : IDL.Nat,
+    'isoWeek' : IDL.Text,
+    'displayName' : IDL.Text,
+    'city' : IDL.Text,
+    'userId' : IDL.Text,
+    'joinedAt' : Timestamp,
+    'rank' : IDL.Nat,
+    'rewarded' : IDL.Bool,
+  });
+  const StripePlan = IDL.Record({
+    'id' : IDL.Text,
+    'interval' : IDL.Text,
+    'name' : IDL.Text,
+    'currency' : IDL.Text,
+    'amount' : IDL.Nat,
+  });
+  const PlanTier = IDL.Variant({
+    'Pro' : IDL.Null,
+    'Starter' : IDL.Null,
+    'Free' : IDL.Null,
+    'Growth' : IDL.Null,
+    'Agency' : IDL.Null,
+  });
+  const UserChurnRiskRow = IDL.Record({
+    'userId' : IDL.Principal,
+    'risk' : ChurnRisk,
+    'openPlanRevenue' : IDL.Nat,
+    'daysSinceLastAction' : IDL.Nat,
+    'openPlan' : PlanTier,
+    'lastEventType' : IDL.Text,
+  });
+  const ChallengeBadge = IDL.Variant({
+    'bronze' : IDL.Null,
+    'gold' : IDL.Null,
+    'none' : IDL.Null,
+    'silver' : IDL.Null,
+  });
+  const LeaderboardEntry = IDL.Record({
+    'leadsCount' : IDL.Nat,
+    'displayName' : IDL.Text,
+    'city' : IDL.Text,
+    'userId' : IDL.Text,
+    'rank' : IDL.Nat,
+    'badge' : ChallengeBadge,
+  });
+  const CohortRetentionRow = IDL.Record({
+    'd1' : IDL.Float64,
+    'd7' : IDL.Float64,
+    'd30' : IDL.Float64,
+    'd60' : IDL.Float64,
+    'retainedD1' : IDL.Nat,
+    'retainedD7' : IDL.Nat,
+    'week' : IDL.Text,
+    'cohortSize' : IDL.Nat,
+    'retainedD30' : IDL.Nat,
+    'retainedD60' : IDL.Nat,
+  });
+  const SeoSignals = IDL.Record({
+    'metaPresent' : IDL.Bool,
+    'h1Count' : IDL.Nat,
+    'titlePresent' : IDL.Bool,
+    'schemaPresent' : IDL.Bool,
+    'internalLinks' : IDL.Nat,
+  });
+  const CompetitorProfile = IDL.Record({
+    'url' : IDL.Text,
+    'pageSpeed' : IDL.Opt(IDL.Nat),
+    'estimatedTraffic' : IDL.Text,
+    'lastScannedAt' : IDL.Int,
+    'socialLinks' : IDL.Vec(IDL.Text),
+    'name' : IDL.Opt(IDL.Text),
+    'seoSignals' : SeoSignals,
+    'ctaPresent' : IDL.Bool,
+    'whatsappPresent' : IDL.Bool,
+  });
+  const CompetitorIntelReport = IDL.Record({
+    'userId' : IDL.Text,
+    'keywordGaps' : IDL.Vec(IDL.Text),
+    'lastUpdatedAt' : IDL.Int,
+    'competitors' : IDL.Vec(CompetitorProfile),
+    'yourUrl' : IDL.Text,
+    'adSpendEstimate' : IDL.Text,
   });
   const ConsentLogId = IDL.Nat;
   const ConsentType = IDL.Variant({
@@ -1128,6 +3423,16 @@ export const idlFactory = ({ IDL }) => {
     'phone' : IDL.Text,
     'consentType' : ConsentType,
   });
+  const DealSuggestion = IDL.Record({
+    'suggestionId' : IDL.Text,
+    'pricingTier' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'closeProbability' : IDL.Nat,
+    'leadId' : LeadId,
+    'suggestedPitch' : IDL.Text,
+    'suggestedPrice' : IDL.Nat,
+    'bestContactTime' : IDL.Text,
+  });
   const DeliverabilityStatId = IDL.Nat;
   const DeliveryStats = IDL.Record({
     'id' : DeliverabilityStatId,
@@ -1138,6 +3443,57 @@ export const idlFactory = ({ IDL }) => {
     'identityId' : SenderIdentityId,
     'bouncedCount' : IDL.Nat,
     'repliedCount' : IDL.Nat,
+  });
+  const WeekTheme = IDL.Variant({
+    'habit_building' : IDL.Null,
+    'scale_upgrade' : IDL.Null,
+    'activation' : IDL.Null,
+    'conversion' : IDL.Null,
+  });
+  const CopyType = IDL.Variant({
+    'reward' : IDL.Null,
+    'urgency' : IDL.Null,
+    'fomo' : IDL.Null,
+    'money_visibility' : IDL.Null,
+  });
+  const DripSequenceDay = IDL.Record({
+    'weekNumber' : IDL.Nat,
+    'weekTheme' : WeekTheme,
+    'personalizationTokens' : IDL.Vec(IDL.Text),
+    'dayNumber' : IDL.Nat,
+    'message' : IDL.Text,
+    'copyType' : CopyType,
+  });
+  const FunnelStepDetail = IDL.Record({
+    'step' : IDL.Text,
+    'dropoffPercent' : IDL.Float64,
+    'avgSecondsToNextStep' : IDL.Opt(IDL.Nat),
+    'users' : IDL.Nat,
+    'conversions' : IDL.Nat,
+  });
+  const EnhancedFunnelMetrics = IDL.Record({
+    'paidUsers' : IDL.Nat,
+    'freeToPaidConversion' : IDL.Float64,
+    'steps' : IDL.Vec(FunnelStepDetail),
+    'avgDaysToFirstPayment' : IDL.Opt(IDL.Float64),
+    'totalUsers' : IDL.Nat,
+  });
+  const EventDrillDown = IDL.Record({
+    'totalCount' : IDL.Nat,
+    'nextEventBreakdown' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat, IDL.Float64)),
+    'eventName' : IDL.Text,
+  });
+  const FunnelStep = IDL.Record({
+    'dropOffRate' : IDL.Float64,
+    'count' : IDL.Nat,
+    'stepName' : IDL.Text,
+    'conversionRate' : IDL.Float64,
+  });
+  const FunnelMetrics = IDL.Record({
+    'paidUsers' : IDL.Nat,
+    'freeToPaidConversion' : IDL.Float64,
+    'steps' : IDL.Vec(FunnelStep),
+    'totalUsers' : IDL.Nat,
   });
   const GA4CredentialStatus = IDL.Record({
     'lastUpdated' : IDL.Opt(IDL.Int),
@@ -1161,6 +3517,19 @@ export const idlFactory = ({ IDL }) => {
     'dailyStreak' : IDL.Nat,
     'unlockedFeatures' : IDL.Vec(IDL.Text),
   });
+  const GrowthOverview = IDL.Record({
+    'dau' : IDL.Nat,
+    'mau' : IDL.Nat,
+    'wau' : IDL.Nat,
+    'retentionD30' : IDL.Float64,
+    'computedAt' : IDL.Int,
+    'mrrEstimatedInr' : IDL.Nat,
+    'retentionD1' : IDL.Float64,
+    'retentionD7' : IDL.Float64,
+    'newSignupsLast30' : IDL.Nat,
+    'newSignupsLast7' : IDL.Nat,
+    'freeToPaidConversionPct' : IDL.Float64,
+  });
   const ImportId = IDL.Nat;
   const ImportRecord = IDL.Record({
     'id' : ImportId,
@@ -1173,10 +3542,76 @@ export const idlFactory = ({ IDL }) => {
     'timestamp' : Timestamp,
     'invalidCount' : IDL.Nat,
   });
+  const SpendChannel = IDL.Variant({
+    'referral' : IDL.Null,
+    'metaAds' : IDL.Null,
+    'other' : IDL.Null,
+    'googleAds' : IDL.Null,
+  });
+  const MarketingSpend = IDL.Record({
+    'id' : IDL.Nat,
+    'month' : IDL.Text,
+    'amountRs' : IDL.Nat,
+    'recordedBy' : IDL.Principal,
+    'timestamp' : IDL.Nat,
+    'channel' : SpendChannel,
+  });
+  const MilestoneStatus = IDL.Variant({
+    'locked' : IDL.Null,
+    'unlocked' : IDL.Null,
+    'claimed' : IDL.Null,
+  });
+  const MilestoneInfo = IDL.Record({
+    'status' : MilestoneStatus,
+    'title' : IDL.Text,
+    'expiresAt' : IDL.Opt(Timestamp),
+    'activatedAt' : IDL.Opt(Timestamp),
+    'currentInvites' : IDL.Nat,
+    'description' : IDL.Text,
+    'milestoneId' : MilestoneId,
+    'inviteThreshold' : IDL.Nat,
+  });
+  const MonitorRecord = IDL.Record({
+    'url' : IDL.Text,
+    'lastScanAt' : IDL.Int,
+    'active' : IDL.Bool,
+    'userId' : IDL.Principal,
+    'frequency' : IDL.Text,
+  });
+  const ActivitySegment = IDL.Variant({
+    'Medium' : IDL.Null,
+    'HighIntent' : IDL.Null,
+    'LowActivity' : IDL.Null,
+  });
+  const UserActivityScore = IDL.Record({
+    'lastMessageSentAt' : IDL.Opt(IDL.Int),
+    'computedAt' : IDL.Int,
+    'userId' : IDL.Text,
+    'lastProposalCreatedAt' : IDL.Opt(IDL.Int),
+    'lastReplyReceivedAt' : IDL.Opt(IDL.Int),
+    'segment' : ActivitySegment,
+  });
+  const OfferType = IDL.Variant({
+    'limited_discount' : IDL.Null,
+    'bonus_credits' : IDL.Null,
+    'free_trial_2d' : IDL.Null,
+  });
+  const PricingRecommendation = IDL.Record({
+    'computedAt' : IDL.Int,
+    'offerLabel' : IDL.Text,
+    'userId' : IDL.Text,
+    'shownAt' : IDL.Opt(IDL.Int),
+    'currentPlan' : IDL.Text,
+    'segment' : ActivitySegment,
+    'acceptedAt' : IDL.Opt(IDL.Int),
+    'recommendedOffer' : OfferType,
+  });
   const SubscriptionPlan = IDL.Variant({
     'pro' : IDL.Null,
-    'enterprise' : IDL.Null,
+    'growth' : IDL.Null,
     'starter' : IDL.Null,
+    'free' : IDL.Null,
+    'agency' : IDL.Null,
   });
   const SubscriptionStatus = IDL.Variant({
     'active' : IDL.Null,
@@ -1185,17 +3620,391 @@ export const idlFactory = ({ IDL }) => {
     'pastDue' : IDL.Null,
     'trialing' : IDL.Null,
   });
+  const BillingCycle = IDL.Variant({
+    'monthly' : IDL.Null,
+    'yearly' : IDL.Null,
+  });
   const UserSubscription = IDL.Record({
     'plan' : SubscriptionPlan,
     'leadCredits' : IDL.Nat,
+    'yearlyPrice' : IDL.Nat,
     'subscriptionStatus' : SubscriptionStatus,
+    'billingCycle' : BillingCycle,
     'stripeCustomerId' : IDL.Text,
+    'monthlyPrice' : IDL.Nat,
+    'trialExpiresAt' : IDL.Opt(IDL.Int),
+  });
+  const NicheFunnelMetrics = IDL.Record({
+    'city' : IDL.Text,
+    'niche' : IDL.Text,
+    'counts' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat)),
+  });
+  const UserSegment = IDL.Variant({
+    'Medium' : IDL.Null,
+    'HighIntent' : IDL.Null,
+    'LowActivity' : IDL.Null,
+  });
+  const NudgeType = IDL.Variant({
+    'reward' : IDL.Null,
+    'urgency' : IDL.Null,
+    'fomo' : IDL.Null,
+    'money_visibility' : IDL.Null,
+  });
+  const NudgePerformanceStat = IDL.Record({
+    'actionCount' : IDL.Nat,
+    'actionRatePct' : IDL.Float64,
+    'userSegment' : UserSegment,
+    'sentCount' : IDL.Nat,
+    'nudgeType' : NudgeType,
+    'conversionLiftPct' : IDL.Float64,
+  });
+  const NudgeVariantType = IDL.Variant({
+    'reward' : IDL.Null,
+    'urgency' : IDL.Null,
+    'fomo' : IDL.Null,
+  });
+  const NudgePerformanceMetrics = IDL.Record({
+    'totalActedOn' : IDL.Nat,
+    'actionRatePct' : IDL.Float64,
+    'variantType' : NudgeVariantType,
+    'totalSent' : IDL.Nat,
+    'variantId' : IDL.Text,
+    'conversionLiftPct' : IDL.Float64,
+    'totalOpened' : IDL.Nat,
+    'openRatePct' : IDL.Float64,
+  });
+  const Segment = IDL.Variant({
+    'Medium' : IDL.Null,
+    'HighIntent' : IDL.Null,
+    'LowActivity' : IDL.Null,
+  });
+  const NudgePerformanceRow = IDL.Record({
+    'opened' : IDL.Nat,
+    'sent' : IDL.Nat,
+    'variantId' : IDL.Text,
+    'segment' : Segment,
+    'conversionRate' : IDL.Float64,
+    'isWinner' : IDL.Bool,
+    'copyType' : IDL.Text,
+    'actionTaken' : IDL.Nat,
+    'openRate' : IDL.Float64,
   });
   const OnboardingPrefs = IDL.Record({
     'city' : IDL.Text,
     'targetBudget' : IDL.Nat,
     'niche' : IDL.Text,
     'completedOnboarding' : IDL.Bool,
+  });
+  const OnboardingTourState = IDL.Record({
+    'completedAt' : IDL.Opt(IDL.Int),
+    'startedAt' : IDL.Int,
+    'skipped' : IDL.Bool,
+    'userId' : IDL.Text,
+    'completed' : IDL.Bool,
+    'currentStep' : IDL.Nat,
+    'completedSteps' : IDL.Vec(IDL.Nat),
+  });
+  const PageSpeedResult = IDL.Record({
+    'cls' : IDL.Float64,
+    'fcp' : IDL.Float64,
+    'fid' : IDL.Float64,
+    'lcp' : IDL.Float64,
+    'tbt' : IDL.Float64,
+    'tti' : IDL.Float64,
+    'url' : IDL.Text,
+    'fetchedAt' : IDL.Int,
+    'opportunities' : IDL.Vec(IDL.Text),
+    'mobileScore' : IDL.Nat,
+    'desktopScore' : IDL.Nat,
+    'diagnostics' : IDL.Vec(IDL.Text),
+  });
+  const PaywallTimingVariant = IDL.Variant({
+    'after_value_moment' : IDL.Null,
+    'immediate' : IDL.Null,
+  });
+  const PaywallState = IDL.Record({
+    'userId' : IDL.Text,
+    'abVariant' : PaywallTimingVariant,
+    'hasExperiencedValueMoment' : IDL.Bool,
+    'paywallShownAfterValue' : IDL.Bool,
+    'paywallShownAt' : IDL.Opt(IDL.Int),
+  });
+  const PerformanceScore = IDL.Record({
+    'activityScore' : IDL.Nat,
+    'overallScore' : IDL.Nat,
+    'userId' : IDL.Text,
+    'rank' : IDL.Text,
+    'estimatedMonthlyRevenue' : IDL.Nat,
+    'updatedAt' : IDL.Int,
+    'conversionRate' : IDL.Nat,
+    'percentileRank' : IDL.Nat,
+    'revenueScore' : IDL.Nat,
+  });
+  const PlanLimits = IDL.Record({
+    'seoChecklist' : IDL.Bool,
+    'premiumAutomation' : IDL.Bool,
+    'campaignBuilder' : IDL.Bool,
+    'unlimitedLeads' : IDL.Bool,
+    'advancedAnalytics' : IDL.Bool,
+    'whiteLabelReports' : IDL.Bool,
+    'crmPipeline' : IDL.Bool,
+    'dailyLeads' : IDL.Nat,
+    'autoFollowUp' : IDL.Bool,
+    'aiProposalGenerator' : IDL.Bool,
+    'teamAccess' : IDL.Bool,
+    'aiPitchGenerator' : IDL.Bool,
+  });
+  const LiveEventEntry = IDL.Record({
+    'eventId' : IDL.Nat,
+    'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+    'userId' : IDL.Text,
+    'timestamp' : IDL.Int,
+    'eventType' : IDL.Text,
+  });
+  const ReferralFunnelStep = IDL.Record({
+    'conversionPct' : IDL.Float64,
+    'count' : IDL.Nat,
+    'stepName' : IDL.Text,
+  });
+  const ReferralFunnelStats = IDL.Record({
+    'totalLinksGenerated' : IDL.Nat,
+    'totalRewardsClaimed' : IDL.Nat,
+    'steps' : IDL.Vec(ReferralFunnelStep),
+  });
+  const ReferralStats = IDL.Record({
+    'creditsEarned' : IDL.Nat,
+    'completed' : IDL.Nat,
+    'signedUp' : IDL.Nat,
+    'trialDaysEarned' : IDL.Nat,
+    'totalInvited' : IDL.Nat,
+  });
+  const TriggerType = IDL.Variant({
+    'drip_day_10' : IDL.Null,
+    'drip_day_11' : IDL.Null,
+    'drip_day_12' : IDL.Null,
+    'drip_day_13' : IDL.Null,
+    'drip_day_14' : IDL.Null,
+    'drip_day_15' : IDL.Null,
+    'drip_day_16' : IDL.Null,
+    'drip_day_17' : IDL.Null,
+    'drip_day_18' : IDL.Null,
+    'drip_day_19' : IDL.Null,
+    'drip_day_20' : IDL.Null,
+    'drip_day_21' : IDL.Null,
+    'drip_day_22' : IDL.Null,
+    'drip_day_23' : IDL.Null,
+    'drip_day_24' : IDL.Null,
+    'drip_day_25' : IDL.Null,
+    'drip_day_26' : IDL.Null,
+    'drip_day_27' : IDL.Null,
+    'drip_day_28' : IDL.Null,
+    'drip_day_0' : IDL.Null,
+    'drip_day_1' : IDL.Null,
+    'drip_day_2' : IDL.Null,
+    'drip_day_3' : IDL.Null,
+    'drip_day_4' : IDL.Null,
+    'drip_day_5' : IDL.Null,
+    'drip_day_6' : IDL.Null,
+    'drip_day_7' : IDL.Null,
+    'drip_day_8' : IDL.Null,
+    'drip_day_9' : IDL.Null,
+    'on_limit_reached' : IDL.Null,
+    'on_inactivity_24h' : IDL.Null,
+    'on_inactivity_48h' : IDL.Null,
+    'on_new_reply' : IDL.Null,
+    'on_streak_milestone' : IDL.Null,
+    'on_followup_due' : IDL.Null,
+  });
+  const TriggerStats = IDL.Record({
+    'actionCount' : IDL.Nat,
+    'count' : IDL.Nat,
+    'actionRate' : IDL.Float64,
+    'triggerType' : TriggerType,
+    'openCount' : IDL.Nat,
+    'openRate' : IDL.Float64,
+  });
+  const CohortDayStats = IDL.Record({
+    'day' : IDL.Nat,
+    'returnedCount' : IDL.Nat,
+    'usersNotified' : IDL.Nat,
+  });
+  const CopyTypeStats = IDL.Record({
+    'actionCount' : IDL.Nat,
+    'count' : IDL.Nat,
+    'actionRate' : IDL.Float64,
+    'openCount' : IDL.Nat,
+    'copyType' : CopyType,
+    'openRate' : IDL.Float64,
+  });
+  const RetentionAnalytics = IDL.Record({
+    'totalNotificationsSent' : IDL.Nat,
+    'byTriggerType' : IDL.Vec(TriggerStats),
+    'totalActionsCompleted' : IDL.Nat,
+    'conversionRate' : IDL.Float64,
+    'totalOpened' : IDL.Nat,
+    'returnRate' : IDL.Float64,
+    'cohortByDay' : IDL.Vec(CohortDayStats),
+    'openRate' : IDL.Float64,
+    'byCopyType' : IDL.Vec(CopyTypeStats),
+  });
+  const RetentionData = IDL.Record({
+    'creditsEarned' : IDL.Nat,
+    'weeklyLeadsGenerated' : IDL.Nat,
+    'userId' : IDL.Text,
+    'lastActiveDate' : IDL.Text,
+    'weeklyRepliesReceived' : IDL.Nat,
+    'longestStreak' : IDL.Nat,
+    'lastSessionAt' : IDL.Int,
+    'churnRisk' : ChurnRisk,
+    'currentStreak' : IDL.Nat,
+    'lastCreditClaim' : IDL.Int,
+    'weeklyProposalsSent' : IDL.Nat,
+  });
+  const RevenuePrediction = IDL.Record({
+    'monthlyEstimate' : IDL.Nat,
+    'pipelineValue' : IDL.Nat,
+    'generatedAt' : IDL.Int,
+    'hotLeadsCount' : IDL.Nat,
+    'predictionBasis' : IDL.Text,
+    'missedOppCount' : IDL.Nat,
+    'weeklyEstimate' : IDL.Nat,
+    'closingThisWeek' : IDL.Nat,
+  });
+  const AlertSeverity = IDL.Variant({
+    'warning' : IDL.Null,
+    'info' : IDL.Null,
+    'critical' : IDL.Null,
+  });
+  const HealthAlert = IDL.Record({
+    'metric' : IDL.Text,
+    'actual' : IDL.Text,
+    'alert' : IDL.Text,
+    'threshold' : IDL.Text,
+    'alertId' : IDL.Text,
+    'timestamp' : IDL.Nat,
+    'severity' : AlertSeverity,
+  });
+  const TierLtv = IDL.Record({
+    'ltv' : IDL.Nat,
+    'avgRetentionMonths' : IDL.Float64,
+    'tier' : PlanTier,
+    'amountRs' : IDL.Nat,
+    'userCount' : IDL.Nat,
+  });
+  const LtvBreakdown = IDL.Record({
+    'byTier' : IDL.Vec(TierLtv),
+    'blendedLtv' : IDL.Nat,
+  });
+  const CacBreakdown = IDL.Record({
+    'cac' : IDL.Nat,
+    'referral' : IDL.Nat,
+    'metaAds' : IDL.Nat,
+    'newPaidCustomers' : IDL.Nat,
+    'other' : IDL.Nat,
+    'googleAds' : IDL.Nat,
+    'totalSpend' : IDL.Nat,
+  });
+  const HealthStatus = IDL.Variant({
+    'loss' : IDL.Null,
+    'healthy' : IDL.Null,
+    'moderate' : IDL.Null,
+  });
+  const SaasMetricsResponse = IDL.Record({
+    'arr' : IDL.Nat,
+    'ltv' : LtvBreakdown,
+    'mrr' : IDL.Nat,
+    'nrr' : IDL.Float64,
+    'activeUsers' : IDL.Nat,
+    'newCustomers' : IDL.Nat,
+    'churnedMrr' : IDL.Nat,
+    'totalPayingCustomers' : IDL.Nat,
+    'monthlyChurnRate' : IDL.Float64,
+    'monthlyGrowthRate' : IDL.Float64,
+    'revenueChurnRate' : IDL.Float64,
+    'churnedCustomers' : IDL.Nat,
+    'cacPaybackMonths' : IDL.Float64,
+    'closingMrr' : IDL.Nat,
+    'newMrr' : IDL.Nat,
+    'ltvCacRatio' : IDL.Float64,
+    'cacByChannel' : CacBreakdown,
+    'dateRange' : IDL.Record({ 'to' : IDL.Nat, 'from' : IDL.Nat }),
+    'expansionMrr' : IDL.Nat,
+    'ltvCacStatus' : HealthStatus,
+  });
+  const SubscriptionEventKind = IDL.Variant({
+    'plan_cancelled' : IDL.Null,
+    'plan_upgraded' : IDL.Null,
+    'plan_purchased' : IDL.Null,
+    'plan_downgraded' : IDL.Null,
+  });
+  const SubscriptionEvent = IDL.Record({
+    'id' : IDL.Nat,
+    'prevPlanTier' : IDL.Opt(PlanTier),
+    'userId' : IDL.Principal,
+    'amountRs' : IDL.Nat,
+    'prevAmountRs' : IDL.Opt(IDL.Nat),
+    'timestamp' : IDL.Nat,
+    'planTier' : PlanTier,
+    'eventKind' : SubscriptionEventKind,
+  });
+  const SubscriptionStatus__1 = IDL.Record({
+    'status' : IDL.Text,
+    'tier' : IDL.Text,
+    'currentPeriodEnd' : IDL.Opt(IDL.Int),
+  });
+  const TrafficSourceBreakdown = IDL.Record({
+    'periodDays' : IDL.Nat,
+    'directCount' : IDL.Nat,
+    'directPct' : IDL.Float64,
+    'referralPct' : IDL.Float64,
+    'organicCount' : IDL.Nat,
+    'referralCount' : IDL.Nat,
+    'adsPct' : IDL.Float64,
+    'adsCount' : IDL.Nat,
+    'organicPct' : IDL.Float64,
+  });
+  const UserJourneyEvent = IDL.Record({
+    'eventId' : IDL.Nat,
+    'metadata' : IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text)),
+    'timestamp' : IDL.Int,
+    'timeSincePrevMs' : IDL.Opt(IDL.Int),
+    'eventType' : IDL.Text,
+  });
+  const UserJourneyTimeline = IDL.Record({
+    'userId' : IDL.Text,
+    'events' : IDL.Vec(UserJourneyEvent),
+  });
+  const FrequencySettings = IDL.Record({
+    'maxPerDay' : IDL.Nat,
+    'quietHoursEnabled' : IDL.Bool,
+    'inactivityReductionEnabled' : IDL.Bool,
+    'quietHoursStart' : IDL.Nat,
+    'quietHoursEnd' : IDL.Nat,
+  });
+  const UserNotificationPrefs = IDL.Record({
+    'lastNotificationDate' : IDL.Opt(IDL.Int),
+    'frequencySettings' : FrequencySettings,
+    'userId' : IDL.Text,
+    'whatsappOptIn' : IDL.Bool,
+    'whatsappConsentDate' : IDL.Opt(IDL.Int),
+    'enabledTriggers' : IDL.Vec(TriggerType),
+    'notificationsSentToday' : IDL.Nat,
+    'whatsappOptOutDate' : IDL.Opt(IDL.Int),
+  });
+  const UserSegmentDistribution = IDL.Record({
+    'totalScored' : IDL.Nat,
+    'scoredAt' : IDL.Nat,
+    'highIntent' : IDL.Nat,
+    'mediumActivity' : IDL.Nat,
+    'excludedChurned' : IDL.Nat,
+    'lowActivity' : IDL.Nat,
+  });
+  const WatiConsent = IDL.Record({
+    'optOutAt' : IDL.Opt(IDL.Int),
+    'userId' : IDL.Text,
+    'consentGiven' : IDL.Bool,
+    'consentAt' : IDL.Int,
+    'phone' : IDL.Text,
   });
   const TemplateId = IDL.Nat;
   const TemplateSections = IDL.Record({
@@ -1213,6 +4022,27 @@ export const idlFactory = ({ IDL }) => {
     'sections' : TemplateSections,
     'lastSaved' : Timestamp,
   });
+  const WeeklyReportData = IDL.Record({
+    'url' : IDL.Text,
+    'resolvedIssueCount' : IDL.Nat,
+    'scoreDelta' : IDL.Int,
+    'userId' : IDL.Principal,
+    'generatedAt' : Timestamp,
+    'topRecommendation' : IDL.Text,
+    'newIssueCount' : IDL.Nat,
+    'latestScore' : IDL.Nat,
+    'previousScore' : IDL.Nat,
+  });
+  const WhatsAppStopCondition = IDL.Variant({
+    'user_opted_out' : IDL.Null,
+    'user_replied' : IDL.Null,
+    'sequence_completed' : IDL.Null,
+  });
+  const WhatsAppMessage = IDL.Record({
+    'dayNumber' : IDL.Nat,
+    'message' : IDL.Text,
+    'stopConditions' : IDL.Vec(WhatsAppStopCondition),
+  });
   const ImportRowStatus = IDL.Variant({
     'valid' : IDL.Null,
     'invalid' : IDL.Null,
@@ -1228,6 +4058,47 @@ export const idlFactory = ({ IDL }) => {
     'category' : IDL.Text,
     'phone' : IDL.Text,
     'reason' : IDL.Text,
+  });
+  const AuditLead = IDL.Record({
+    'id' : IDL.Nat,
+    'leadName' : IDL.Text,
+    'city' : IDL.Text,
+    'whatsappSentAt' : IDL.Opt(Timestamp),
+    'submittedAt' : Timestamp,
+    'niche' : IDL.Text,
+    'phone' : IDL.Text,
+    'budgetRange' : IDL.Text,
+    'salonType' : IDL.Text,
+  });
+  const GatedFeatureAdminStat = IDL.Record({
+    'totalUsageCount' : IDL.Nat,
+    'activeUserCount' : IDL.Nat,
+    'featureName' : IDL.Text,
+  });
+  const NotificationRecord = IDL.Record({
+    'id' : IDL.Text,
+    'title' : IDL.Text,
+    'actionUrl' : IDL.Opt(IDL.Text),
+    'metadata' : IDL.Opt(IDL.Text),
+    'body' : IDL.Text,
+    'userId' : IDL.Text,
+    'createdAt' : IDL.Int,
+    'type' : IDL.Text,
+    'isRead' : IDL.Bool,
+  });
+  const SocialProofActivityType = IDL.Variant({
+    'referral_signup' : IDL.Null,
+    'leads_generated' : IDL.Null,
+    'deal_closed' : IDL.Null,
+    'pitches_sent' : IDL.Null,
+  });
+  const SocialProofEntry = IDL.Record({
+    'id' : IDL.Nat,
+    'activityType' : SocialProofActivityType,
+    'metricValue' : IDL.Nat,
+    'city' : IDL.Text,
+    'userDisplayName' : IDL.Text,
+    'timestamp' : Timestamp,
   });
   const SeoAuditId = IDL.Nat;
   const SeoAuditItem = IDL.Record({
@@ -1259,11 +4130,34 @@ export const idlFactory = ({ IDL }) => {
     'items' : IDL.Vec(SeoAuditItem),
     'keywordDensityScore' : IDL.Nat,
   });
-  const SaveTemplateInput = IDL.Record({
-    'clientId' : ClientId,
-    'templateId' : IDL.Text,
+  const TrafficSource = IDL.Variant({
+    'ads' : IDL.Null,
+    'referral' : IDL.Null,
+    'organic' : IDL.Null,
+    'direct' : IDL.Null,
+  });
+  const TrafficSourceAttribution = IDL.Record({
+    'referralCode' : IDL.Opt(IDL.Text),
+    'source' : TrafficSource,
+    'userId' : IDL.Text,
+    'signedUpAt' : Timestamp,
+  });
+  const UserPricingRow = IDL.Record({
+    'offerLabel' : IDL.Text,
+    'userId' : IDL.Text,
+    'shownAt' : IDL.Opt(IDL.Int),
+    'currentPlan' : IDL.Text,
+    'segment' : ActivitySegment,
+    'recommendedOffer' : OfferType,
+  });
+  const WatiMessage = IDL.Record({
+    'id' : IDL.Text,
+    'status' : IDL.Text,
+    'userId' : IDL.Text,
     'templateName' : IDL.Text,
-    'sections' : TemplateSections,
+    'sentAt' : IDL.Int,
+    'phone' : IDL.Text,
+    'params' : IDL.Vec(IDL.Text),
   });
   const http_header = IDL.Record({ 'value' : IDL.Text, 'name' : IDL.Text });
   const http_request_result = IDL.Record({
@@ -1279,6 +4173,70 @@ export const idlFactory = ({ IDL }) => {
     'status' : IDL.Nat,
     'body' : IDL.Vec(IDL.Nat8),
     'headers' : IDL.Vec(http_header),
+  });
+  const HeatmapEventKind = IDL.Variant({
+    'tap' : IDL.Null,
+    'scrollDepth' : IDL.Null,
+    'deadClick' : IDL.Null,
+    'screenTime' : IDL.Null,
+    'rageTap' : IDL.Null,
+  });
+  const NicheFunnelEventType = IDL.Variant({
+    'audit_sent' : IDL.Null,
+    'form_submit' : IDL.Null,
+    'landing_view' : IDL.Null,
+    'whatsapp_sent' : IDL.Null,
+    'call_booked' : IDL.Null,
+    'whatsapp_click' : IDL.Null,
+    'share_clicked' : IDL.Null,
+  });
+  const NudgeDelivery = IDL.Record({
+    'id' : IDL.Nat,
+    'userId' : IDL.Text,
+    'sentAt' : Timestamp,
+    'userSegment' : UserSegment,
+    'actionTakenAt' : IDL.Opt(Timestamp),
+    'nudgeType' : NudgeType,
+    'converted' : IDL.Bool,
+  });
+  const SaveTemplateInput = IDL.Record({
+    'clientId' : ClientId,
+    'templateId' : IDL.Text,
+    'templateName' : IDL.Text,
+    'sections' : TemplateSections,
+  });
+  const ReferralFunnelEventType = IDL.Variant({
+    'landing_view' : IDL.Null,
+    'reward_claimed' : IDL.Null,
+    'signup_started' : IDL.Null,
+    'link_generated' : IDL.Null,
+    'share_clicked' : IDL.Null,
+    'signup_completed' : IDL.Null,
+  });
+  const NudgeEvent = IDL.Record({
+    'id' : IDL.Nat,
+    'actedOnAt' : IDL.Opt(IDL.Int),
+    'userId' : IDL.Text,
+    'variantType' : NudgeVariantType,
+    'sentAt' : IDL.Int,
+    'variantId' : IDL.Text,
+    'segment' : ActivitySegment,
+    'openedAt' : IDL.Opt(IDL.Int),
+  });
+  const ScanLimitRecord = IDL.Record({
+    'scansThisWeek' : IDL.Nat,
+    'userId' : IDL.Principal,
+    'weekStartedAt' : Timestamp,
+    'planTier' : PlanTier,
+  });
+  const CaseStudyUpdate = IDL.Record({
+    'clientCity' : IDL.Opt(IDL.Text),
+    'clientName' : IDL.Opt(IDL.Text),
+    'testimonialQuote' : IDL.Opt(IDL.Text),
+    'clientNiche' : IDL.Opt(IDL.Text),
+    'resultMetrics' : IDL.Opt(IDL.Vec(ResultMetric)),
+    'actionsToken' : IDL.Opt(IDL.Vec(IDL.Text)),
+    'problemStatement' : IDL.Opt(IDL.Text),
   });
   const UpdateClientMetricsInput = IDL.Record({
     'id' : ClientId,
@@ -1301,17 +4259,67 @@ export const idlFactory = ({ IDL }) => {
   
   return IDL.Service({
     '_initializeAccessControl' : IDL.Func([], [], []),
+    'activateFeatureUnlock' : IDL.Func(
+        [GatedFeatureName],
+        [FeatureUnlockSession],
+        [],
+      ),
+    'activateMilestone' : IDL.Func([MilestoneId], [IDL.Bool], []),
+    'addMonitoredUrl' : IDL.Func([IDL.Text], [], []),
     'addSenderIdentity' : IDL.Func(
         [IDL.Text, SenderType],
         [SenderIdentity],
         [],
       ),
     'assignCallerUserRole' : IDL.Func([IDL.Principal, UserRole], [], []),
+    'awardCredits' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+    'awardWeeklyRewards' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+        [],
+      ),
+    'canSendNotification' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
+    'cancelSubscription' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'checkChurnRisk' : IDL.Func([IDL.Text], [ChurnRisk], ['query']),
+    'checkFeatureUnlock' : IDL.Func(
+        [GatedFeatureName],
+        [FeatureUnlockCheck],
+        ['query'],
+      ),
     'checkOptOutStatus' : IDL.Func([LeadId], [IDL.Bool], ['query']),
+    'checkValueMoment' : IDL.Func([IDL.Text], [IDL.Bool], ['query']),
     'claimMilestoneReward' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'claimReferralByCode' : IDL.Func([IDL.Text], [IDL.Bool], []),
     'clearGA4Credentials' : IDL.Func([], [], []),
     'completeNote' : IDL.Func([NoteId], [IDL.Bool], []),
     'completeOnboarding' : IDL.Func([], [], []),
+    'completeOnboardingTour' : IDL.Func(
+        [],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'createCaseStudy' : IDL.Func(
+        [
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Text,
+          IDL.Vec(IDL.Text),
+          IDL.Vec(ResultMetric),
+          IDL.Opt(IDL.Text),
+        ],
+        [IDL.Variant({ 'ok' : CaseStudy, 'err' : IDL.Text })],
+        [],
+      ),
+    'createCheckoutSession' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : CheckoutSession, 'err' : IDL.Text })],
+        [],
+      ),
     'createClient' : IDL.Func([CreateClientInput], [Client], []),
     'createConversionScript' : IDL.Func(
         [IDL.Text, IDL.Text, IDL.Text],
@@ -1329,7 +4337,23 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'createLead' : IDL.Func([CreateLeadInput], [Lead], []),
+    'createMarketplaceListing' : IDL.Func(
+        [
+          MarketplaceListingType,
+          IDL.Text,
+          IDL.Text,
+          IDL.Nat,
+          IDL.Vec(IDL.Text),
+        ],
+        [MarketplaceListing],
+        [],
+      ),
     'createNote' : IDL.Func([CreateNoteInput], [Note], []),
+    'createNotification' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [IDL.Text],
+        [],
+      ),
     'createOutreachCampaign' : IDL.Func(
         [CreateOutreachCampaignInput],
         [OutreachCampaign],
@@ -1340,36 +4364,181 @@ export const idlFactory = ({ IDL }) => {
         [OutreachMessage],
         [],
       ),
+    'createRazorpayOrder' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : RazorpayOrder, 'err' : IDL.Text })],
+        [],
+      ),
+    'createReferral' : IDL.Func([], [ReferralRecord], []),
     'createScraperJob' : IDL.Func([IDL.Text, IDL.Text], [ScraperJob], []),
     'createWhatsAppTemplate' : IDL.Func(
         [IDL.Text, WhatsAppTemplateCategory, IDL.Text, IDL.Vec(IDL.Text)],
         [WhatsAppTemplate],
         [],
       ),
+    'deleteCaseStudy' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'deleteClient' : IDL.Func([ClientId], [IDL.Bool], []),
+    'deleteContentCalendar' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'deleteLead' : IDL.Func([LeadId], [IDL.Bool], []),
     'deleteNote' : IDL.Func([NoteId], [IDL.Bool], []),
+    'deleteNotification' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'deleteProposal' : IDL.Func([ProposalId], [IDL.Bool], []),
+    'deleteSeoPage' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'dismissSuggestion' : IDL.Func([SuggestionId], [IDL.Bool], []),
+    'finalizeChallengeWeek' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(FinalizedChallengeResult)],
+        [],
+      ),
+    'generateAutoReport' : IDL.Func([ClientId, IDL.Text], [AutoReport], []),
+    'generateClientGrowthPlan' : IDL.Func([ClientId], [ClientGrowthPlan], []),
+    'generateContentCalendar' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : ContentCalendarPublic, 'err' : IDL.Text })],
+        [],
+      ),
     'generateGrowthReport' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Text, IDL.Nat, IDL.Nat, IDL.Nat],
         [GrowthReport],
         [],
       ),
+    'generateInvestorReport' : IDL.Func(
+        [],
+        [IDL.Variant({ 'ok' : InvestorReport, 'err' : IDL.Text })],
+        [],
+      ),
     'generateProposal' : IDL.Func([CreateProposalInput], [Proposal], []),
+    'generateSeoPages' : IDL.Func(
+        [IDL.Vec(SeoPageRequest)],
+        [IDL.Variant({ 'ok' : IDL.Vec(SeoPagePublic), 'err' : IDL.Text })],
+        [],
+      ),
+    'generateShareableWin' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+        [ShareableWin],
+        ['query'],
+      ),
+    'getAbTestResult' : IDL.Func(
+        [AbTestName],
+        [IDL.Opt(AbTestResult)],
+        ['query'],
+      ),
+    'getAbVariant' : IDL.Func([AbTestName], [AbVariantId], []),
+    'getAccountabilityState' : IDL.Func(
+        [],
+        [AccountabilityStateView],
+        ['query'],
+      ),
+    'getAdminEvents' : IDL.Func([], [IDL.Vec(WHEvent)], ['query']),
+    'getAffiliateStats' : IDL.Func([], [AffiliateStats], ['query']),
+    'getAnalyticsEvents' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(AnalyticsEvent)],
+        ['query'],
+      ),
+    'getAuditHistory' : IDL.Func([IDL.Text], [IDL.Vec(AuditRecord)], ['query']),
+    'getAutoAgencyState' : IDL.Func([], [AutoAgencyStateView], ['query']),
+    'getAutoReport' : IDL.Func([ClientId], [IDL.Opt(AutoReport)], ['query']),
     'getCallerUserRole' : IDL.Func([], [UserRole], ['query']),
     'getCampaignsByLead' : IDL.Func(
         [LeadId],
         [IDL.Vec(OutreachCampaign)],
         ['query'],
       ),
+    'getCaseStudy' : IDL.Func([IDL.Text], [IDL.Opt(CaseStudy)], ['query']),
+    'getChallengeParticipants' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(ChallengeParticipant)],
+        ['query'],
+      ),
+    'getCheckoutConfig' : IDL.Func(
+        [],
+        [
+          IDL.Record({
+            'plans' : IDL.Vec(StripePlan),
+            'publishableKey' : IDL.Text,
+          }),
+        ],
+        ['query'],
+      ),
+    'getChurnRiskUsers' : IDL.Func([], [IDL.Vec(UserChurnRiskRow)], ['query']),
+    'getChurnStatus' : IDL.Func(
+        [],
+        [
+          IDL.Record({
+            'isAtRisk' : IDL.Bool,
+            'pendingHotLeads' : IDL.Nat,
+            'daysSinceLastSession' : IDL.Nat,
+          }),
+        ],
+        ['query'],
+      ),
+    'getCityLeaderboard' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Vec(LeaderboardEntry)],
+        ['query'],
+      ),
     'getClient' : IDL.Func([ClientId], [IDL.Opt(Client)], ['query']),
+    'getClientGrowthPlan' : IDL.Func(
+        [ClientId],
+        [IDL.Opt(ClientGrowthPlan)],
+        ['query'],
+      ),
+    'getCohortRetention' : IDL.Func(
+        [IDL.Opt(IDL.Nat)],
+        [IDL.Vec(CohortRetentionRow)],
+        ['query'],
+      ),
+    'getCompetitorComparison' : IDL.Func(
+        [IDL.Vec(IDL.Text)],
+        [IDL.Vec(CompetitorRecord)],
+        [],
+      ),
+    'getCompetitorIntelReport' : IDL.Func(
+        [],
+        [IDL.Opt(CompetitorIntelReport)],
+        ['query'],
+      ),
     'getConsentLogs' : IDL.Func([], [IDL.Vec(ConsentLog)], ['query']),
+    'getContentCalendar' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(ContentCalendarPublic)],
+        ['query'],
+      ),
+    'getDealSuggestions' : IDL.Func([], [IDL.Vec(DealSuggestion)], ['query']),
     'getDeliverabilityMetrics' : IDL.Func(
         [SenderIdentityId],
         [IDL.Vec(DeliveryStats)],
         ['query'],
       ),
+    'getDripMessage' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Opt(DripSequenceDay)],
+        ['query'],
+      ),
+    'getEnhancedFunnelMetrics' : IDL.Func(
+        [],
+        [EnhancedFunnelMetrics],
+        ['query'],
+      ),
+    'getEventDrillDown' : IDL.Func([IDL.Text], [EventDrillDown], ['query']),
+    'getFunnelMetrics' : IDL.Func([], [FunnelMetrics], ['query']),
     'getGA4CredentialStatus' : IDL.Func([], [GA4CredentialStatus], ['query']),
     'getGA4Dashboard' : IDL.Func(
         [IDL.Nat],
@@ -1377,27 +4546,178 @@ export const idlFactory = ({ IDL }) => {
         [],
       ),
     'getGamificationState' : IDL.Func([], [GamificationState], ['query']),
+    'getGrowthOverview' : IDL.Func([], [GrowthOverview], ['query']),
+    'getHeatmapSummary' : IDL.Func(
+        [],
+        [IDL.Vec(IDL.Tuple(IDL.Text, IDL.Nat))],
+        ['query'],
+      ),
     'getImportHistory' : IDL.Func([], [IDL.Vec(ImportRecord)], ['query']),
     'getLandingPage' : IDL.Func(
         [LandingPageId],
         [IDL.Opt(LandingPage)],
         ['query'],
       ),
+    'getLatestAudit' : IDL.Func([IDL.Text], [IDL.Opt(AuditRecord)], ['query']),
+    'getLatestReport' : IDL.Func([], [IDL.Opt(InvestorReport)], ['query']),
     'getLead' : IDL.Func([LeadId], [IDL.Opt(Lead)], ['query']),
+    'getMarketingSpend' : IDL.Func(
+        [IDL.Opt(IDL.Text)],
+        [IDL.Vec(MarketingSpend)],
+        ['query'],
+      ),
+    'getMarketplaceListings' : IDL.Func(
+        [],
+        [IDL.Vec(MarketplaceListing)],
+        ['query'],
+      ),
+    'getMilestoneStatus' : IDL.Func([], [IDL.Vec(MilestoneInfo)], ['query']),
+    'getMonitoredUrls' : IDL.Func([], [IDL.Vec(MonitorRecord)], ['query']),
+    'getMonitoredUrlsNeedingRescan' : IDL.Func(
+        [],
+        [IDL.Vec(MonitorRecord)],
+        ['query'],
+      ),
+    'getMyActivityScore' : IDL.Func([], [UserActivityScore], []),
+    'getMyPricingRecommendation' : IDL.Func([], [PricingRecommendation], []),
     'getMySubscription' : IDL.Func([], [IDL.Opt(UserSubscription)], ['query']),
+    'getNicheFunnelMetrics' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [NicheFunnelMetrics],
+        ['query'],
+      ),
     'getNote' : IDL.Func([NoteId], [IDL.Opt(Note)], ['query']),
+    'getNudgeDeliveryStats' : IDL.Func(
+        [],
+        [IDL.Vec(NudgePerformanceStat)],
+        ['query'],
+      ),
+    'getNudgeMetricsBySegment' : IDL.Func(
+        [ActivitySegment],
+        [IDL.Vec(NudgePerformanceMetrics)],
+        ['query'],
+      ),
+    'getNudgePerformanceBySegment' : IDL.Func(
+        [IDL.Opt(Segment)],
+        [IDL.Vec(NudgePerformanceRow)],
+        ['query'],
+      ),
+    'getNudgePerformanceMetrics' : IDL.Func(
+        [],
+        [IDL.Vec(NudgePerformanceMetrics)],
+        ['query'],
+      ),
     'getOnboardingPrefs' : IDL.Func([], [IDL.Opt(OnboardingPrefs)], ['query']),
+    'getOnboardingState' : IDL.Func([], [OnboardingTourState], []),
     'getOutreachMessagesByLead' : IDL.Func(
         [LeadId],
         [IDL.Vec(OutreachMessage)],
         ['query'],
       ),
+    'getPageSpeedHistory' : IDL.Func(
+        [IDL.Text],
+        [IDL.Vec(PageSpeedResult)],
+        ['query'],
+      ),
+    'getPaywallState' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(PaywallState)],
+        ['query'],
+      ),
+    'getPerformanceScore' : IDL.Func([], [PerformanceScore], ['query']),
+    'getPlanLimits' : IDL.Func([SubscriptionPlan], [PlanLimits], ['query']),
     'getProposal' : IDL.Func([ProposalId], [IDL.Opt(Proposal)], ['query']),
+    'getPublicCaseStudy' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(CaseStudy)],
+        ['query'],
+      ),
+    'getRazorpayConfig' : IDL.Func(
+        [],
+        [
+          IDL.Variant({
+            'ok' : IDL.Record({ 'currency' : IDL.Text, 'keyId' : IDL.Text }),
+            'err' : IDL.Text,
+          }),
+        ],
+        ['query'],
+      ),
+    'getRealTimeEventStream' : IDL.Func(
+        [],
+        [IDL.Vec(LiveEventEntry)],
+        ['query'],
+      ),
+    'getReferralFunnelStats' : IDL.Func([], [ReferralFunnelStats], ['query']),
+    'getReferralStats' : IDL.Func([], [ReferralStats], ['query']),
+    'getRetentionAnalytics' : IDL.Func([], [RetentionAnalytics], ['query']),
+    'getRetentionData' : IDL.Func(
+        [IDL.Text],
+        [IDL.Opt(RetentionData)],
+        ['query'],
+      ),
+    'getRevenuePrediction' : IDL.Func([], [RevenuePrediction], ['query']),
+    'getSaasHealthAlerts' : IDL.Func([], [IDL.Vec(HealthAlert)], ['query']),
+    'getSaasMetrics' : IDL.Func(
+        [IDL.Opt(IDL.Nat)],
+        [SaasMetricsResponse],
+        ['query'],
+      ),
     'getScraperJob' : IDL.Func([IDL.Nat], [IDL.Opt(ScraperJob)], ['query']),
     'getSenderIdentities' : IDL.Func([], [IDL.Vec(SenderIdentity)], ['query']),
+    'getSeoPage' : IDL.Func([IDL.Text], [IDL.Opt(SeoPagePublic)], ['query']),
     'getSubscriptionByUser' : IDL.Func(
         [IDL.Principal],
         [IDL.Opt(UserSubscription)],
+        [],
+      ),
+    'getSubscriptionHistory' : IDL.Func(
+        [IDL.Opt(IDL.Principal)],
+        [IDL.Vec(SubscriptionEvent)],
+        ['query'],
+      ),
+    'getSubscriptionStatus' : IDL.Func([], [SubscriptionStatus__1], ['query']),
+    'getTrafficSourceBreakdown' : IDL.Func(
+        [IDL.Nat],
+        [TrafficSourceBreakdown],
+        ['query'],
+      ),
+    'getUnreadCount' : IDL.Func([], [IDL.Nat], ['query']),
+    'getUserActivityScore' : IDL.Func([IDL.Text], [UserActivityScore], []),
+    'getUserJourneyTimeline' : IDL.Func(
+        [IDL.Text],
+        [UserJourneyTimeline],
+        ['query'],
+      ),
+    'getUserNotificationPrefs' : IDL.Func(
+        [],
+        [UserNotificationPrefs],
+        ['query'],
+      ),
+    'getUserSegments' : IDL.Func([], [UserSegmentDistribution], ['query']),
+    'getWatiConfig' : IDL.Func(
+        [],
+        [
+          IDL.Opt(
+            IDL.Record({ 'baseUrl' : IDL.Text, 'businessPhoneId' : IDL.Text })
+          ),
+        ],
+        ['query'],
+      ),
+    'getWatiConsent' : IDL.Func([], [IDL.Opt(WatiConsent)], ['query']),
+    'getWatiTemplates' : IDL.Func(
+        [],
+        [
+          IDL.Variant({
+            'ok' : IDL.Vec(
+              IDL.Record({
+                'status' : IDL.Text,
+                'name' : IDL.Text,
+                'category' : IDL.Text,
+              })
+            ),
+            'err' : IDL.Text,
+          }),
+        ],
         [],
       ),
     'getWebsiteTemplate' : IDL.Func(
@@ -1405,22 +4725,51 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Opt(WebsiteTemplate)],
         ['query'],
       ),
+    'getWeeklyReportData' : IDL.Func(
+        [],
+        [IDL.Opt(WeeklyReportData)],
+        ['query'],
+      ),
+    'getWhatsAppSequence' : IDL.Func([], [IDL.Vec(WhatsAppMessage)], ['query']),
+    'handleStripeWebhook' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'importCSVLeads' : IDL.Func(
         [IDL.Vec(ImportRowResult), IDL.Text, IDL.Text],
         [ImportRecord],
         [],
       ),
     'isCallerAdmin' : IDL.Func([], [IDL.Bool], ['query']),
+    'joinChallenge' : IDL.Func([IDL.Text, IDL.Text, IDL.Text], [], []),
     'listAllCampaigns' : IDL.Func([], [IDL.Vec(OutreachCampaign)], ['query']),
     'listAllOutreachMessages' : IDL.Func(
         [],
         [IDL.Vec(OutreachMessage)],
         ['query'],
       ),
+    'listAuditLeads' : IDL.Func([], [IDL.Vec(AuditLead)], ['query']),
+    'listCaseStudies' : IDL.Func([], [IDL.Vec(CaseStudy)], ['query']),
     'listClients' : IDL.Func([], [IDL.Vec(Client)], ['query']),
+    'listCommissions' : IDL.Func(
+        [IDL.Opt(IDL.Text)],
+        [IDL.Vec(CommissionRecord)],
+        ['query'],
+      ),
+    'listContentCalendars' : IDL.Func(
+        [],
+        [IDL.Vec(ContentCalendarPublic)],
+        ['query'],
+      ),
     'listConversionScripts' : IDL.Func(
         [],
         [IDL.Vec(ConversionScript)],
+        ['query'],
+      ),
+    'listGatedFeatureAdminStats' : IDL.Func(
+        [],
+        [IDL.Vec(GatedFeatureAdminStat)],
         ['query'],
       ),
     'listGrowthReports' : IDL.Func(
@@ -1437,17 +4786,102 @@ export const idlFactory = ({ IDL }) => {
     'listLeads' : IDL.Func([], [IDL.Vec(Lead)], ['query']),
     'listLeadsByStatus' : IDL.Func([LeadStatus], [IDL.Vec(Lead)], ['query']),
     'listNotesByLead' : IDL.Func([LeadId], [IDL.Vec(Note)], ['query']),
+    'listNotifications' : IDL.Func(
+        [IDL.Nat, IDL.Bool],
+        [IDL.Vec(NotificationRecord)],
+        ['query'],
+      ),
+    'listPayoutRequests' : IDL.Func(
+        [],
+        [
+          IDL.Vec(
+            IDL.Record({
+              'status' : IDL.Text,
+              'requestId' : IDL.Text,
+              'createdAt' : IDL.Int,
+              'amount' : IDL.Nat,
+            })
+          ),
+        ],
+        ['query'],
+      ),
     'listProposalsByLead' : IDL.Func([LeadId], [IDL.Vec(Proposal)], ['query']),
+    'listRecentSocialProof' : IDL.Func(
+        [],
+        [IDL.Vec(SocialProofEntry)],
+        ['query'],
+      ),
     'listScraperJobs' : IDL.Func([], [IDL.Vec(ScraperJob)], ['query']),
     'listSeoAudits' : IDL.Func([], [IDL.Vec(SeoAuditRecord)], ['query']),
+    'listSeoPages' : IDL.Func([], [IDL.Vec(SeoPagePublic)], ['query']),
+    'listTrafficAttributions' : IDL.Func(
+        [],
+        [IDL.Vec(TrafficSourceAttribution)],
+        ['query'],
+      ),
+    'listUserPricingRows' : IDL.Func([], [IDL.Vec(UserPricingRow)], ['query']),
+    'listUserReferrals' : IDL.Func([], [IDL.Vec(ReferralRecord)], ['query']),
+    'listWatiMessages' : IDL.Func([IDL.Nat], [IDL.Vec(WatiMessage)], ['query']),
     'listWhatsAppTemplates' : IDL.Func(
         [],
         [IDL.Vec(WhatsAppTemplate)],
         ['query'],
       ),
+    'markAllRead' : IDL.Func(
+        [],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'markCommissionPaid' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'markNudgeActedOn' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'markNudgeActionTaken' : IDL.Func([IDL.Nat, IDL.Bool], [], []),
+    'markNudgeOpened' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'markPostPosted' : IDL.Func(
+        [IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'markRead' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'markReportSent' : IDL.Func([ClientId], [], []),
     'markSuggestionImplemented' : IDL.Func([SuggestionId], [IDL.Bool], []),
     'moveLead' : IDL.Func([LeadId, LeadStatus], [IDL.Bool], []),
+    'publishCaseStudy' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'publishLandingPage' : IDL.Func([LandingPageId], [IDL.Bool], []),
+    'publishSeoPage' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'razorpayTransform' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'recordAbConversion' : IDL.Func([AbTestName, AbVariantId], [], []),
+    'recordAbImpression' : IDL.Func([AbTestName, AbVariantId], [], []),
+    'recordActionCompleted' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'recordAnalyticsEvent' : IDL.Func(
+        [IDL.Text, AnalyticsEventType, IDL.Vec(IDL.Tuple(IDL.Text, IDL.Text))],
+        [IDL.Nat],
+        [],
+      ),
+    'recordCommission' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Nat],
+        [IDL.Variant({ 'ok' : CommissionRecord, 'err' : IDL.Text })],
+        [],
+      ),
     'recordConsentLog' : IDL.Func(
         [IDL.Text, IDL.Text, ConsentType, IDL.Text, IDL.Text, IDL.Text],
         [ConsentLogId],
@@ -1467,20 +4901,148 @@ export const idlFactory = ({ IDL }) => {
         [DeliverabilityStatId],
         [],
       ),
+    'recordFeatureUnlockUsed' : IDL.Func([GatedFeatureName], [], []),
+    'recordHeatmapEvent' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, HeatmapEventKind, IDL.Nat, IDL.Nat],
+        [IDL.Nat],
+        [],
+      ),
+    'recordMarketingSpend' : IDL.Func(
+        [IDL.Text, SpendChannel, IDL.Nat],
+        [IDL.Nat],
+        [],
+      ),
+    'recordNicheFunnelEvent' : IDL.Func(
+        [IDL.Text, NicheFunnelEventType, IDL.Text, IDL.Text, IDL.Opt(IDL.Nat)],
+        [],
+        [],
+      ),
+    'recordNotificationOpened' : IDL.Func([IDL.Nat], [IDL.Bool], []),
+    'recordNudgeDelivery' : IDL.Func(
+        [IDL.Text, NudgeType, UserSegment],
+        [NudgeDelivery],
+        [],
+      ),
+    'recordOfferShown' : IDL.Func([], [], []),
+    'recordPaywallShown' : IDL.Func([IDL.Text], [PaywallState], []),
+    'recordShareClick' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'recordSocialProofEntry' : IDL.Func(
+        [IDL.Text, IDL.Text, SocialProofActivityType, IDL.Nat],
+        [SocialProofEntry],
+        [],
+      ),
+    'recordSubscriptionEvent' : IDL.Func(
+        [SubscriptionEventKind, PlanTier, IDL.Opt(PlanTier)],
+        [IDL.Nat],
+        [],
+      ),
+    'recordTrafficSourceAttribution' : IDL.Func(
+        [IDL.Text, TrafficSource, IDL.Opt(IDL.Text)],
+        [],
+        [],
+      ),
+    'refreshDealSuggestions' : IDL.Func([], [], []),
+    'requestPayout' : IDL.Func(
+        [IDL.Text],
+        [
+          IDL.Variant({
+            'ok' : IDL.Record({ 'requestId' : IDL.Text }),
+            'err' : IDL.Text,
+          }),
+        ],
+        [],
+      ),
+    'resetAbTest' : IDL.Func([AbTestName], [], []),
+    'resetOnboardingTour' : IDL.Func(
+        [],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'runAgencyCycle' : IDL.Func([], [], []),
+    'runCompetitorScan' : IDL.Func(
+        [IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Variant({ 'ok' : CompetitorIntelReport, 'err' : IDL.Text })],
+        [],
+      ),
+    'runPageSpeedScan' : IDL.Func(
+        [IDL.Text],
+        [IDL.Variant({ 'ok' : PageSpeedResult, 'err' : IDL.Text })],
+        [],
+      ),
     'runSeoAudit' : IDL.Func([IDL.Text], [SeoAuditRecord], []),
+    'saveCompetitorUrls' : IDL.Func(
+        [IDL.Text, IDL.Vec(IDL.Text)],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'saveOnboardingPrefs' : IDL.Func([IDL.Text, IDL.Text, IDL.Nat], [], []),
+    'saveWatiConfig' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'saveWebsiteTemplate' : IDL.Func(
         [SaveTemplateInput],
         [WebsiteTemplate],
         [],
       ),
+    'sendWatiTemplate' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Vec(IDL.Text)],
+        [
+          IDL.Variant({
+            'ok' : IDL.Record({ 'messageId' : IDL.Text }),
+            'err' : IDL.Text,
+          }),
+        ],
+        [],
+      ),
+    'setAutoAgencyEnabled' : IDL.Func([IDL.Bool], [], []),
     'setGA4Credentials' : IDL.Func([IDL.Text, IDL.Text], [], []),
+    'setUserNotificationPrefs' : IDL.Func(
+        [FrequencySettings, IDL.Vec(TriggerType)],
+        [],
+        [],
+      ),
+    'setWhatsAppConsent' : IDL.Func([IDL.Text, IDL.Bool], [], []),
+    'skipOnboardingTour' : IDL.Func(
+        [],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
+    'submitAudit' : IDL.Func([IDL.Text], [AuditRecord], []),
+    'submitAuditLead' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [AuditLead],
+        [],
+      ),
     'submitTemplateForApproval' : IDL.Func(
         [WhatsAppTemplateId],
         [IDL.Bool],
         [],
       ),
+    'trackReferralFunnelEvent' : IDL.Func(
+        [
+          ReferralFunnelEventType,
+          IDL.Text,
+          IDL.Opt(IDL.Text),
+          IDL.Opt(IDL.Text),
+        ],
+        [],
+        [],
+      ),
+    'trackReferralLandingView' : IDL.Func([IDL.Text], [], []),
+    'trackShareClick' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Opt(IDL.Text)],
+        [],
+        [],
+      ),
+    'trackWebsiteHealthEvent' : IDL.Func([IDL.Text, IDL.Text], [], []),
     'transform' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'transformCompetitorIntel' : IDL.Func(
         [TransformationInput],
         [TransformationOutput],
         ['query'],
@@ -1490,9 +5052,38 @@ export const idlFactory = ({ IDL }) => {
         [TransformationOutput],
         ['query'],
       ),
+    'transformPageSpeed' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'transformPaymentsWhatsapp' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'transformWebsiteHealth' : IDL.Func(
+        [TransformationInput],
+        [TransformationOutput],
+        ['query'],
+      ),
+    'triggerNudgeForUser' : IDL.Func([IDL.Text], [IDL.Opt(NudgeEvent)], []),
+    'triggerSystemNotifications' : IDL.Func([], [IDL.Nat], []),
+    'updateAuditScanLimit' : IDL.Func([], [ScanLimitRecord], []),
     'updateCampaignStats' : IDL.Func(
         [IDL.Nat, IDL.Nat, IDL.Nat, IDL.Text],
         [OutreachCampaign],
+        [],
+      ),
+    'updateCaseStudy' : IDL.Func(
+        [IDL.Text, CaseStudyUpdate],
+        [IDL.Variant({ 'ok' : CaseStudy, 'err' : IDL.Text })],
+        [],
+      ),
+    'updateChallengeLeadsCount' : IDL.Func([IDL.Text, IDL.Nat], [], []),
+    'updateChallengeProgress' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Nat],
+        [],
         [],
       ),
     'updateClientMetrics' : IDL.Func(
@@ -1505,10 +5096,23 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         [],
       ),
+    'updateDailyProgress' : IDL.Func([IDL.Nat, IDL.Nat, IDL.Nat], [], []),
+    'updateLastSession' : IDL.Func([], [], []),
     'updateLead' : IDL.Func([UpdateLeadInput], [IDL.Bool], []),
+    'updateMonitoredUrl' : IDL.Func([IDL.Text, IDL.Bool], [], []),
+    'updateOnboardingStep' : IDL.Func(
+        [IDL.Nat],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'updateOutreachMessageStatus' : IDL.Func(
         [IDL.Nat, IDL.Text, IDL.Opt(Timestamp)],
         [OutreachMessage],
+        [],
+      ),
+    'updateRetentionData' : IDL.Func(
+        [IDL.Text, IDL.Nat, IDL.Nat, IDL.Nat],
+        [],
         [],
       ),
     'updateScraperJobProgress' : IDL.Func(
@@ -1526,7 +5130,17 @@ export const idlFactory = ({ IDL }) => {
         [IDL.Bool],
         [],
       ),
+    'updateWatiConsent' : IDL.Func(
+        [IDL.Text, IDL.Bool],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
     'upsertMySubscription' : IDL.Func([UserSubscription], [], []),
+    'verifyRazorpayPayment' : IDL.Func(
+        [IDL.Text, IDL.Text, IDL.Text, IDL.Text],
+        [IDL.Variant({ 'ok' : IDL.Text, 'err' : IDL.Text })],
+        [],
+      ),
   });
 };
 

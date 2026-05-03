@@ -9,12 +9,13 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
+import { useNavigate } from "@tanstack/react-router";
 import {
   ArrowUpRight,
   CheckCircle2,
   CreditCard,
+  Crown,
   Download,
   Minus,
   Plus,
@@ -22,6 +23,7 @@ import {
   Shield,
   Sparkles,
   Star,
+  TrendingUp,
   Wallet,
   X,
   Zap,
@@ -35,12 +37,12 @@ import { toast } from "sonner";
 interface Plan {
   id: string;
   name: string;
-  price: string;
-  priceAmount: number;
-  priceNote: string;
+  monthlyPrice: number;
+  yearlyPrice: number;
   description: string;
   highlighted?: boolean;
   current?: boolean;
+  icon?: React.ReactNode;
   features: { label: string; included: boolean }[];
 }
 
@@ -74,18 +76,18 @@ interface AddOn {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const ALL_FEATURES = [
-  "Leads per month",
-  "AI Messages",
-  "Campaigns",
-  "AI Features",
-  "WhatsApp Outreach",
-  "Email Outreach",
-  "SEO Audit",
-  "Automation Flows",
-  "Client Reports",
+  "Leads per day",
+  "AI Pitch Generator",
+  "AI Proposal Generator",
+  "Auto Follow-Up",
+  "CRM Pipeline",
+  "SEO Checklist",
+  "Campaign Builder",
+  "Advanced Analytics",
+  "White-label Reports",
+  "Team Access",
   "Priority Support",
   "Dedicated Account Manager",
-  "White-label Reports",
   "API Access",
 ];
 
@@ -93,71 +95,112 @@ const PLANS: Plan[] = [
   {
     id: "free",
     name: "Free",
-    price: "₹0",
-    priceAmount: 0,
-    priceNote: "/mo",
-    description: "Get started for free",
+    monthlyPrice: 0,
+    yearlyPrice: 0,
+    description: "Manual outreach, 10 leads/day",
     features: [
-      { label: "50 leads per month", included: true },
-      { label: "100 AI messages", included: true },
-      { label: "1 campaign", included: true },
-      { label: "AI features", included: false },
-      { label: "WhatsApp outreach", included: false },
-      { label: "Email outreach", included: false },
-      { label: "Basic SEO audit", included: true },
-      { label: "Automation flows", included: false },
-      { label: "Client reports", included: false },
+      { label: "10 leads/day", included: true },
+      { label: "AI pitch generator", included: false },
+      { label: "AI proposal generator", included: false },
+      { label: "Auto follow-up", included: false },
+      { label: "CRM pipeline", included: false },
+      { label: "SEO checklist", included: false },
+      { label: "Campaign builder", included: false },
+      { label: "Advanced analytics", included: false },
+      { label: "White-label reports", included: false },
+      { label: "Team access", included: false },
       { label: "Priority support", included: false },
       { label: "Account manager", included: false },
+      { label: "API access", included: false },
+    ],
+  },
+  {
+    id: "starter",
+    name: "Starter",
+    monthlyPrice: 49,
+    yearlyPrice: 39,
+    description: "50 leads/day + message templates",
+    features: [
+      { label: "50 leads/day", included: true },
+      { label: "AI pitch generator", included: true },
+      { label: "AI proposal generator", included: false },
+      { label: "Basic follow-up", included: true },
+      { label: "CRM pipeline", included: false },
+      { label: "SEO checklist", included: false },
+      { label: "Campaign builder", included: false },
+      { label: "Advanced analytics", included: false },
       { label: "White-label reports", included: false },
+      { label: "Team access", included: false },
+      { label: "Priority support", included: false },
+      { label: "Account manager", included: false },
       { label: "API access", included: false },
     ],
   },
   {
     id: "growth",
     name: "Growth",
-    price: "₹2,999",
-    priceAmount: 2999,
-    priceNote: "/mo",
-    description: "For serious agencies",
+    monthlyPrice: 299,
+    yearlyPrice: 239,
+    description: "Auto follow-ups, CRM pipeline, reports",
     highlighted: true,
     current: true,
     features: [
-      { label: "1,000 leads per month", included: true },
-      { label: "500 AI messages", included: true },
-      { label: "10 campaigns", included: true },
-      { label: "AI features", included: true },
-      { label: "WhatsApp outreach", included: true },
-      { label: "Email outreach", included: true },
-      { label: "Full SEO audit", included: true },
-      { label: "Automation flows", included: true },
-      { label: "Client reports", included: true },
+      { label: "150 leads/day", included: true },
+      { label: "AI pitch generator", included: true },
+      { label: "AI proposal generator", included: false },
+      { label: "Auto follow-up", included: true },
+      { label: "CRM pipeline", included: true },
+      { label: "SEO checklist", included: true },
+      { label: "Campaign builder", included: false },
+      { label: "Advanced analytics", included: false },
+      { label: "White-label reports", included: false },
+      { label: "Team access", included: false },
       { label: "Priority support", included: true },
       { label: "Account manager", included: false },
-      { label: "White-label reports", included: false },
       { label: "API access", included: false },
     ],
   },
   {
-    id: "scale",
-    name: "Scale",
-    price: "₹7,999",
-    priceAmount: 7999,
-    priceNote: "/mo",
-    description: "Unlimited, enterprise-grade",
+    id: "pro",
+    name: "Pro",
+    monthlyPrice: 999,
+    yearlyPrice: 799,
+    description: "500 leads/day + proposals + campaigns",
     features: [
-      { label: "Unlimited leads", included: true },
-      { label: "Unlimited messages", included: true },
-      { label: "Unlimited campaigns", included: true },
-      { label: "AI features", included: true },
-      { label: "WhatsApp outreach", included: true },
-      { label: "Email outreach", included: true },
-      { label: "Full SEO audit", included: true },
-      { label: "Automation flows", included: true },
-      { label: "Client reports", included: true },
+      { label: "500 leads/day", included: true },
+      { label: "AI pitch generator", included: true },
+      { label: "AI proposal generator", included: true },
+      { label: "Auto follow-up", included: true },
+      { label: "CRM pipeline", included: true },
+      { label: "SEO checklist", included: true },
+      { label: "Campaign builder", included: true },
+      { label: "Advanced analytics", included: true },
+      { label: "White-label reports", included: false },
+      { label: "Team access", included: false },
+      { label: "Priority support", included: true },
+      { label: "Account manager", included: false },
+      { label: "API access", included: false },
+    ],
+  },
+  {
+    id: "agency",
+    name: "Agency",
+    monthlyPrice: 4999,
+    yearlyPrice: 3999,
+    description: "White-label reports, team access, high-volume",
+    features: [
+      { label: "Unlimited leads (fair usage)", included: true },
+      { label: "AI pitch generator", included: true },
+      { label: "AI proposal generator", included: true },
+      { label: "Auto follow-up", included: true },
+      { label: "CRM pipeline", included: true },
+      { label: "SEO checklist", included: true },
+      { label: "Campaign builder", included: true },
+      { label: "Advanced analytics", included: true },
+      { label: "White-label reports", included: true },
+      { label: "Team access", included: true },
       { label: "Priority support", included: true },
       { label: "Dedicated account manager", included: true },
-      { label: "White-label reports", included: true },
       { label: "API access", included: true },
     ],
   },
@@ -198,42 +241,35 @@ const INVOICES: Invoice[] = [
     id: "INV-2604",
     date: "Apr 1, 2026",
     description: "Growth Plan — Monthly",
-    amount: "₹2,999",
+    amount: "₹299",
     status: "paid",
   },
   {
     id: "INV-2603",
     date: "Mar 1, 2026",
     description: "Growth Plan — Monthly",
-    amount: "₹2,999",
+    amount: "₹299",
     status: "paid",
   },
   {
     id: "INV-2602",
     date: "Feb 1, 2026",
     description: "Growth Plan — Monthly",
-    amount: "₹2,999",
+    amount: "₹299",
     status: "paid",
   },
   {
     id: "INV-2601",
     date: "Jan 1, 2026",
-    description: "Growth Plan — Monthly",
-    amount: "₹2,999",
+    description: "Starter Plan — Monthly",
+    amount: "₹49",
     status: "paid",
   },
   {
     id: "INV-2512",
     date: "Dec 1, 2025",
     description: "Starter Plan — Monthly",
-    amount: "₹999",
-    status: "paid",
-  },
-  {
-    id: "INV-2511",
-    date: "Nov 1, 2025",
-    description: "Starter Plan — Monthly",
-    amount: "₹999",
+    amount: "₹49",
     status: "paid",
   },
 ];
@@ -339,36 +375,38 @@ function CircularMeter({
 function CompareModal({
   open,
   onClose,
-}: { open: boolean; onClose: () => void }) {
+  isYearly,
+}: { open: boolean; onClose: () => void; isYearly: boolean }) {
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent
-        className="max-w-2xl max-h-[80vh] overflow-y-auto scrollbar-thin"
+        className="max-w-3xl max-h-[80vh] overflow-y-auto scrollbar-thin"
         data-ocid="billing.compare.dialog"
       >
         <DialogHeader>
           <DialogTitle className="font-display text-lg">
-            Compare Plans
+            Compare All Plans
           </DialogTitle>
         </DialogHeader>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border">
-                <th className="text-left py-3 pr-4 font-medium text-muted-foreground w-48">
+                <th className="text-left py-3 pr-4 font-medium text-muted-foreground w-40">
                   Feature
                 </th>
                 {PLANS.map((p) => (
-                  <th key={p.id} className="py-3 px-2 text-center">
+                  <th key={p.id} className="py-3 px-2 text-center min-w-[90px]">
                     <span
                       className={`font-display font-semibold ${p.current ? "text-primary" : "text-foreground"}`}
                     >
                       {p.name}
                     </span>
                     <br />
-                    <span className="text-xs font-normal text-muted-foreground">
-                      {p.price}
-                      {p.priceNote}
+                    <span className="text-xs font-normal text-muted-foreground tabular-nums">
+                      {p.monthlyPrice === 0
+                        ? "Free"
+                        : `₹${(isYearly ? p.yearlyPrice : p.monthlyPrice).toLocaleString("en-IN")}/mo`}
                     </span>
                   </th>
                 ))}
@@ -386,7 +424,7 @@ function CompareModal({
                       {p.features[i]?.included ? (
                         <CheckCircle2 className="w-4 h-4 text-success mx-auto" />
                       ) : (
-                        <Minus className="w-4 h-4 text-muted-foreground/40 mx-auto" />
+                        <X className="w-4 h-4 text-muted-foreground/40 mx-auto" />
                       )}
                     </td>
                   ))}
@@ -410,11 +448,35 @@ function CompareModal({
   );
 }
 
-// ─── Page ─────────────────────────────────────────────────────────────────────
+// ─── BillingUpgradeButton ───────────────────────────────────────────────────
+
+function BillingUpgradeButton() {
+  const nav = useNavigate();
+  return (
+    <Button
+      size="sm"
+      className="btn-primary-glow"
+      onClick={() =>
+        nav({
+          to: "/checkout",
+          search: { plan: "rzp_growth" } as Record<string, string>,
+        })
+      }
+      data-ocid="billing.upgrade_plan.button"
+    >
+      <Zap className="w-3.5 h-3.5 mr-1.5" />
+      Upgrade Plan
+    </Button>
+  );
+}
+
+// ─── Page ────────────────────────────────────────────────────────────────────
 
 export default function BillingPage() {
+  const navigate = useNavigate();
   const [compareOpen, setCompareOpen] = useState(false);
   const [cancelOpen, setCancelOpen] = useState(false);
+  const [isYearly, setIsYearly] = useState(false);
   const [addons, setAddons] = useState<AddOn[]>(INITIAL_ADDONS);
   const [cartTotal, setCartTotal] = useState(0);
 
@@ -432,9 +494,12 @@ export default function BillingPage() {
       0,
     );
     setCartTotal(total);
-    toast.success(`Order of ₹${total.toLocaleString()} placed successfully!`, {
-      description: "Credits will be added to your account within minutes.",
-    });
+    toast.success(
+      `Order of ₹${total.toLocaleString("en-IN")} placed successfully!`,
+      {
+        description: "Credits will be added to your account within minutes.",
+      },
+    );
   }
 
   const cartSum = addons.reduce(
@@ -471,15 +536,13 @@ export default function BillingPage() {
           transition={{ duration: 0.4 }}
         >
           <Card className="p-6 border-primary/40 shadow-glow-primary relative overflow-hidden">
-            {/* gradient accent bar */}
             <div
-              className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary via-premium-accent to-primary/0"
+              className="absolute top-0 left-0 right-0 h-0.5"
               style={{
                 background:
                   "linear-gradient(90deg, oklch(var(--primary)), oklch(var(--premium-accent)), transparent)",
               }}
             />
-
             <div className="flex flex-col sm:flex-row sm:items-start gap-6">
               <div className="w-12 h-12 rounded-xl gradient-premium flex items-center justify-center shrink-0">
                 <Sparkles className="w-5 h-5 text-primary" />
@@ -492,6 +555,10 @@ export default function BillingPage() {
                   <Badge className="status-active text-[10px] font-semibold px-2 py-0.5">
                     Active
                   </Badge>
+                  <Badge className="status-premium text-[10px] font-semibold px-2 py-0.5">
+                    <Star className="w-2.5 h-2.5 mr-1" />
+                    Most Popular
+                  </Badge>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-3 text-sm">
                   <div>
@@ -499,7 +566,7 @@ export default function BillingPage() {
                       Billing Cycle
                     </p>
                     <p className="font-semibold text-foreground mt-0.5">
-                      Monthly
+                      {isYearly ? "Yearly" : "Monthly"}
                     </p>
                   </div>
                   <div>
@@ -507,7 +574,7 @@ export default function BillingPage() {
                       Current Price
                     </p>
                     <p className="font-semibold text-foreground mt-0.5 tabular-nums">
-                      ₹2,999/mo
+                      {isYearly ? "₹239/mo" : "₹299/mo"}
                     </p>
                   </div>
                   <div>
@@ -523,20 +590,13 @@ export default function BillingPage() {
                       Next Bill Amount
                     </p>
                     <p className="font-semibold text-foreground mt-0.5 tabular-nums">
-                      ₹2,999
+                      {isYearly ? "₹2,868" : "₹299"}
                     </p>
                   </div>
                 </div>
               </div>
               <div className="flex gap-2 shrink-0">
-                <Button
-                  size="sm"
-                  className="btn-primary-glow"
-                  data-ocid="billing.upgrade_plan.button"
-                >
-                  <Zap className="w-3.5 h-3.5 mr-1.5" />
-                  Upgrade Plan
-                </Button>
+                <BillingUpgradeButton />
                 <Button
                   size="sm"
                   variant="outline"
@@ -631,130 +691,311 @@ export default function BillingPage() {
 
       {/* ── Subscription Plans ────────────────────────────────────────────── */}
       <section data-ocid="billing.plans.section">
-        <div className="flex items-center justify-between mb-3">
+        {/* Toggle + header row */}
+        <div className="flex items-center justify-between mb-4 gap-4 flex-wrap">
           <h2 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
             Subscription Plans
           </h2>
-          <button
-            type="button"
-            className="text-xs text-primary hover:underline transition-fast"
-            onClick={() => setCompareOpen(true)}
-            data-ocid="billing.compare_inline.button"
-          >
-            View full comparison →
-          </button>
-        </div>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-3 gap-4"
-          initial="hidden"
-          animate="visible"
-          variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
-        >
-          {PLANS.map((plan, i) => (
-            <motion.div
-              key={plan.id}
-              variants={{
-                hidden: { opacity: 0, y: 16 },
-                visible: { opacity: 1, y: 0 },
-              }}
-              transition={{ duration: 0.4 }}
-              data-ocid={`billing.plan.${i + 1}`}
+          <div className="flex items-center gap-3">
+            <span
+              className={`text-xs font-semibold transition-colors ${!isYearly ? "text-foreground" : "text-muted-foreground"}`}
             >
-              <Card
-                className={`p-5 h-full flex flex-col relative transition-smooth ${
-                  plan.highlighted
-                    ? "border-primary shadow-elevated"
-                    : "border-border"
-                }`}
-              >
-                {plan.highlighted && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
-                    <span className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-elevated">
-                      <Star className="w-2.5 h-2.5" />
-                      Most Popular
-                    </span>
-                  </div>
-                )}
-                {plan.current && (
-                  <Badge className="absolute top-3 right-3 status-active text-[10px] font-semibold px-2 py-0.5">
-                    Current
-                  </Badge>
-                )}
-
-                <div className="mb-4 mt-1">
-                  <h3 className="font-display font-bold text-foreground">
-                    {plan.name}
-                  </h3>
-                  <div className="flex items-baseline gap-1 mt-1">
-                    <span className="text-3xl font-bold text-foreground tabular-nums">
-                      {plan.price}
-                    </span>
-                    <span className="text-sm text-muted-foreground">
-                      {plan.priceNote}
-                    </span>
-                  </div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {plan.description}
-                  </p>
-                </div>
-
-                <ul className="space-y-2 flex-1 mb-5">
-                  {plan.features.slice(0, 7).map((f) => (
-                    <li
-                      key={f.label}
-                      className="flex items-start gap-2 text-xs"
-                    >
-                      {f.included ? (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
-                      ) : (
-                        <X className="w-3.5 h-3.5 text-muted-foreground/40 mt-0.5 shrink-0" />
-                      )}
-                      <span
-                        className={
-                          f.included
-                            ? "text-foreground"
-                            : "text-muted-foreground/60"
-                        }
-                      >
-                        {f.label}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-
-                <Button
-                  className={`w-full text-sm h-9 ${plan.highlighted && !plan.current ? "btn-primary-glow" : ""}`}
-                  variant={
-                    plan.current
-                      ? "outline"
-                      : plan.highlighted
-                        ? "default"
-                        : "outline"
-                  }
-                  disabled={plan.current}
-                  data-ocid={`billing.plan.select.${plan.id}`}
+              Monthly
+            </span>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={isYearly}
+              onClick={() => setIsYearly((p) => !p)}
+              className={`relative w-10 h-5 rounded-full transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary ${isYearly ? "bg-primary" : "bg-muted"}`}
+              data-ocid="billing.billing_toggle"
+            >
+              <span
+                className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-card shadow-subtle transition-transform duration-200 ${isYearly ? "translate-x-5" : "translate-x-0"}`}
+              />
+            </button>
+            <span
+              className={`text-xs font-semibold transition-colors flex items-center gap-1.5 ${isYearly ? "text-foreground" : "text-muted-foreground"}`}
+            >
+              Yearly
+              {isYearly && (
+                <motion.span
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-warning/15 text-warning"
                 >
-                  {plan.current ? (
-                    <span className="flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" />
-                      Current Plan
-                    </span>
-                  ) : plan.priceAmount > 2999 ? (
-                    <span className="flex items-center gap-1.5">
-                      <Zap className="w-3.5 h-3.5" />
-                      Upgrade to {plan.name}
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1.5">
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                      Downgrade
-                    </span>
+                  Save 20%
+                </motion.span>
+              )}
+            </span>
+            <button
+              type="button"
+              className="text-xs text-primary hover:underline transition-fast ml-2"
+              onClick={() => setCompareOpen(true)}
+              data-ocid="billing.compare_inline.button"
+            >
+              Compare all →
+            </button>
+          </div>
+        </div>
+
+        {/* Horizontal snap scroll on mobile, grid on desktop */}
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-thin pb-3 md:grid md:grid-cols-5 md:overflow-visible">
+          {PLANS.map((plan, i) => {
+            const displayPrice = isYearly
+              ? plan.yearlyPrice
+              : plan.monthlyPrice;
+            return (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
+                className="snap-start shrink-0 w-[220px] md:w-auto"
+                data-ocid={`billing.plan.${i + 1}`}
+              >
+                <Card
+                  className={`p-5 h-full flex flex-col relative transition-smooth ${
+                    plan.highlighted
+                      ? "border-primary shadow-elevated scale-[1.02]"
+                      : "border-border"
+                  }`}
+                >
+                  {plan.highlighted && (
+                    <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-10">
+                      <span className="bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-elevated">
+                        <Star className="w-2.5 h-2.5" />
+                        Most Popular
+                      </span>
+                    </div>
                   )}
-                </Button>
-              </Card>
-            </motion.div>
-          ))}
+                  {plan.current && (
+                    <Badge className="absolute top-3 right-3 status-active text-[10px] font-semibold px-2 py-0.5">
+                      Current
+                    </Badge>
+                  )}
+
+                  {/* Plan icon */}
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-3">
+                    {plan.id === "free" && (
+                      <Zap className="w-3.5 h-3.5 text-muted-foreground" />
+                    )}
+                    {plan.id === "starter" && (
+                      <Star className="w-3.5 h-3.5 text-primary" />
+                    )}
+                    {plan.id === "growth" && (
+                      <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    )}
+                    {plan.id === "pro" && (
+                      <Zap className="w-3.5 h-3.5 text-primary" />
+                    )}
+                    {plan.id === "agency" && (
+                      <Crown className="w-3.5 h-3.5 text-warning" />
+                    )}
+                  </div>
+
+                  <div className="mb-4 mt-1">
+                    <h3 className="font-display font-bold text-foreground">
+                      {plan.name}
+                    </h3>
+                    {plan.id === "growth" && (
+                      <p className="text-[10px] font-semibold text-primary/80 mt-0.5">
+                        Most businesses start here
+                      </p>
+                    )}
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-2xl font-bold text-foreground tabular-nums">
+                        {plan.monthlyPrice === 0
+                          ? "₹0"
+                          : `₹${displayPrice.toLocaleString("en-IN")}`}
+                      </span>
+                      {plan.monthlyPrice > 0 && (
+                        <span className="text-xs text-muted-foreground">
+                          /mo
+                        </span>
+                      )}
+                    </div>
+                    {isYearly && plan.monthlyPrice > 0 && (
+                      <p className="text-[10px] text-success font-semibold mt-0.5">
+                        Save{" "}
+                        {Math.round(
+                          ((plan.monthlyPrice - plan.yearlyPrice) /
+                            plan.monthlyPrice) *
+                            100,
+                        )}
+                        %
+                      </p>
+                    )}
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {plan.description}
+                    </p>
+                  </div>
+
+                  <ul className="space-y-1.5 flex-1 mb-4">
+                    {plan.features.slice(0, 6).map((f) => (
+                      <li
+                        key={f.label}
+                        className="flex items-start gap-2 text-xs"
+                      >
+                        {f.included ? (
+                          <CheckCircle2 className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
+                        ) : (
+                          <X className="w-3.5 h-3.5 text-muted-foreground/40 mt-0.5 shrink-0" />
+                        )}
+                        <span
+                          className={
+                            f.included
+                              ? "text-foreground"
+                              : "text-muted-foreground/60"
+                          }
+                        >
+                          {f.label}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {/* Free trial note */}
+                  {(plan.id === "starter" || plan.id === "growth") && (
+                    <p className="text-[10px] text-muted-foreground mb-2 text-center">
+                      🎁 7-day free trial
+                    </p>
+                  )}
+
+                  <Button
+                    className={`w-full text-xs h-9 ${plan.highlighted && !plan.current ? "btn-primary-glow" : ""}`}
+                    variant={
+                      plan.current
+                        ? "outline"
+                        : plan.highlighted
+                          ? "default"
+                          : "outline"
+                    }
+                    disabled={plan.current}
+                    onClick={() => {
+                      if (!plan.current) {
+                        if (plan.id === "agency") {
+                          toast.info("Contact our sales team for Agency plan.");
+                        } else if (plan.id !== "free") {
+                          navigate({
+                            to: "/checkout",
+                            search: {
+                              plan: `rzp_${plan.id}`,
+                              yearly: isYearly ? "1" : undefined,
+                            } as Record<string, string>,
+                          });
+                        }
+                      }
+                    }}
+                    data-ocid={`billing.plan.select.${plan.id}`}
+                  >
+                    {plan.current ? (
+                      <span className="flex items-center gap-1">
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                        Current Plan
+                      </span>
+                    ) : plan.id === "free" ? (
+                      <span className="flex items-center gap-1">
+                        <Zap className="w-3.5 h-3.5" />
+                        Start free
+                      </span>
+                    ) : plan.id === "starter" ? (
+                      <span className="flex items-center gap-1">
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        Get started
+                      </span>
+                    ) : plan.id === "growth" ? (
+                      <span className="flex items-center gap-1">
+                        <Zap className="w-3.5 h-3.5" />
+                        Upgrade to Growth
+                      </span>
+                    ) : plan.id === "pro" ? (
+                      <span className="flex items-center gap-1">
+                        <ArrowUpRight className="w-3.5 h-3.5" />
+                        Go Pro
+                      </span>
+                    ) : (
+                      <span className="flex items-center gap-1">
+                        <Crown className="w-3.5 h-3.5 text-warning" />
+                        Start Agency plan
+                      </span>
+                    )}
+                  </Button>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── ROI Callout + Objections ──────────────────────────────────────── */}
+      <section data-ocid="billing.roi_callout.section" className="space-y-4">
+        {/* ROI Box */}
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.15 }}
+        >
+          <Card className="p-5 border-success/30 bg-success/5">
+            <div className="flex items-start gap-4">
+              <div className="w-9 h-9 rounded-xl bg-success/15 flex items-center justify-center shrink-0">
+                <TrendingUp className="w-4 h-4 text-success" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-semibold text-foreground">
+                  Even 1 new customer can cover your monthly plan.
+                </p>
+                <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                  Example: ₹1,000 service × 10 extra customers ={" "}
+                  <span className="font-semibold text-success">
+                    ₹10,000 added revenue
+                  </span>{" "}
+                  — enough to cover the Growth plan for over 33 months.
+                </p>
+              </div>
+            </div>
+          </Card>
         </motion.div>
+
+        {/* Quick objection answers */}
+        <div
+          className="grid grid-cols-1 sm:grid-cols-3 gap-3"
+          data-ocid="billing.objections.section"
+        >
+          {[
+            {
+              id: "no-contracts",
+              icon: <Shield className="w-3.5 h-3.5 text-primary" />,
+              text: "No contracts. Cancel anytime.",
+            },
+            {
+              id: "no-experience",
+              icon: <CheckCircle2 className="w-3.5 h-3.5 text-success" />,
+              text: "No experience needed — the app guides you step by step.",
+            },
+            {
+              id: "integrations",
+              icon: <Zap className="w-3.5 h-3.5 text-warning" />,
+              text: "Works with Google Ads, Meta Ads, and WhatsApp Business.",
+            },
+          ].map((item) => (
+            <div
+              key={item.id}
+              className="flex items-start gap-2.5 p-3.5 rounded-xl bg-muted/30 border border-border/60"
+            >
+              <div className="mt-0.5 shrink-0">{item.icon}</div>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {item.text}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Disclaimer */}
+        <p className="text-[11px] text-muted-foreground/70 text-center">
+          Results depend on your location, offer, and follow-up speed.
+          Integrations are not endorsements. Logos belong to their owners.
+        </p>
       </section>
 
       {/* ── Billing History ───────────────────────────────────────────────── */}
@@ -798,9 +1039,7 @@ export default function BillingPage() {
                   {inv.amount}
                 </span>
                 <span
-                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 capitalize ${
-                    inv.status === "paid" ? "status-active" : "status-paused"
-                  }`}
+                  className={`text-[10px] font-semibold px-2 py-0.5 rounded-full shrink-0 capitalize ${inv.status === "paid" ? "status-active" : "status-paused"}`}
                 >
                   {inv.status}
                 </span>
@@ -819,8 +1058,9 @@ export default function BillingPage() {
           <div className="px-5 py-3 flex items-center gap-2 bg-muted/20">
             <Shield className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
             <p className="text-xs text-muted-foreground">
-              Payments processed securely via Razorpay. All invoices include
-              GST.
+              Payments secured by{" "}
+              <span className="font-semibold text-[#528FF0]">Razorpay</span>.
+              All invoices include GST.
             </p>
           </div>
         </Card>
@@ -934,7 +1174,8 @@ export default function BillingPage() {
                   </button>
                 </div>
                 <span className="w-20 text-right text-sm font-bold text-foreground tabular-nums shrink-0">
-                  ₹{(addon.priceAmount * addon.quantity).toLocaleString()}
+                  ₹
+                  {(addon.priceAmount * addon.quantity).toLocaleString("en-IN")}
                 </span>
               </div>
             ))}
@@ -946,7 +1187,7 @@ export default function BillingPage() {
             <div>
               <p className="text-xs text-muted-foreground">Cart Total</p>
               <p className="text-xl font-bold text-foreground tabular-nums">
-                ₹{cartSum.toLocaleString()}
+                ₹{cartSum.toLocaleString("en-IN")}
               </p>
             </div>
             <Button
@@ -968,7 +1209,8 @@ export default function BillingPage() {
             data-ocid="billing.checkout.success_state"
           >
             <CheckCircle2 className="w-3.5 h-3.5" />
-            Last order of ₹{cartTotal.toLocaleString()} was placed successfully.
+            Last order of ₹{cartTotal.toLocaleString("en-IN")} was placed
+            successfully.
           </motion.p>
         )}
       </section>
@@ -992,13 +1234,17 @@ export default function BillingPage() {
       </section>
 
       {/* ── Modals ───────────────────────────────────────────────────────── */}
-      <CompareModal open={compareOpen} onClose={() => setCompareOpen(false)} />
+      <CompareModal
+        open={compareOpen}
+        onClose={() => setCompareOpen(false)}
+        isYearly={isYearly}
+      />
 
       <ConfirmModal
         open={cancelOpen}
         onOpenChange={setCancelOpen}
         title="Cancel Your Subscription?"
-        description="You will immediately lose access to: 1,000 leads/month, AI message credits, automation flows, WhatsApp & email outreach, priority support, and client reports. Your account will revert to the Free plan on May 1, 2026."
+        description="You will immediately lose access to: 150 leads/day, auto follow-up, CRM pipeline, SEO checklist, and priority support. Your account will revert to the Free plan on May 1, 2026."
         confirmLabel="Yes, Cancel Plan"
         cancelLabel="Keep My Plan"
         destructive

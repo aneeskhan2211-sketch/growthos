@@ -1,6 +1,8 @@
 import { Outlet } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { useOnboardingTour } from "../hooks/useOnboardingTour";
 import { Header } from "./Header";
+import { OnboardingTour } from "./OnboardingTour";
 import { Sidebar } from "./Sidebar";
 
 export function Layout() {
@@ -28,6 +30,8 @@ export function Layout() {
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
   }, []);
+
+  const { shouldShowTour } = useOnboardingTour();
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
@@ -67,6 +71,7 @@ export function Layout() {
           </div>
         </main>
       </div>
+      {shouldShowTour && <OnboardingTour />}
     </div>
   );
 }

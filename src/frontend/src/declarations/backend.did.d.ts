@@ -10,6 +10,209 @@ import type { ActorMethod } from '@icp-sdk/core/agent';
 import type { IDL } from '@icp-sdk/core/candid';
 import type { Principal } from '@icp-sdk/core/principal';
 
+export type AbTestName = { 'nudge_copy_ab' : null } |
+  { 'paywall_timing_ab' : null };
+export interface AbTestResult {
+  'lastResetAt' : bigint,
+  'testName' : AbTestName,
+  'variants' : Array<AbVariantStats>,
+  'isActive' : boolean,
+  'winningVariant' : [] | [AbVariantId],
+}
+export type AbVariantId = string;
+export interface AbVariantStats {
+  'impressions' : bigint,
+  'conversionRatePct' : number,
+  'variantId' : AbVariantId,
+  'conversions' : bigint,
+}
+export interface AccountabilityStateView {
+  'targetLeads' : bigint,
+  'targetFollowups' : bigint,
+  'todayComplete' : boolean,
+  'targetDeals' : bigint,
+  'dailyLeadsContacted' : bigint,
+  'dailyFollowupsDone' : bigint,
+  'dailyDealsClosed' : bigint,
+  'lastTaskDate' : bigint,
+  'streakMilestones' : Array<bigint>,
+  'currentStreak' : bigint,
+}
+export type ActivitySegment = { 'Medium' : null } |
+  { 'HighIntent' : null } |
+  { 'LowActivity' : null };
+export interface AffiliateStats {
+  'totalReferrals' : bigint,
+  'paidEarnings' : bigint,
+  'pendingEarnings' : bigint,
+  'commissionHistory' : Array<CommissionRecord>,
+  'conversionRate' : number,
+  'totalEarnings' : bigint,
+}
+export type AlertSeverity = { 'warning' : null } |
+  { 'info' : null } |
+  { 'critical' : null };
+export interface AnalyticsEvent {
+  'id' : bigint,
+  'metadata' : Array<[string, string]>,
+  'userId' : string,
+  'timestamp' : bigint,
+  'eventType' : AnalyticsEventType,
+}
+export type AnalyticsEventType = { 'city_selected' : null } |
+  { 'pitch_sent' : null } |
+  { 'get_clients_clicked' : null } |
+  { 'payment_failed' : null } |
+  { 'onboarding_started' : null } |
+  { 'payment_started' : null } |
+  { 'reply_received' : null } |
+  { 'leads_generated' : null } |
+  { 'feature_locked_clicked' : null } |
+  { 'onboarding_completed' : null } |
+  { 'plan_selected' : null } |
+  { 'app_opened' : null } |
+  { 'user_churn_risk' : null } |
+  { 'niche_selected' : null } |
+  { 'paywall_viewed' : null } |
+  { 'payment_success' : null } |
+  { 'proposal_created' : null };
+export type AuditId = bigint;
+export interface AuditIssue {
+  'estimatedLossMax' : bigint,
+  'estimatedLossMin' : bigint,
+  'aiFixSuggestion' : string,
+  'businessImpact' : string,
+  'difficulty' : FixDifficulty,
+  'fixCategory' : FixCategory,
+  'severity' : IssueSeverity,
+  'fixType' : FixType,
+  'problem' : string,
+}
+export interface AuditLead {
+  'id' : bigint,
+  'leadName' : string,
+  'city' : string,
+  'whatsappSentAt' : [] | [Timestamp],
+  'submittedAt' : Timestamp,
+  'niche' : string,
+  'phone' : string,
+  'budgetRange' : string,
+  'salonType' : string,
+}
+export interface AuditRecord {
+  'id' : AuditId,
+  'url' : string,
+  'rawMetrics' : [] | [RawMetrics],
+  'overallScore' : bigint,
+  'userId' : Principal,
+  'createdAt' : Timestamp,
+  'issues' : Array<AuditIssue>,
+  'scanDurationMs' : bigint,
+  'competitors' : Array<CompetitorRecord>,
+  'monitorActive' : boolean,
+  'categoryScores' : CategoryScores,
+  'lastMonitorScanAt' : bigint,
+}
+export interface AutoAgencyAction {
+  'leadName' : string,
+  'actionType' : AutoAgencyActionType,
+  'description' : string,
+  'timestamp' : bigint,
+  'outcome' : string,
+  'actionId' : string,
+}
+export type AutoAgencyActionType = { 'dealSuggested' : null } |
+  { 'outreachSent' : null } |
+  { 'followupSent' : null } |
+  { 'leadFound' : null } |
+  { 'reportGenerated' : null };
+export interface AutoAgencyStateView {
+  'dailyOutreachSent' : bigint,
+  'toggleEnabled' : boolean,
+  'dailyLeadsGenerated' : bigint,
+  'runCount' : bigint,
+  'lastActivityFeed' : Array<AutoAgencyAction>,
+  'lastRunTime' : bigint,
+  'nextRunTime' : bigint,
+  'dailyFollowupsSent' : bigint,
+}
+export interface AutoReport {
+  'roi' : bigint,
+  'status' : AutoReportStatus,
+  'clientId' : ClientId,
+  'nextSteps' : Array<string>,
+  'topChannel' : string,
+  'generatedAt' : bigint,
+  'sentAt' : [] | [bigint],
+  'reportPeriod' : string,
+  'leadsGenerated' : bigint,
+  'conversions' : bigint,
+  'revenueImpact' : bigint,
+  'reportId' : string,
+}
+export type AutoReportStatus = { 'sent' : null } |
+  { 'draft' : null } |
+  { 'ready' : null };
+export type BillingCycle = { 'monthly' : null } |
+  { 'yearly' : null };
+export interface CacBreakdown {
+  'cac' : bigint,
+  'referral' : bigint,
+  'metaAds' : bigint,
+  'newPaidCustomers' : bigint,
+  'other' : bigint,
+  'googleAds' : bigint,
+  'totalSpend' : bigint,
+}
+export interface CaseStudy {
+  'id' : string,
+  'isPublished' : boolean,
+  'clientCity' : string,
+  'clientName' : string,
+  'userId' : string,
+  'testimonialQuote' : [] | [string],
+  'createdAt' : bigint,
+  'shareToken' : string,
+  'clientNiche' : string,
+  'resultMetrics' : Array<ResultMetric>,
+  'actionsToken' : Array<string>,
+  'problemStatement' : string,
+}
+export interface CaseStudyUpdate {
+  'clientCity' : [] | [string],
+  'clientName' : [] | [string],
+  'testimonialQuote' : [] | [string],
+  'clientNiche' : [] | [string],
+  'resultMetrics' : [] | [Array<ResultMetric>],
+  'actionsToken' : [] | [Array<string>],
+  'problemStatement' : [] | [string],
+}
+export interface CategoryScores {
+  'seo' : bigint,
+  'content' : bigint,
+  'security' : bigint,
+  'speed' : bigint,
+  'mobile' : bigint,
+  'conversion' : bigint,
+}
+export type ChallengeBadge = { 'bronze' : null } |
+  { 'gold' : null } |
+  { 'none' : null } |
+  { 'silver' : null };
+export interface ChallengeParticipant {
+  'leadsCount' : bigint,
+  'isoWeek' : string,
+  'displayName' : string,
+  'city' : string,
+  'userId' : string,
+  'joinedAt' : Timestamp,
+  'rank' : bigint,
+  'rewarded' : boolean,
+}
+export interface CheckoutSession { 'url' : string, 'sessionId' : string }
+export type ChurnRisk = { 'high' : null } |
+  { 'none' : null } |
+  { 'medium' : null };
 export interface Client {
   'id' : ClientId,
   'metrics' : ClientMetrics,
@@ -18,12 +221,82 @@ export interface Client {
   'leadId' : LeadId,
   'startDate' : Timestamp,
 }
+export interface ClientGrowthPlan {
+  'clientId' : ClientId,
+  'adsPlan' : Array<GrowthPlanItem>,
+  'seoPlan' : Array<GrowthPlanItem>,
+  'planId' : string,
+  'generatedAt' : bigint,
+  'approvalStatus' : ClientGrowthPlanStatus,
+  'contentIdeas' : Array<GrowthPlanItem>,
+  'weekOf' : bigint,
+}
+export type ClientGrowthPlanStatus = { 'pending' : null } |
+  { 'approved' : null } |
+  { 'executing' : null };
 export type ClientId = bigint;
 export interface ClientMetrics {
   'revenue' : number,
   'leads' : bigint,
   'traffic' : bigint,
   'conversions' : bigint,
+}
+export interface CohortDayStats {
+  'day' : bigint,
+  'returnedCount' : bigint,
+  'usersNotified' : bigint,
+}
+export interface CohortRetentionRow {
+  'd1' : number,
+  'd7' : number,
+  'd30' : number,
+  'd60' : number,
+  'retainedD1' : bigint,
+  'retainedD7' : bigint,
+  'week' : string,
+  'cohortSize' : bigint,
+  'retainedD30' : bigint,
+  'retainedD60' : bigint,
+}
+export interface CommissionRecord {
+  'id' : string,
+  'status' : string,
+  'referredUserId' : string,
+  'createdAt' : bigint,
+  'referrerId' : string,
+  'commissionAmount' : bigint,
+  'planAmount' : bigint,
+  'commissionRate' : number,
+  'paidAt' : [] | [bigint],
+  'planTier' : string,
+}
+export interface CompetitorIntelReport {
+  'userId' : string,
+  'keywordGaps' : Array<string>,
+  'lastUpdatedAt' : bigint,
+  'competitors' : Array<CompetitorProfile>,
+  'yourUrl' : string,
+  'adSpendEstimate' : string,
+}
+export interface CompetitorProfile {
+  'url' : string,
+  'pageSpeed' : [] | [bigint],
+  'estimatedTraffic' : string,
+  'lastScannedAt' : bigint,
+  'socialLinks' : Array<string>,
+  'name' : [] | [string],
+  'seoSignals' : SeoSignals,
+  'ctaPresent' : boolean,
+  'whatsappPresent' : boolean,
+}
+export interface CompetitorRecord {
+  'conversionScore' : bigint,
+  'overallScore' : bigint,
+  'mobileScore' : bigint,
+  'seoScore' : bigint,
+  'securityScore' : bigint,
+  'speedScore' : bigint,
+  'competitorName' : string,
 }
 export interface ConsentLog {
   'id' : ConsentLogId,
@@ -44,6 +317,29 @@ export type ConsentType = { 'reply_first' : null } |
   { 'form_submission' : null } |
   { 'manual_override' : null } |
   { 'qr_optin' : null };
+export interface ContentCalendarPublic {
+  'id' : string,
+  'city' : string,
+  'userId' : string,
+  'goal' : string,
+  'createdAt' : bigint,
+  'niche' : string,
+  'posts' : Array<ContentPostPublic>,
+  'monthYear' : string,
+}
+export interface ContentPostPublic {
+  'id' : string,
+  'postType' : string,
+  'hashtags' : Array<string>,
+  'body' : string,
+  'city' : string,
+  'hook' : string,
+  'isPosted' : boolean,
+  'callToAction' : string,
+  'niche' : string,
+  'caption' : string,
+  'scheduledDay' : bigint,
+}
 export interface ConversionScript {
   'id' : ConversionScriptId,
   'serviceType' : string,
@@ -60,6 +356,18 @@ export interface ConversionScript {
   >,
 }
 export type ConversionScriptId = bigint;
+export type CopyType = { 'reward' : null } |
+  { 'urgency' : null } |
+  { 'fomo' : null } |
+  { 'money_visibility' : null };
+export interface CopyTypeStats {
+  'actionCount' : bigint,
+  'count' : bigint,
+  'actionRate' : number,
+  'openCount' : bigint,
+  'copyType' : CopyType,
+  'openRate' : number,
+}
 export interface CreateClientInput {
   'businessName' : string,
   'leadId' : LeadId,
@@ -111,6 +419,16 @@ export interface CreateSuggestionInput {
   'priority' : SuggestionPriority,
   'weekOf' : Timestamp,
 }
+export interface DealSuggestion {
+  'suggestionId' : string,
+  'pricingTier' : string,
+  'createdAt' : bigint,
+  'closeProbability' : bigint,
+  'leadId' : LeadId,
+  'suggestedPitch' : string,
+  'suggestedPrice' : bigint,
+  'bestContactTime' : string,
+}
 export type DeliverabilityStatId = bigint;
 export interface DeliveryStats {
   'id' : DeliverabilityStatId,
@@ -121,6 +439,90 @@ export interface DeliveryStats {
   'identityId' : SenderIdentityId,
   'bouncedCount' : bigint,
   'repliedCount' : bigint,
+}
+export interface DripSequenceDay {
+  'weekNumber' : bigint,
+  'weekTheme' : WeekTheme,
+  'personalizationTokens' : Array<string>,
+  'dayNumber' : bigint,
+  'message' : string,
+  'copyType' : CopyType,
+}
+export interface EnhancedFunnelMetrics {
+  'paidUsers' : bigint,
+  'freeToPaidConversion' : number,
+  'steps' : Array<FunnelStepDetail>,
+  'avgDaysToFirstPayment' : [] | [number],
+  'totalUsers' : bigint,
+}
+export interface EventDrillDown {
+  'totalCount' : bigint,
+  'nextEventBreakdown' : Array<[string, bigint, number]>,
+  'eventName' : string,
+}
+export interface FeatureUnlockCheck {
+  'requiredInvites' : bigint,
+  'expiresAt' : [] | [Timestamp],
+  'usageCount' : bigint,
+  'currentInvites' : bigint,
+  'isUnlocked' : boolean,
+  'featureName' : GatedFeatureName,
+}
+export interface FeatureUnlockSession {
+  'expiresAt' : Timestamp,
+  'unlockedAt' : Timestamp,
+  'userId' : string,
+  'usageCount' : bigint,
+  'featureName' : GatedFeatureName,
+}
+export interface FinalizedChallengeResult {
+  'creditsAwarded' : bigint,
+  'isoWeek' : string,
+  'displayName' : string,
+  'city' : string,
+  'userId' : string,
+  'finalRank' : bigint,
+  'badgeAwarded' : string,
+}
+export type FixCategory = { 'Cta' : null } |
+  { 'Seo' : null } |
+  { 'Speed' : null } |
+  { 'Security' : null } |
+  { 'Images' : null } |
+  { 'WhatsApp' : null } |
+  { 'Content' : null } |
+  { 'Mobile' : null };
+export type FixDifficulty = { 'Easy' : null } |
+  { 'Hard' : null } |
+  { 'Medium' : null };
+export type FixType = { 'developer_needed' : null } |
+  { 'one_click' : null } |
+  { 'guided' : null };
+export interface FrequencySettings {
+  'maxPerDay' : bigint,
+  'quietHoursEnabled' : boolean,
+  'inactivityReductionEnabled' : boolean,
+  'quietHoursStart' : bigint,
+  'quietHoursEnd' : bigint,
+}
+export interface FunnelMetrics {
+  'paidUsers' : bigint,
+  'freeToPaidConversion' : number,
+  'steps' : Array<FunnelStep>,
+  'totalUsers' : bigint,
+}
+export interface FunnelStep {
+  'dropOffRate' : number,
+  'count' : bigint,
+  'stepName' : string,
+  'conversionRate' : number,
+}
+export interface FunnelStepDetail {
+  'step' : string,
+  'dropoffPercent' : number,
+  'avgSecondsToNextStep' : [] | [bigint],
+  'users' : bigint,
+  'conversions' : bigint,
 }
 export interface GA4CredentialStatus {
   'lastUpdated' : [] | [bigint],
@@ -144,6 +546,41 @@ export interface GamificationState {
   'dailyStreak' : bigint,
   'unlockedFeatures' : Array<string>,
 }
+export interface GatedFeatureAdminStat {
+  'totalUsageCount' : bigint,
+  'activeUserCount' : bigint,
+  'featureName' : string,
+}
+export type GatedFeatureName = { 'advanced_analytics' : null } |
+  { 'bulk_send' : null } |
+  { 'export_leads' : null };
+export interface GrowthOverview {
+  'dau' : bigint,
+  'mau' : bigint,
+  'wau' : bigint,
+  'retentionD30' : number,
+  'computedAt' : bigint,
+  'mrrEstimatedInr' : bigint,
+  'retentionD1' : number,
+  'retentionD7' : number,
+  'newSignupsLast30' : bigint,
+  'newSignupsLast7' : bigint,
+  'freeToPaidConversionPct' : number,
+}
+export interface GrowthPlanItem {
+  'status' : GrowthPlanItemStatus,
+  'title' : string,
+  'description' : string,
+  'effort' : GrowthPlanItemEffort,
+  'priorityScore' : bigint,
+  'estimatedRevenue' : bigint,
+}
+export type GrowthPlanItemEffort = { 'deep' : null } |
+  { 'quick' : null } |
+  { 'medium' : null };
+export type GrowthPlanItemStatus = { 'pending' : null } |
+  { 'done' : null } |
+  { 'approved' : null };
 export interface GrowthReport {
   'id' : GrowthReportId,
   'clientId' : bigint,
@@ -172,6 +609,23 @@ export interface GrowthSuggestion {
   'dismissed' : boolean,
   'weekOf' : Timestamp,
 }
+export interface HealthAlert {
+  'metric' : string,
+  'actual' : string,
+  'alert' : string,
+  'threshold' : string,
+  'alertId' : string,
+  'timestamp' : bigint,
+  'severity' : AlertSeverity,
+}
+export type HealthStatus = { 'loss' : null } |
+  { 'healthy' : null } |
+  { 'moderate' : null };
+export type HeatmapEventKind = { 'tap' : null } |
+  { 'scrollDepth' : null } |
+  { 'deadClick' : null } |
+  { 'screenTime' : null } |
+  { 'rageTap' : null };
 export type ImportId = bigint;
 export interface ImportRecord {
   'id' : ImportId,
@@ -198,6 +652,30 @@ export interface ImportRowResult {
 export type ImportRowStatus = { 'valid' : null } |
   { 'invalid' : null } |
   { 'duplicate' : null };
+export interface InvestorReport {
+  'arr' : bigint,
+  'cac' : bigint,
+  'ltv' : bigint,
+  'mrr' : bigint,
+  'nrr' : number,
+  'newCustomers' : bigint,
+  'churnedMrr' : bigint,
+  'disclaimers' : Array<string>,
+  'monthlyChurnRate' : number,
+  'funnelData' : Array<string>,
+  'generatedAt' : bigint,
+  'churnedCustomers' : bigint,
+  'cacPaybackMonths' : number,
+  'newMrr' : bigint,
+  'ltvCacRatio' : number,
+  'cohortData' : Array<string>,
+  'healthAlerts' : Array<string>,
+  'totalCustomers' : bigint,
+  'expansionMrr' : bigint,
+}
+export type IssueSeverity = { 'Critical' : null } |
+  { 'Minor' : null } |
+  { 'Warning' : null };
 export interface LandingPage {
   'id' : LandingPageId,
   'status' : LandingPageStatus,
@@ -270,6 +748,83 @@ export type LeadStatus = { 'new' : null } |
   { 'closed' : null } |
   { 'proposal' : null } |
   { 'contacted' : null };
+export interface LeaderboardEntry {
+  'leadsCount' : bigint,
+  'displayName' : string,
+  'city' : string,
+  'userId' : string,
+  'rank' : bigint,
+  'badge' : ChallengeBadge,
+}
+export interface LiveEventEntry {
+  'eventId' : bigint,
+  'metadata' : Array<[string, string]>,
+  'userId' : string,
+  'timestamp' : bigint,
+  'eventType' : string,
+}
+export interface LtvBreakdown {
+  'byTier' : Array<TierLtv>,
+  'blendedLtv' : bigint,
+}
+export interface MarketingSpend {
+  'id' : bigint,
+  'month' : string,
+  'amountRs' : bigint,
+  'recordedBy' : Principal,
+  'timestamp' : bigint,
+  'channel' : SpendChannel,
+}
+export interface MarketplaceListing {
+  'title' : string,
+  'listingId' : string,
+  'createdAt' : bigint,
+  'tags' : Array<string>,
+  'description' : string,
+  'isActive' : boolean,
+  'listingType' : MarketplaceListingType,
+  'sellerName' : string,
+  'sellerId' : string,
+  'price' : bigint,
+  'reviewCount' : bigint,
+  'avgRating' : bigint,
+}
+export type MarketplaceListingType = { 'buyLeads' : null } |
+  { 'hireFreelancer' : null } |
+  { 'sellService' : null };
+export type MilestoneId = string;
+export interface MilestoneInfo {
+  'status' : MilestoneStatus,
+  'title' : string,
+  'expiresAt' : [] | [Timestamp],
+  'activatedAt' : [] | [Timestamp],
+  'currentInvites' : bigint,
+  'description' : string,
+  'milestoneId' : MilestoneId,
+  'inviteThreshold' : bigint,
+}
+export type MilestoneStatus = { 'locked' : null } |
+  { 'unlocked' : null } |
+  { 'claimed' : null };
+export interface MonitorRecord {
+  'url' : string,
+  'lastScanAt' : bigint,
+  'active' : boolean,
+  'userId' : Principal,
+  'frequency' : string,
+}
+export type NicheFunnelEventType = { 'audit_sent' : null } |
+  { 'form_submit' : null } |
+  { 'landing_view' : null } |
+  { 'whatsapp_sent' : null } |
+  { 'call_booked' : null } |
+  { 'whatsapp_click' : null } |
+  { 'share_clicked' : null };
+export interface NicheFunnelMetrics {
+  'city' : string,
+  'niche' : string,
+  'counts' : Array<[string, bigint]>,
+}
 export interface Note {
   'id' : NoteId,
   'content' : string,
@@ -282,11 +837,89 @@ export interface Note {
 export type NoteId = bigint;
 export type NoteType = { 'reminder' : null } |
   { 'note' : null };
+export interface NotificationRecord {
+  'id' : string,
+  'title' : string,
+  'actionUrl' : [] | [string],
+  'metadata' : [] | [string],
+  'body' : string,
+  'userId' : string,
+  'createdAt' : bigint,
+  'type' : string,
+  'isRead' : boolean,
+}
+export interface NudgeDelivery {
+  'id' : bigint,
+  'userId' : string,
+  'sentAt' : Timestamp,
+  'userSegment' : UserSegment,
+  'actionTakenAt' : [] | [Timestamp],
+  'nudgeType' : NudgeType,
+  'converted' : boolean,
+}
+export interface NudgeEvent {
+  'id' : bigint,
+  'actedOnAt' : [] | [bigint],
+  'userId' : string,
+  'variantType' : NudgeVariantType,
+  'sentAt' : bigint,
+  'variantId' : string,
+  'segment' : ActivitySegment,
+  'openedAt' : [] | [bigint],
+}
+export interface NudgePerformanceMetrics {
+  'totalActedOn' : bigint,
+  'actionRatePct' : number,
+  'variantType' : NudgeVariantType,
+  'totalSent' : bigint,
+  'variantId' : string,
+  'conversionLiftPct' : number,
+  'totalOpened' : bigint,
+  'openRatePct' : number,
+}
+export interface NudgePerformanceRow {
+  'opened' : bigint,
+  'sent' : bigint,
+  'variantId' : string,
+  'segment' : Segment,
+  'conversionRate' : number,
+  'isWinner' : boolean,
+  'copyType' : string,
+  'actionTaken' : bigint,
+  'openRate' : number,
+}
+export interface NudgePerformanceStat {
+  'actionCount' : bigint,
+  'actionRatePct' : number,
+  'userSegment' : UserSegment,
+  'sentCount' : bigint,
+  'nudgeType' : NudgeType,
+  'conversionLiftPct' : number,
+}
+export type NudgeType = { 'reward' : null } |
+  { 'urgency' : null } |
+  { 'fomo' : null } |
+  { 'money_visibility' : null };
+export type NudgeVariantType = { 'reward' : null } |
+  { 'urgency' : null } |
+  { 'fomo' : null };
+export type OfferType = { 'limited_discount' : null } |
+  { 'bonus_credits' : null } |
+  { 'free_trial_2d' : null };
 export interface OnboardingPrefs {
   'city' : string,
   'targetBudget' : bigint,
   'niche' : string,
   'completedOnboarding' : boolean,
+}
+export interface OnboardingTourState {
+  'completedAt' : [] | [bigint],
+  'startedAt' : bigint,
+  'skipped' : boolean,
+  'userId' : string,
+  'completed' : boolean,
+  'currentStep' : bigint,
+  'completedSteps' : Array<bigint>,
 }
 export interface OutreachCampaign {
   'id' : bigint,
@@ -319,6 +952,69 @@ export interface OutreachMessage {
   'consentChecked' : boolean,
   'scheduledAt' : Timestamp,
 }
+export interface PageSpeedResult {
+  'cls' : number,
+  'fcp' : number,
+  'fid' : number,
+  'lcp' : number,
+  'tbt' : number,
+  'tti' : number,
+  'url' : string,
+  'fetchedAt' : bigint,
+  'opportunities' : Array<string>,
+  'mobileScore' : bigint,
+  'desktopScore' : bigint,
+  'diagnostics' : Array<string>,
+}
+export interface PaywallState {
+  'userId' : string,
+  'abVariant' : PaywallTimingVariant,
+  'hasExperiencedValueMoment' : boolean,
+  'paywallShownAfterValue' : boolean,
+  'paywallShownAt' : [] | [bigint],
+}
+export type PaywallTimingVariant = { 'after_value_moment' : null } |
+  { 'immediate' : null };
+export interface PerformanceScore {
+  'activityScore' : bigint,
+  'overallScore' : bigint,
+  'userId' : string,
+  'rank' : string,
+  'estimatedMonthlyRevenue' : bigint,
+  'updatedAt' : bigint,
+  'conversionRate' : bigint,
+  'percentileRank' : bigint,
+  'revenueScore' : bigint,
+}
+export interface PlanLimits {
+  'seoChecklist' : boolean,
+  'premiumAutomation' : boolean,
+  'campaignBuilder' : boolean,
+  'unlimitedLeads' : boolean,
+  'advancedAnalytics' : boolean,
+  'whiteLabelReports' : boolean,
+  'crmPipeline' : boolean,
+  'dailyLeads' : bigint,
+  'autoFollowUp' : boolean,
+  'aiProposalGenerator' : boolean,
+  'teamAccess' : boolean,
+  'aiPitchGenerator' : boolean,
+}
+export type PlanTier = { 'Pro' : null } |
+  { 'Starter' : null } |
+  { 'Free' : null } |
+  { 'Growth' : null } |
+  { 'Agency' : null };
+export interface PricingRecommendation {
+  'computedAt' : bigint,
+  'offerLabel' : string,
+  'userId' : string,
+  'shownAt' : [] | [bigint],
+  'currentPlan' : string,
+  'segment' : ActivitySegment,
+  'acceptedAt' : [] | [bigint],
+  'recommendedOffer' : OfferType,
+}
 export type PriorityTag = { 'low' : null } |
   { 'high' : null } |
   { 'medium' : null };
@@ -334,11 +1030,150 @@ export interface Proposal {
   'pricingBreakdown' : string,
 }
 export type ProposalId = bigint;
+export interface RawMetrics {
+  'hasContactForm' : boolean,
+  'hasOpeningHours' : boolean,
+  'hasHSTS' : boolean,
+  'robotsTxtFound' : boolean,
+  'imagesMissingAlt' : bigint,
+  'hasH1' : boolean,
+  'hasAddress' : boolean,
+  'hasTestimonials' : boolean,
+  'titleLength' : bigint,
+  'sitemapFound' : boolean,
+  'hasXContentType' : boolean,
+  'imageCount' : bigint,
+  'hasViewport' : boolean,
+  'internalLinkCount' : bigint,
+  'hasWhatsAppLink' : boolean,
+  'httpsEnabled' : boolean,
+  'hasTitle' : boolean,
+  'hasCanonical' : boolean,
+  'hasPhoneNumber' : boolean,
+  'hasCTA' : boolean,
+  'hasBusinessName' : boolean,
+  'renderBlockingScripts' : bigint,
+  'hasXFrame' : boolean,
+  'hasMixedContent' : boolean,
+  'hasGoogleMap' : boolean,
+  'metaDescLength' : bigint,
+  'hasMediaQueries' : boolean,
+  'hasMetaDesc' : boolean,
+}
+export interface RazorpayOrder {
+  'receipt' : string,
+  'orderId' : string,
+  'currency' : string,
+  'amount' : bigint,
+}
+export type ReferralFunnelEventType = { 'landing_view' : null } |
+  { 'reward_claimed' : null } |
+  { 'signup_started' : null } |
+  { 'link_generated' : null } |
+  { 'share_clicked' : null } |
+  { 'signup_completed' : null };
+export interface ReferralFunnelStats {
+  'totalLinksGenerated' : bigint,
+  'totalRewardsClaimed' : bigint,
+  'steps' : Array<ReferralFunnelStep>,
+}
+export interface ReferralFunnelStep {
+  'conversionPct' : number,
+  'count' : bigint,
+  'stepName' : string,
+}
+export interface ReferralRecord {
+  'id' : bigint,
+  'status' : ReferralStatus,
+  'completedAt' : [] | [Timestamp],
+  'referredUserId' : [] | [Principal],
+  'referralCode' : string,
+  'rewardClaimed' : boolean,
+  'createdAt' : Timestamp,
+  'referrerId' : Principal,
+}
+export interface ReferralStats {
+  'creditsEarned' : bigint,
+  'completed' : bigint,
+  'signedUp' : bigint,
+  'trialDaysEarned' : bigint,
+  'totalInvited' : bigint,
+}
+export type ReferralStatus = { 'created' : null } |
+  { 'completed' : null } |
+  { 'signedUp' : null };
+export interface ResultMetric {
+  'after' : string,
+  'metricLabel' : string,
+  'before' : string,
+}
+export interface RetentionAnalytics {
+  'totalNotificationsSent' : bigint,
+  'byTriggerType' : Array<TriggerStats>,
+  'totalActionsCompleted' : bigint,
+  'conversionRate' : number,
+  'totalOpened' : bigint,
+  'returnRate' : number,
+  'cohortByDay' : Array<CohortDayStats>,
+  'openRate' : number,
+  'byCopyType' : Array<CopyTypeStats>,
+}
+export interface RetentionData {
+  'creditsEarned' : bigint,
+  'weeklyLeadsGenerated' : bigint,
+  'userId' : string,
+  'lastActiveDate' : string,
+  'weeklyRepliesReceived' : bigint,
+  'longestStreak' : bigint,
+  'lastSessionAt' : bigint,
+  'churnRisk' : ChurnRisk,
+  'currentStreak' : bigint,
+  'lastCreditClaim' : bigint,
+  'weeklyProposalsSent' : bigint,
+}
+export interface RevenuePrediction {
+  'monthlyEstimate' : bigint,
+  'pipelineValue' : bigint,
+  'generatedAt' : bigint,
+  'hotLeadsCount' : bigint,
+  'predictionBasis' : string,
+  'missedOppCount' : bigint,
+  'weeklyEstimate' : bigint,
+  'closingThisWeek' : bigint,
+}
+export interface SaasMetricsResponse {
+  'arr' : bigint,
+  'ltv' : LtvBreakdown,
+  'mrr' : bigint,
+  'nrr' : number,
+  'activeUsers' : bigint,
+  'newCustomers' : bigint,
+  'churnedMrr' : bigint,
+  'totalPayingCustomers' : bigint,
+  'monthlyChurnRate' : number,
+  'monthlyGrowthRate' : number,
+  'revenueChurnRate' : number,
+  'churnedCustomers' : bigint,
+  'cacPaybackMonths' : number,
+  'closingMrr' : bigint,
+  'newMrr' : bigint,
+  'ltvCacRatio' : number,
+  'cacByChannel' : CacBreakdown,
+  'dateRange' : { 'to' : bigint, 'from' : bigint },
+  'expansionMrr' : bigint,
+  'ltvCacStatus' : HealthStatus,
+}
 export interface SaveTemplateInput {
   'clientId' : ClientId,
   'templateId' : string,
   'templateName' : string,
   'sections' : TemplateSections,
+}
+export interface ScanLimitRecord {
+  'scansThisWeek' : bigint,
+  'userId' : Principal,
+  'weekStartedAt' : Timestamp,
+  'planTier' : PlanTier,
 }
 export interface ScraperJob {
   'id' : bigint,
@@ -355,6 +1190,9 @@ export interface ScraperJob {
 export type ScriptType = { 'chat_suggestion' : null } |
   { 'call_script' : null } |
   { 'email_sequence' : null };
+export type Segment = { 'Medium' : null } |
+  { 'HighIntent' : null } |
+  { 'LowActivity' : null };
 export interface SenderIdentity {
   'id' : SenderIdentityId,
   'reputationScore' : bigint,
@@ -400,14 +1238,90 @@ export interface SeoAuditRecord {
   'items' : Array<SeoAuditItem>,
   'keywordDensityScore' : bigint,
 }
+export interface SeoPagePublic {
+  'id' : string,
+  'isPublished' : boolean,
+  'pricingHint' : string,
+  'city' : string,
+  'headline' : string,
+  'createdAt' : bigint,
+  'slug' : string,
+  'caseExample' : { 'after' : string, 'before' : string },
+  'painPoints' : Array<string>,
+  'niche' : string,
+  'benefits' : Array<string>,
+  'subheadline' : string,
+}
+export interface SeoPageRequest { 'city' : string, 'niche' : string }
+export interface SeoSignals {
+  'metaPresent' : boolean,
+  'h1Count' : bigint,
+  'titlePresent' : boolean,
+  'schemaPresent' : boolean,
+  'internalLinks' : bigint,
+}
+export type ShareWinType = { 'streak' : null } |
+  { 'deal' : null } |
+  { 'leads' : null };
+export interface ShareableWin {
+  'displayName' : string,
+  'metricValue' : bigint,
+  'city' : string,
+  'date' : string,
+  'winType' : ShareWinType,
+}
+export type SocialProofActivityType = { 'referral_signup' : null } |
+  { 'leads_generated' : null } |
+  { 'deal_closed' : null } |
+  { 'pitches_sent' : null };
+export interface SocialProofEntry {
+  'id' : bigint,
+  'activityType' : SocialProofActivityType,
+  'metricValue' : bigint,
+  'city' : string,
+  'userDisplayName' : string,
+  'timestamp' : Timestamp,
+}
+export type SpendChannel = { 'referral' : null } |
+  { 'metaAds' : null } |
+  { 'other' : null } |
+  { 'googleAds' : null };
+export interface StripePlan {
+  'id' : string,
+  'interval' : string,
+  'name' : string,
+  'currency' : string,
+  'amount' : bigint,
+}
+export interface SubscriptionEvent {
+  'id' : bigint,
+  'prevPlanTier' : [] | [PlanTier],
+  'userId' : Principal,
+  'amountRs' : bigint,
+  'prevAmountRs' : [] | [bigint],
+  'timestamp' : bigint,
+  'planTier' : PlanTier,
+  'eventKind' : SubscriptionEventKind,
+}
+export type SubscriptionEventKind = { 'plan_cancelled' : null } |
+  { 'plan_upgraded' : null } |
+  { 'plan_purchased' : null } |
+  { 'plan_downgraded' : null };
 export type SubscriptionPlan = { 'pro' : null } |
-  { 'enterprise' : null } |
-  { 'starter' : null };
+  { 'growth' : null } |
+  { 'starter' : null } |
+  { 'free' : null } |
+  { 'agency' : null };
 export type SubscriptionStatus = { 'active' : null } |
   { 'canceled' : null } |
   { 'inactive' : null } |
   { 'pastDue' : null } |
   { 'trialing' : null };
+export interface SubscriptionStatus__1 {
+  'status' : string,
+  'tier' : string,
+  'currentPeriodEnd' : [] | [bigint],
+}
 export type SuggestionId = bigint;
 export type SuggestionPriority = { 'low' : null } |
   { 'high' : null } |
@@ -420,7 +1334,35 @@ export interface TemplateSections {
   'testimonials' : string,
   'footer' : string,
 }
+export interface TierLtv {
+  'ltv' : bigint,
+  'avgRetentionMonths' : number,
+  'tier' : PlanTier,
+  'amountRs' : bigint,
+  'userCount' : bigint,
+}
 export type Timestamp = bigint;
+export type TrafficSource = { 'ads' : null } |
+  { 'referral' : null } |
+  { 'organic' : null } |
+  { 'direct' : null };
+export interface TrafficSourceAttribution {
+  'referralCode' : [] | [string],
+  'source' : TrafficSource,
+  'userId' : string,
+  'signedUpAt' : Timestamp,
+}
+export interface TrafficSourceBreakdown {
+  'periodDays' : bigint,
+  'directCount' : bigint,
+  'directPct' : number,
+  'referralPct' : number,
+  'organicCount' : bigint,
+  'referralCount' : bigint,
+  'adsPct' : number,
+  'adsCount' : bigint,
+  'organicPct' : number,
+}
 export interface TransformationInput {
   'context' : Uint8Array,
   'response' : http_request_result,
@@ -430,6 +1372,49 @@ export interface TransformationOutput {
   'body' : Uint8Array,
   'headers' : Array<http_header>,
 }
+export interface TriggerStats {
+  'actionCount' : bigint,
+  'count' : bigint,
+  'actionRate' : number,
+  'triggerType' : TriggerType,
+  'openCount' : bigint,
+  'openRate' : number,
+}
+export type TriggerType = { 'drip_day_10' : null } |
+  { 'drip_day_11' : null } |
+  { 'drip_day_12' : null } |
+  { 'drip_day_13' : null } |
+  { 'drip_day_14' : null } |
+  { 'drip_day_15' : null } |
+  { 'drip_day_16' : null } |
+  { 'drip_day_17' : null } |
+  { 'drip_day_18' : null } |
+  { 'drip_day_19' : null } |
+  { 'drip_day_20' : null } |
+  { 'drip_day_21' : null } |
+  { 'drip_day_22' : null } |
+  { 'drip_day_23' : null } |
+  { 'drip_day_24' : null } |
+  { 'drip_day_25' : null } |
+  { 'drip_day_26' : null } |
+  { 'drip_day_27' : null } |
+  { 'drip_day_28' : null } |
+  { 'drip_day_0' : null } |
+  { 'drip_day_1' : null } |
+  { 'drip_day_2' : null } |
+  { 'drip_day_3' : null } |
+  { 'drip_day_4' : null } |
+  { 'drip_day_5' : null } |
+  { 'drip_day_6' : null } |
+  { 'drip_day_7' : null } |
+  { 'drip_day_8' : null } |
+  { 'drip_day_9' : null } |
+  { 'on_limit_reached' : null } |
+  { 'on_inactivity_24h' : null } |
+  { 'on_inactivity_48h' : null } |
+  { 'on_new_reply' : null } |
+  { 'on_streak_milestone' : null } |
+  { 'on_followup_due' : null };
 export interface UpdateClientMetricsInput {
   'id' : ClientId,
   'metrics' : ClientMetrics,
@@ -448,19 +1433,101 @@ export interface UpdateLeadInput {
   'phone' : string,
   'industry' : string,
 }
+export interface UserActivityScore {
+  'lastMessageSentAt' : [] | [bigint],
+  'computedAt' : bigint,
+  'userId' : string,
+  'lastProposalCreatedAt' : [] | [bigint],
+  'lastReplyReceivedAt' : [] | [bigint],
+  'segment' : ActivitySegment,
+}
+export interface UserChurnRiskRow {
+  'userId' : Principal,
+  'risk' : ChurnRisk,
+  'openPlanRevenue' : bigint,
+  'daysSinceLastAction' : bigint,
+  'openPlan' : PlanTier,
+  'lastEventType' : string,
+}
+export interface UserJourneyEvent {
+  'eventId' : bigint,
+  'metadata' : Array<[string, string]>,
+  'timestamp' : bigint,
+  'timeSincePrevMs' : [] | [bigint],
+  'eventType' : string,
+}
+export interface UserJourneyTimeline {
+  'userId' : string,
+  'events' : Array<UserJourneyEvent>,
+}
+export interface UserNotificationPrefs {
+  'lastNotificationDate' : [] | [bigint],
+  'frequencySettings' : FrequencySettings,
+  'userId' : string,
+  'whatsappOptIn' : boolean,
+  'whatsappConsentDate' : [] | [bigint],
+  'enabledTriggers' : Array<TriggerType>,
+  'notificationsSentToday' : bigint,
+  'whatsappOptOutDate' : [] | [bigint],
+}
+export interface UserPricingRow {
+  'offerLabel' : string,
+  'userId' : string,
+  'shownAt' : [] | [bigint],
+  'currentPlan' : string,
+  'segment' : ActivitySegment,
+  'recommendedOffer' : OfferType,
+}
 export type UserRole = { 'admin' : null } |
   { 'user' : null } |
   { 'guest' : null };
+export type UserSegment = { 'Medium' : null } |
+  { 'HighIntent' : null } |
+  { 'LowActivity' : null };
+export interface UserSegmentDistribution {
+  'totalScored' : bigint,
+  'scoredAt' : bigint,
+  'highIntent' : bigint,
+  'mediumActivity' : bigint,
+  'excludedChurned' : bigint,
+  'lowActivity' : bigint,
+}
 export interface UserSubscription {
   'plan' : SubscriptionPlan,
   'leadCredits' : bigint,
+  'yearlyPrice' : bigint,
   'subscriptionStatus' : SubscriptionStatus,
+  'billingCycle' : BillingCycle,
   'stripeCustomerId' : string,
+  'monthlyPrice' : bigint,
+  'trialExpiresAt' : [] | [bigint],
+}
+export interface WHEvent {
+  'metadata' : string,
+  'userId' : string,
+  'createdAt' : Timestamp,
+  'eventName' : string,
 }
 export type WarmupPhase = { 'unlimited' : null } |
   { 'phase1' : null } |
   { 'phase2' : null } |
   { 'phase3' : null };
+export interface WatiConsent {
+  'optOutAt' : [] | [bigint],
+  'userId' : string,
+  'consentGiven' : boolean,
+  'consentAt' : bigint,
+  'phone' : string,
+}
+export interface WatiMessage {
+  'id' : string,
+  'status' : string,
+  'userId' : string,
+  'templateName' : string,
+  'sentAt' : bigint,
+  'phone' : string,
+  'params' : Array<string>,
+}
 export interface WebsiteTemplate {
   'id' : TemplateId,
   'clientId' : ClientId,
@@ -469,6 +1536,10 @@ export interface WebsiteTemplate {
   'sections' : TemplateSections,
   'lastSaved' : Timestamp,
 }
+export type WeekTheme = { 'habit_building' : null } |
+  { 'scale_upgrade' : null } |
+  { 'activation' : null } |
+  { 'conversion' : null };
 export interface WeeklyAction {
   'action' : string,
   'estimatedImpact' : string,
@@ -480,6 +1551,25 @@ export interface WeeklyAction {
     { 'launch_ad' : null } |
     { 'post_content' : null },
 }
+export interface WeeklyReportData {
+  'url' : string,
+  'resolvedIssueCount' : bigint,
+  'scoreDelta' : bigint,
+  'userId' : Principal,
+  'generatedAt' : Timestamp,
+  'topRecommendation' : string,
+  'newIssueCount' : bigint,
+  'latestScore' : bigint,
+  'previousScore' : bigint,
+}
+export interface WhatsAppMessage {
+  'dayNumber' : bigint,
+  'message' : string,
+  'stopConditions' : Array<WhatsAppStopCondition>,
+}
+export type WhatsAppStopCondition = { 'user_opted_out' : null } |
+  { 'user_replied' : null } |
+  { 'sequence_completed' : null };
 export interface WhatsAppTemplate {
   'id' : WhatsAppTemplateId,
   'status' : WhatsAppTemplateStatus,
@@ -510,13 +1600,54 @@ export interface http_request_result {
 }
 export interface _SERVICE {
   '_initializeAccessControl' : ActorMethod<[], undefined>,
+  'activateFeatureUnlock' : ActorMethod<
+    [GatedFeatureName],
+    FeatureUnlockSession
+  >,
+  'activateMilestone' : ActorMethod<[MilestoneId], boolean>,
+  'addMonitoredUrl' : ActorMethod<[string], undefined>,
   'addSenderIdentity' : ActorMethod<[string, SenderType], SenderIdentity>,
   'assignCallerUserRole' : ActorMethod<[Principal, UserRole], undefined>,
+  'awardCredits' : ActorMethod<[string, bigint], undefined>,
+  'awardWeeklyRewards' : ActorMethod<[string, string], Array<[string, bigint]>>,
+  'canSendNotification' : ActorMethod<[string], boolean>,
+  'cancelSubscription' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'checkChurnRisk' : ActorMethod<[string], ChurnRisk>,
+  'checkFeatureUnlock' : ActorMethod<[GatedFeatureName], FeatureUnlockCheck>,
   'checkOptOutStatus' : ActorMethod<[LeadId], boolean>,
+  'checkValueMoment' : ActorMethod<[string], boolean>,
   'claimMilestoneReward' : ActorMethod<[bigint], boolean>,
+  'claimReferralByCode' : ActorMethod<[string], boolean>,
   'clearGA4Credentials' : ActorMethod<[], undefined>,
   'completeNote' : ActorMethod<[NoteId], boolean>,
   'completeOnboarding' : ActorMethod<[], undefined>,
+  'completeOnboardingTour' : ActorMethod<
+    [],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'createCaseStudy' : ActorMethod<
+    [
+      string,
+      string,
+      string,
+      string,
+      Array<string>,
+      Array<ResultMetric>,
+      [] | [string],
+    ],
+    { 'ok' : CaseStudy } |
+      { 'err' : string }
+  >,
+  'createCheckoutSession' : ActorMethod<
+    [string, string, string],
+    { 'ok' : CheckoutSession } |
+      { 'err' : string }
+  >,
   'createClient' : ActorMethod<[CreateClientInput], Client>,
   'createConversionScript' : ActorMethod<
     [string, string, string],
@@ -531,7 +1662,15 @@ export interface _SERVICE {
     LandingPage
   >,
   'createLead' : ActorMethod<[CreateLeadInput], Lead>,
+  'createMarketplaceListing' : ActorMethod<
+    [MarketplaceListingType, string, string, bigint, Array<string>],
+    MarketplaceListing
+  >,
   'createNote' : ActorMethod<[CreateNoteInput], Note>,
+  'createNotification' : ActorMethod<
+    [string, string, string, [] | [string]],
+    string
+  >,
   'createOutreachCampaign' : ActorMethod<
     [CreateOutreachCampaignInput],
     OutreachCampaign
@@ -540,29 +1679,124 @@ export interface _SERVICE {
     [CreateOutreachMessageInput],
     OutreachMessage
   >,
+  'createRazorpayOrder' : ActorMethod<
+    [string],
+    { 'ok' : RazorpayOrder } |
+      { 'err' : string }
+  >,
+  'createReferral' : ActorMethod<[], ReferralRecord>,
   'createScraperJob' : ActorMethod<[string, string], ScraperJob>,
   'createWhatsAppTemplate' : ActorMethod<
     [string, WhatsAppTemplateCategory, string, Array<string>],
     WhatsAppTemplate
   >,
+  'deleteCaseStudy' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'deleteClient' : ActorMethod<[ClientId], boolean>,
+  'deleteContentCalendar' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'deleteLead' : ActorMethod<[LeadId], boolean>,
   'deleteNote' : ActorMethod<[NoteId], boolean>,
+  'deleteNotification' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'deleteProposal' : ActorMethod<[ProposalId], boolean>,
+  'deleteSeoPage' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'dismissSuggestion' : ActorMethod<[SuggestionId], boolean>,
+  'finalizeChallengeWeek' : ActorMethod<
+    [string],
+    Array<FinalizedChallengeResult>
+  >,
+  'generateAutoReport' : ActorMethod<[ClientId, string], AutoReport>,
+  'generateClientGrowthPlan' : ActorMethod<[ClientId], ClientGrowthPlan>,
+  'generateContentCalendar' : ActorMethod<
+    [string, string, string],
+    { 'ok' : ContentCalendarPublic } |
+      { 'err' : string }
+  >,
   'generateGrowthReport' : ActorMethod<
     [bigint, string, string, bigint, bigint, bigint],
     GrowthReport
   >,
+  'generateInvestorReport' : ActorMethod<
+    [],
+    { 'ok' : InvestorReport } |
+      { 'err' : string }
+  >,
   'generateProposal' : ActorMethod<[CreateProposalInput], Proposal>,
+  'generateSeoPages' : ActorMethod<
+    [Array<SeoPageRequest>],
+    { 'ok' : Array<SeoPagePublic> } |
+      { 'err' : string }
+  >,
+  'generateShareableWin' : ActorMethod<
+    [string, string, string, bigint],
+    ShareableWin
+  >,
+  'getAbTestResult' : ActorMethod<[AbTestName], [] | [AbTestResult]>,
+  'getAbVariant' : ActorMethod<[AbTestName], AbVariantId>,
+  'getAccountabilityState' : ActorMethod<[], AccountabilityStateView>,
+  'getAdminEvents' : ActorMethod<[], Array<WHEvent>>,
+  'getAffiliateStats' : ActorMethod<[], AffiliateStats>,
+  'getAnalyticsEvents' : ActorMethod<[string], Array<AnalyticsEvent>>,
+  'getAuditHistory' : ActorMethod<[string], Array<AuditRecord>>,
+  'getAutoAgencyState' : ActorMethod<[], AutoAgencyStateView>,
+  'getAutoReport' : ActorMethod<[ClientId], [] | [AutoReport]>,
   'getCallerUserRole' : ActorMethod<[], UserRole>,
   'getCampaignsByLead' : ActorMethod<[LeadId], Array<OutreachCampaign>>,
+  'getCaseStudy' : ActorMethod<[string], [] | [CaseStudy]>,
+  'getChallengeParticipants' : ActorMethod<
+    [string],
+    Array<ChallengeParticipant>
+  >,
+  'getCheckoutConfig' : ActorMethod<
+    [],
+    { 'plans' : Array<StripePlan>, 'publishableKey' : string }
+  >,
+  'getChurnRiskUsers' : ActorMethod<[], Array<UserChurnRiskRow>>,
+  'getChurnStatus' : ActorMethod<
+    [],
+    {
+      'isAtRisk' : boolean,
+      'pendingHotLeads' : bigint,
+      'daysSinceLastSession' : bigint,
+    }
+  >,
+  'getCityLeaderboard' : ActorMethod<[string, string], Array<LeaderboardEntry>>,
   'getClient' : ActorMethod<[ClientId], [] | [Client]>,
+  'getClientGrowthPlan' : ActorMethod<[ClientId], [] | [ClientGrowthPlan]>,
+  'getCohortRetention' : ActorMethod<
+    [[] | [bigint]],
+    Array<CohortRetentionRow>
+  >,
+  'getCompetitorComparison' : ActorMethod<
+    [Array<string>],
+    Array<CompetitorRecord>
+  >,
+  'getCompetitorIntelReport' : ActorMethod<[], [] | [CompetitorIntelReport]>,
   'getConsentLogs' : ActorMethod<[], Array<ConsentLog>>,
+  'getContentCalendar' : ActorMethod<[string], [] | [ContentCalendarPublic]>,
+  'getDealSuggestions' : ActorMethod<[], Array<DealSuggestion>>,
   'getDeliverabilityMetrics' : ActorMethod<
     [SenderIdentityId],
     Array<DeliveryStats>
   >,
+  'getDripMessage' : ActorMethod<[bigint], [] | [DripSequenceDay]>,
+  'getEnhancedFunnelMetrics' : ActorMethod<[], EnhancedFunnelMetrics>,
+  'getEventDrillDown' : ActorMethod<[string], EventDrillDown>,
+  'getFunnelMetrics' : ActorMethod<[], FunnelMetrics>,
   'getGA4CredentialStatus' : ActorMethod<[], GA4CredentialStatus>,
   'getGA4Dashboard' : ActorMethod<
     [bigint],
@@ -570,40 +1804,186 @@ export interface _SERVICE {
       { 'err' : string }
   >,
   'getGamificationState' : ActorMethod<[], GamificationState>,
+  'getGrowthOverview' : ActorMethod<[], GrowthOverview>,
+  'getHeatmapSummary' : ActorMethod<[], Array<[string, bigint]>>,
   'getImportHistory' : ActorMethod<[], Array<ImportRecord>>,
   'getLandingPage' : ActorMethod<[LandingPageId], [] | [LandingPage]>,
+  'getLatestAudit' : ActorMethod<[string], [] | [AuditRecord]>,
+  'getLatestReport' : ActorMethod<[], [] | [InvestorReport]>,
   'getLead' : ActorMethod<[LeadId], [] | [Lead]>,
+  'getMarketingSpend' : ActorMethod<[[] | [string]], Array<MarketingSpend>>,
+  'getMarketplaceListings' : ActorMethod<[], Array<MarketplaceListing>>,
+  'getMilestoneStatus' : ActorMethod<[], Array<MilestoneInfo>>,
+  'getMonitoredUrls' : ActorMethod<[], Array<MonitorRecord>>,
+  'getMonitoredUrlsNeedingRescan' : ActorMethod<[], Array<MonitorRecord>>,
+  'getMyActivityScore' : ActorMethod<[], UserActivityScore>,
+  'getMyPricingRecommendation' : ActorMethod<[], PricingRecommendation>,
   'getMySubscription' : ActorMethod<[], [] | [UserSubscription]>,
+  'getNicheFunnelMetrics' : ActorMethod<[string, string], NicheFunnelMetrics>,
   'getNote' : ActorMethod<[NoteId], [] | [Note]>,
+  'getNudgeDeliveryStats' : ActorMethod<[], Array<NudgePerformanceStat>>,
+  'getNudgeMetricsBySegment' : ActorMethod<
+    [ActivitySegment],
+    Array<NudgePerformanceMetrics>
+  >,
+  'getNudgePerformanceBySegment' : ActorMethod<
+    [[] | [Segment]],
+    Array<NudgePerformanceRow>
+  >,
+  'getNudgePerformanceMetrics' : ActorMethod<
+    [],
+    Array<NudgePerformanceMetrics>
+  >,
   'getOnboardingPrefs' : ActorMethod<[], [] | [OnboardingPrefs]>,
+  'getOnboardingState' : ActorMethod<[], OnboardingTourState>,
   'getOutreachMessagesByLead' : ActorMethod<[LeadId], Array<OutreachMessage>>,
+  'getPageSpeedHistory' : ActorMethod<[string], Array<PageSpeedResult>>,
+  'getPaywallState' : ActorMethod<[string], [] | [PaywallState]>,
+  'getPerformanceScore' : ActorMethod<[], PerformanceScore>,
+  'getPlanLimits' : ActorMethod<[SubscriptionPlan], PlanLimits>,
   'getProposal' : ActorMethod<[ProposalId], [] | [Proposal]>,
+  'getPublicCaseStudy' : ActorMethod<[string], [] | [CaseStudy]>,
+  'getRazorpayConfig' : ActorMethod<
+    [],
+    { 'ok' : { 'currency' : string, 'keyId' : string } } |
+      { 'err' : string }
+  >,
+  'getRealTimeEventStream' : ActorMethod<[], Array<LiveEventEntry>>,
+  'getReferralFunnelStats' : ActorMethod<[], ReferralFunnelStats>,
+  'getReferralStats' : ActorMethod<[], ReferralStats>,
+  'getRetentionAnalytics' : ActorMethod<[], RetentionAnalytics>,
+  'getRetentionData' : ActorMethod<[string], [] | [RetentionData]>,
+  'getRevenuePrediction' : ActorMethod<[], RevenuePrediction>,
+  'getSaasHealthAlerts' : ActorMethod<[], Array<HealthAlert>>,
+  'getSaasMetrics' : ActorMethod<[[] | [bigint]], SaasMetricsResponse>,
   'getScraperJob' : ActorMethod<[bigint], [] | [ScraperJob]>,
   'getSenderIdentities' : ActorMethod<[], Array<SenderIdentity>>,
+  'getSeoPage' : ActorMethod<[string], [] | [SeoPagePublic]>,
   'getSubscriptionByUser' : ActorMethod<[Principal], [] | [UserSubscription]>,
+  'getSubscriptionHistory' : ActorMethod<
+    [[] | [Principal]],
+    Array<SubscriptionEvent>
+  >,
+  'getSubscriptionStatus' : ActorMethod<[], SubscriptionStatus__1>,
+  'getTrafficSourceBreakdown' : ActorMethod<[bigint], TrafficSourceBreakdown>,
+  'getUnreadCount' : ActorMethod<[], bigint>,
+  'getUserActivityScore' : ActorMethod<[string], UserActivityScore>,
+  'getUserJourneyTimeline' : ActorMethod<[string], UserJourneyTimeline>,
+  'getUserNotificationPrefs' : ActorMethod<[], UserNotificationPrefs>,
+  'getUserSegments' : ActorMethod<[], UserSegmentDistribution>,
+  'getWatiConfig' : ActorMethod<
+    [],
+    [] | [{ 'baseUrl' : string, 'businessPhoneId' : string }]
+  >,
+  'getWatiConsent' : ActorMethod<[], [] | [WatiConsent]>,
+  'getWatiTemplates' : ActorMethod<
+    [],
+    {
+        'ok' : Array<
+          { 'status' : string, 'name' : string, 'category' : string }
+        >
+      } |
+      { 'err' : string }
+  >,
   'getWebsiteTemplate' : ActorMethod<[ClientId], [] | [WebsiteTemplate]>,
+  'getWeeklyReportData' : ActorMethod<[], [] | [WeeklyReportData]>,
+  'getWhatsAppSequence' : ActorMethod<[], Array<WhatsAppMessage>>,
+  'handleStripeWebhook' : ActorMethod<
+    [string, string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'importCSVLeads' : ActorMethod<
     [Array<ImportRowResult>, string, string],
     ImportRecord
   >,
   'isCallerAdmin' : ActorMethod<[], boolean>,
+  'joinChallenge' : ActorMethod<[string, string, string], undefined>,
   'listAllCampaigns' : ActorMethod<[], Array<OutreachCampaign>>,
   'listAllOutreachMessages' : ActorMethod<[], Array<OutreachMessage>>,
+  'listAuditLeads' : ActorMethod<[], Array<AuditLead>>,
+  'listCaseStudies' : ActorMethod<[], Array<CaseStudy>>,
   'listClients' : ActorMethod<[], Array<Client>>,
+  'listCommissions' : ActorMethod<[[] | [string]], Array<CommissionRecord>>,
+  'listContentCalendars' : ActorMethod<[], Array<ContentCalendarPublic>>,
   'listConversionScripts' : ActorMethod<[], Array<ConversionScript>>,
+  'listGatedFeatureAdminStats' : ActorMethod<[], Array<GatedFeatureAdminStat>>,
   'listGrowthReports' : ActorMethod<[bigint], Array<GrowthReport>>,
   'listGrowthSuggestions' : ActorMethod<[ClientId], Array<GrowthSuggestion>>,
   'listLandingPages' : ActorMethod<[], Array<LandingPage>>,
   'listLeads' : ActorMethod<[], Array<Lead>>,
   'listLeadsByStatus' : ActorMethod<[LeadStatus], Array<Lead>>,
   'listNotesByLead' : ActorMethod<[LeadId], Array<Note>>,
+  'listNotifications' : ActorMethod<
+    [bigint, boolean],
+    Array<NotificationRecord>
+  >,
+  'listPayoutRequests' : ActorMethod<
+    [],
+    Array<
+      {
+        'status' : string,
+        'requestId' : string,
+        'createdAt' : bigint,
+        'amount' : bigint,
+      }
+    >
+  >,
   'listProposalsByLead' : ActorMethod<[LeadId], Array<Proposal>>,
+  'listRecentSocialProof' : ActorMethod<[], Array<SocialProofEntry>>,
   'listScraperJobs' : ActorMethod<[], Array<ScraperJob>>,
   'listSeoAudits' : ActorMethod<[], Array<SeoAuditRecord>>,
+  'listSeoPages' : ActorMethod<[], Array<SeoPagePublic>>,
+  'listTrafficAttributions' : ActorMethod<[], Array<TrafficSourceAttribution>>,
+  'listUserPricingRows' : ActorMethod<[], Array<UserPricingRow>>,
+  'listUserReferrals' : ActorMethod<[], Array<ReferralRecord>>,
+  'listWatiMessages' : ActorMethod<[bigint], Array<WatiMessage>>,
   'listWhatsAppTemplates' : ActorMethod<[], Array<WhatsAppTemplate>>,
+  'markAllRead' : ActorMethod<[], { 'ok' : string } | { 'err' : string }>,
+  'markCommissionPaid' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'markNudgeActedOn' : ActorMethod<[bigint], boolean>,
+  'markNudgeActionTaken' : ActorMethod<[bigint, boolean], undefined>,
+  'markNudgeOpened' : ActorMethod<[bigint], boolean>,
+  'markPostPosted' : ActorMethod<
+    [string, string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'markRead' : ActorMethod<[string], { 'ok' : string } | { 'err' : string }>,
+  'markReportSent' : ActorMethod<[ClientId], undefined>,
   'markSuggestionImplemented' : ActorMethod<[SuggestionId], boolean>,
   'moveLead' : ActorMethod<[LeadId, LeadStatus], boolean>,
+  'publishCaseStudy' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'publishLandingPage' : ActorMethod<[LandingPageId], boolean>,
+  'publishSeoPage' : ActorMethod<
+    [string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'razorpayTransform' : ActorMethod<
+    [TransformationInput],
+    TransformationOutput
+  >,
+  'recordAbConversion' : ActorMethod<[AbTestName, AbVariantId], undefined>,
+  'recordAbImpression' : ActorMethod<[AbTestName, AbVariantId], undefined>,
+  'recordActionCompleted' : ActorMethod<[bigint], boolean>,
+  'recordAnalyticsEvent' : ActorMethod<
+    [string, AnalyticsEventType, Array<[string, string]>],
+    bigint
+  >,
+  'recordCommission' : ActorMethod<
+    [string, string, bigint],
+    { 'ok' : CommissionRecord } |
+      { 'err' : string }
+  >,
   'recordConsentLog' : ActorMethod<
     [string, string, ConsentType, string, string, string],
     ConsentLogId
@@ -613,23 +1993,152 @@ export interface _SERVICE {
     [SenderIdentityId, string, bigint, bigint, bigint, bigint, bigint],
     DeliverabilityStatId
   >,
+  'recordFeatureUnlockUsed' : ActorMethod<[GatedFeatureName], undefined>,
+  'recordHeatmapEvent' : ActorMethod<
+    [string, string, string, HeatmapEventKind, bigint, bigint],
+    bigint
+  >,
+  'recordMarketingSpend' : ActorMethod<[string, SpendChannel, bigint], bigint>,
+  'recordNicheFunnelEvent' : ActorMethod<
+    [string, NicheFunnelEventType, string, string, [] | [bigint]],
+    undefined
+  >,
+  'recordNotificationOpened' : ActorMethod<[bigint], boolean>,
+  'recordNudgeDelivery' : ActorMethod<
+    [string, NudgeType, UserSegment],
+    NudgeDelivery
+  >,
+  'recordOfferShown' : ActorMethod<[], undefined>,
+  'recordPaywallShown' : ActorMethod<[string], PaywallState>,
+  'recordShareClick' : ActorMethod<[string, string], undefined>,
+  'recordSocialProofEntry' : ActorMethod<
+    [string, string, SocialProofActivityType, bigint],
+    SocialProofEntry
+  >,
+  'recordSubscriptionEvent' : ActorMethod<
+    [SubscriptionEventKind, PlanTier, [] | [PlanTier]],
+    bigint
+  >,
+  'recordTrafficSourceAttribution' : ActorMethod<
+    [string, TrafficSource, [] | [string]],
+    undefined
+  >,
+  'refreshDealSuggestions' : ActorMethod<[], undefined>,
+  'requestPayout' : ActorMethod<
+    [string],
+    { 'ok' : { 'requestId' : string } } |
+      { 'err' : string }
+  >,
+  'resetAbTest' : ActorMethod<[AbTestName], undefined>,
+  'resetOnboardingTour' : ActorMethod<
+    [],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'runAgencyCycle' : ActorMethod<[], undefined>,
+  'runCompetitorScan' : ActorMethod<
+    [string, Array<string>],
+    { 'ok' : CompetitorIntelReport } |
+      { 'err' : string }
+  >,
+  'runPageSpeedScan' : ActorMethod<
+    [string],
+    { 'ok' : PageSpeedResult } |
+      { 'err' : string }
+  >,
   'runSeoAudit' : ActorMethod<[string], SeoAuditRecord>,
+  'saveCompetitorUrls' : ActorMethod<
+    [string, Array<string>],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'saveOnboardingPrefs' : ActorMethod<[string, string, bigint], undefined>,
+  'saveWatiConfig' : ActorMethod<
+    [string, string, string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'saveWebsiteTemplate' : ActorMethod<[SaveTemplateInput], WebsiteTemplate>,
+  'sendWatiTemplate' : ActorMethod<
+    [string, string, Array<string>],
+    { 'ok' : { 'messageId' : string } } |
+      { 'err' : string }
+  >,
+  'setAutoAgencyEnabled' : ActorMethod<[boolean], undefined>,
   'setGA4Credentials' : ActorMethod<[string, string], undefined>,
+  'setUserNotificationPrefs' : ActorMethod<
+    [FrequencySettings, Array<TriggerType>],
+    undefined
+  >,
+  'setWhatsAppConsent' : ActorMethod<[string, boolean], undefined>,
+  'skipOnboardingTour' : ActorMethod<
+    [],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
+  'submitAudit' : ActorMethod<[string], AuditRecord>,
+  'submitAuditLead' : ActorMethod<[string, string, string, string], AuditLead>,
   'submitTemplateForApproval' : ActorMethod<[WhatsAppTemplateId], boolean>,
+  'trackReferralFunnelEvent' : ActorMethod<
+    [ReferralFunnelEventType, string, [] | [string], [] | [string]],
+    undefined
+  >,
+  'trackReferralLandingView' : ActorMethod<[string], undefined>,
+  'trackShareClick' : ActorMethod<[string, string, [] | [string]], undefined>,
+  'trackWebsiteHealthEvent' : ActorMethod<[string, string], undefined>,
   'transform' : ActorMethod<[TransformationInput], TransformationOutput>,
+  'transformCompetitorIntel' : ActorMethod<
+    [TransformationInput],
+    TransformationOutput
+  >,
   'transformGA4' : ActorMethod<[TransformationInput], TransformationOutput>,
+  'transformPageSpeed' : ActorMethod<
+    [TransformationInput],
+    TransformationOutput
+  >,
+  'transformPaymentsWhatsapp' : ActorMethod<
+    [TransformationInput],
+    TransformationOutput
+  >,
+  'transformWebsiteHealth' : ActorMethod<
+    [TransformationInput],
+    TransformationOutput
+  >,
+  'triggerNudgeForUser' : ActorMethod<[string], [] | [NudgeEvent]>,
+  'triggerSystemNotifications' : ActorMethod<[], bigint>,
+  'updateAuditScanLimit' : ActorMethod<[], ScanLimitRecord>,
   'updateCampaignStats' : ActorMethod<
     [bigint, bigint, bigint, string],
     OutreachCampaign
   >,
+  'updateCaseStudy' : ActorMethod<
+    [string, CaseStudyUpdate],
+    { 'ok' : CaseStudy } |
+      { 'err' : string }
+  >,
+  'updateChallengeLeadsCount' : ActorMethod<[string, bigint], undefined>,
+  'updateChallengeProgress' : ActorMethod<
+    [string, string, string, bigint],
+    undefined
+  >,
   'updateClientMetrics' : ActorMethod<[UpdateClientMetricsInput], boolean>,
   'updateConsentStatus' : ActorMethod<[ConsentLogId, ConsentStatus], boolean>,
+  'updateDailyProgress' : ActorMethod<[bigint, bigint, bigint], undefined>,
+  'updateLastSession' : ActorMethod<[], undefined>,
   'updateLead' : ActorMethod<[UpdateLeadInput], boolean>,
+  'updateMonitoredUrl' : ActorMethod<[string, boolean], undefined>,
+  'updateOnboardingStep' : ActorMethod<
+    [bigint],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'updateOutreachMessageStatus' : ActorMethod<
     [bigint, string, [] | [Timestamp]],
     OutreachMessage
+  >,
+  'updateRetentionData' : ActorMethod<
+    [string, bigint, bigint, bigint],
+    undefined
   >,
   'updateScraperJobProgress' : ActorMethod<
     [bigint, bigint, bigint, string],
@@ -643,7 +2152,17 @@ export interface _SERVICE {
     [WhatsAppTemplateId, WhatsAppTemplateStatus, [] | [string]],
     boolean
   >,
+  'updateWatiConsent' : ActorMethod<
+    [string, boolean],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
   'upsertMySubscription' : ActorMethod<[UserSubscription], undefined>,
+  'verifyRazorpayPayment' : ActorMethod<
+    [string, string, string, string],
+    { 'ok' : string } |
+      { 'err' : string }
+  >,
 }
 export declare const idlService: IDL.ServiceClass;
 export declare const idlInitArgs: IDL.Type[];

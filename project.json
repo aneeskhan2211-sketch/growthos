@@ -1,28 +1,31 @@
 {
-  "overview": "GrowthOS is a premium SaaS dashboard for digital marketing agencies — an AI-powered command center for lead generation, campaign management, SEO, analytics, proposals, and client growth. Built with a hand-crafted premium UI that feels like it was engineered by senior developers.",
+  "overview": "GrowthOS is a premium AI-powered SaaS platform for digital marketing agencies and local businesses. It automates lead generation, client acquisition, messaging, SEO, analytics, and business growth — helping agencies scale with minimal manual effort. Features include live Stripe payments, WhatsApp integration, competitor intelligence, content calendar, case study builder, affiliate commissions, statistical A/B testing, and an investor-ready metrics dashboard.",
   "features": [
-    "Premium dark/light mode dashboard with KPI cards and sparklines",
-    "Lead Engine with scoring, filters, and pitch sending",
-    "Campaign builder wizard for multi-platform ad campaigns",
-    "SEO Center with audits, keyword tracking, and blog generator",
-    "Analytics with revenue-first charts and funnel visualization",
-    "Social Hub connecting YouTube, Instagram, Facebook, LinkedIn, and more",
-    "Unified WhatsApp + Email inbox with AI reply suggestions",
-    "Proposal builder with ₹15k/₹25k/₹50k pricing packages and ROI calculator",
-    "Client growth strategy dashboard with monthly reports",
-    "Automation workflow builder with pre-built templates",
-    "Reports generator with shareable links",
-    "Billing and subscription management"
+    "Live Stripe checkout for real plan upgrades",
+    "WhatsApp/WATI integration with consent management",
+    "In-app notification center with real-time alerts",
+    "Case study builder with shareable proof cards",
+    "Affiliate commission dashboard with payout tracking",
+    "Competitor intelligence deep-dive with ad and keyword analysis",
+    "Content calendar automation — 30 posts/month generator",
+    "Bulk SEO page generator for niche+city landing pages",
+    "A/B test statistical significance with z-test and confidence scoring",
+    "In-app guided onboarding tour for new users",
+    "Investor report PDF export from SaaS Metrics dashboard",
+    "Real Google PageSpeed API integration for website scanner",
+    "Live competitor website scans via HTTP outcalls"
   ],
-  "category": "productivity",
+  "category": "saas-digital-marketing",
   "tags": [
     "saas",
     "digital-marketing",
     "lead-generation",
-    "crm",
-    "dashboard",
     "analytics",
-    "agency"
+    "stripe",
+    "whatsapp",
+    "seo",
+    "india",
+    "growth"
   ],
-  "last_updated": "2026-04-30T16:49:23.255Z"
+  "last_updated": "2026-05-02T08:13:21.913Z"
 }

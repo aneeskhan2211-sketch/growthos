@@ -389,6 +389,93 @@ module {
     };
   };
 
+  // ── Plan limits ───────────────────────────────────────────────────────────
+
+  public func getPlanLimits(plan : T.SubscriptionPlan) : T.PlanLimits {
+    switch (plan) {
+      case (#free) {
+        {
+          dailyLeads = 10;
+          aiPitchGenerator = false;
+          autoFollowUp = false;
+          crmPipeline = false;
+          seoChecklist = false;
+          aiProposalGenerator = false;
+          campaignBuilder = false;
+          advancedAnalytics = false;
+          whiteLabelReports = false;
+          teamAccess = false;
+          unlimitedLeads = false;
+          premiumAutomation = false;
+        };
+      };
+      case (#starter) {
+        {
+          dailyLeads = 50;
+          aiPitchGenerator = true;
+          autoFollowUp = false;
+          crmPipeline = false;
+          seoChecklist = false;
+          aiProposalGenerator = false;
+          campaignBuilder = false;
+          advancedAnalytics = false;
+          whiteLabelReports = false;
+          teamAccess = false;
+          unlimitedLeads = false;
+          premiumAutomation = false;
+        };
+      };
+      case (#growth) {
+        {
+          dailyLeads = 150;
+          aiPitchGenerator = true;
+          autoFollowUp = true;
+          crmPipeline = true;
+          seoChecklist = true;
+          aiProposalGenerator = false;
+          campaignBuilder = false;
+          advancedAnalytics = false;
+          whiteLabelReports = false;
+          teamAccess = false;
+          unlimitedLeads = false;
+          premiumAutomation = false;
+        };
+      };
+      case (#pro) {
+        {
+          dailyLeads = 500;
+          aiPitchGenerator = true;
+          autoFollowUp = true;
+          crmPipeline = true;
+          seoChecklist = true;
+          aiProposalGenerator = true;
+          campaignBuilder = true;
+          advancedAnalytics = true;
+          whiteLabelReports = false;
+          teamAccess = false;
+          unlimitedLeads = false;
+          premiumAutomation = false;
+        };
+      };
+      case (#agency) {
+        {
+          dailyLeads = 9999;
+          aiPitchGenerator = true;
+          autoFollowUp = true;
+          crmPipeline = true;
+          seoChecklist = true;
+          aiProposalGenerator = true;
+          campaignBuilder = true;
+          advancedAnalytics = true;
+          whiteLabelReports = true;
+          teamAccess = true;
+          unlimitedLeads = true;
+          premiumAutomation = true;
+        };
+      };
+    };
+  };
+
   // ── Subscription helpers ──────────────────────────────────────────────────
 
   public func getSubscription(

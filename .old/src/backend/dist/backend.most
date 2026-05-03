@@ -1,4 +1,179 @@
 // Version: 1.0.0
+type AbAssignment__924691690 =
+  {
+    assignedAt : Int;
+    assignedVariant : AbVariantId__843863975;
+    testName : AbTestName__998466111;
+    userId : Text
+  };
+type AbTestName__998466111 = {#nudge_copy_ab; #paywall_timing_ab};
+type AbTestResult__756455281 =
+  {
+    isActive : Bool;
+    lastResetAt : Int;
+    testName : AbTestName__998466111;
+    variants : [AbVariantStats__277856203];
+    winningVariant : ?AbVariantId__843863975
+  };
+type AbVariantId__843863975 = Text;
+type AbVariantStats__277856203 =
+  {
+    conversionRatePct : Float;
+    conversions : Nat;
+    impressions : Nat;
+    variantId : AbVariantId__843863975
+  };
+type ActivitySegment__511203846 = {#HighIntent; #LowActivity; #Medium};
+type AnalyticsEventType__989628797 =
+  {
+    #app_opened;
+    #city_selected;
+    #feature_locked_clicked;
+    #get_clients_clicked;
+    #leads_generated;
+    #niche_selected;
+    #onboarding_completed;
+    #onboarding_started;
+    #payment_failed;
+    #payment_started;
+    #payment_success;
+    #paywall_viewed;
+    #pitch_sent;
+    #plan_selected;
+    #proposal_created;
+    #reply_received;
+    #user_churn_risk
+  };
+type AnalyticsEvent__903796698 =
+  {
+    eventType : AnalyticsEventType__989628797;
+    id : Nat;
+    metadata : [(Text, Text)];
+    timestamp : Int;
+    userId : Text
+  };
+type AuditId__104620520 = Nat;
+type AuditIssue__1029937649 =
+  {
+    aiFixSuggestion : Text;
+    businessImpact : Text;
+    difficulty : FixDifficulty__983494799;
+    estimatedLossMax : Nat;
+    estimatedLossMin : Nat;
+    fixCategory : FixCategory__262755482;
+    fixType : FixType__252266450;
+    problem : Text;
+    severity : IssueSeverity__746459159
+  };
+type AuditLead__480331878 =
+  {
+    budgetRange : Text;
+    city : Text;
+    id : Nat;
+    leadName : Text;
+    niche : Text;
+    phone : Text;
+    salonType : Text;
+    submittedAt : Timestamp__301639476;
+    whatsappSentAt : ?Timestamp__301639476
+  };
+type AuditRecord__968680006 =
+  {
+    categoryScores : CategoryScores__35694775;
+    competitors : [CompetitorRecord__439800136];
+    createdAt : Timestamp__301639476;
+    id : AuditId__104620520;
+    issues : [AuditIssue__1029937649];
+    lastMonitorScanAt : Int;
+    monitorActive : Bool;
+    overallScore : Nat;
+    rawMetrics : ?RawMetrics__266154718;
+    scanDurationMs : Int;
+    url : Text;
+    userId : Principal
+  };
+type AutoAgencyActionType__262807119 =
+  {
+    #dealSuggested;
+    #followupSent;
+    #leadFound;
+    #outreachSent;
+    #reportGenerated
+  };
+type AutoAgencyAction__432177164 =
+  {
+    actionId : Text;
+    actionType : AutoAgencyActionType__262807119;
+    description : Text;
+    leadName : Text;
+    outcome : Text;
+    timestamp : Int
+  };
+type AutoReportStatus__167346202 = {#draft; #ready; #sent};
+type AutoReport__266109071 =
+  {
+    clientId : ClientId__724934594;
+    conversions : Nat;
+    generatedAt : Int;
+    leadsGenerated : Nat;
+    nextSteps : [Text];
+    reportId : Text;
+    reportPeriod : Text;
+    revenueImpact : Nat;
+    roi : Nat;
+    sentAt : ?Int;
+    status : AutoReportStatus__167346202;
+    topChannel : Text
+  };
+type BillingCycle__792607739 = {#monthly; #yearly};
+type CaseStudy__802356290 =
+  {
+    actionsToken : [Text];
+    clientCity : Text;
+    clientName : Text;
+    clientNiche : Text;
+    createdAt : Int;
+    id : Text;
+    isPublished : Bool;
+    problemStatement : Text;
+    resultMetrics : [ResultMetric__867793881];
+    shareToken : Text;
+    testimonialQuote : ?Text;
+    userId : Text
+  };
+type CategoryScores__35694775 =
+  {
+    content : Nat;
+    conversion : Nat;
+    mobile : Nat;
+    security : Nat;
+    seo : Nat;
+    speed : Nat
+  };
+type ChallengeParticipant__958060972 =
+  {
+    city : Text;
+    displayName : Text;
+    isoWeek : Text;
+    joinedAt : Timestamp__301639476;
+    leadsCount : Nat;
+    rank : Nat;
+    rewarded : Bool;
+    userId : Text
+  };
+type ChurnRisk__806898674 = {#high; #medium; #none};
+type ClientGrowthPlanStatus__864815144 = {#approved; #executing; #pending};
+type ClientGrowthPlan__188616888 =
+  {
+    adsPlan : [GrowthPlanItem__266981361];
+    approvalStatus : ClientGrowthPlanStatus__864815144;
+    clientId : ClientId__724934594;
+    contentIdeas : [GrowthPlanItem__266981361];
+    generatedAt : Int;
+    planId : Text;
+    seoPlan : [GrowthPlanItem__266981361];
+    weekOf : Int
+  };
 type ClientId__724934594 = Nat;
 type ClientMetrics__97577162 =
   {conversions : Nat; leads : Nat; revenue : Float; traffic : Nat};
@@ -10,6 +185,50 @@ type Client__72501839 =
     metrics : ClientMetrics__97577162;
     reportDate : Timestamp__301639476;
     startDate : Timestamp__301639476
+  };
+type CommissionRecord__965547106 =
+  {
+    commissionAmount : Nat;
+    commissionRate : Float;
+    createdAt : Int;
+    id : Text;
+    paidAt : ?Int;
+    planAmount : Nat;
+    planTier : Text;
+    referredUserId : Text;
+    referrerId : Text;
+    status : Text
+  };
+type CompetitorIntelReport__350404550 =
+  {
+    adSpendEstimate : Text;
+    competitors : [CompetitorProfile__534478757];
+    keywordGaps : [Text];
+    lastUpdatedAt : Int;
+    userId : Text;
+    yourUrl : Text
+  };
+type CompetitorProfile__534478757 =
+  {
+    ctaPresent : Bool;
+    estimatedTraffic : Text;
+    lastScannedAt : Int;
+    name : ?Text;
+    pageSpeed : ?Nat;
+    seoSignals : SeoSignals__80891432;
+    socialLinks : [Text];
+    url : Text;
+    whatsappPresent : Bool
+  };
+type CompetitorRecord__439800136 =
+  {
+    competitorName : Text;
+    conversionScore : Nat;
+    mobileScore : Nat;
+    overallScore : Nat;
+    securityScore : Nat;
+    seoScore : Nat;
+    speedScore : Nat
   };
 type ConsentLogId__460906029 = Nat;
 type ConsentLog__915081219 =
@@ -27,6 +246,31 @@ type ConsentLog__915081219 =
 type ConsentStatus__645725254 = {#granted; #pending; #withdrawn};
 type ConsentType__689118028 =
   {#form_submission; #manual_override; #qr_optin; #reply_first};
+type ContentCalendar__25129094 =
+  {
+    city : Text;
+    createdAt : Int;
+    goal : Text;
+    id : Text;
+    monthYear : Text;
+    niche : Text;
+    posts : [ContentPost__564502736];
+    userId : Text
+  };
+type ContentPost__564502736 =
+  {
+    body : Text;
+    callToAction : Text;
+    caption : Text;
+    city : Text;
+    hashtags : [Text];
+    hook : Text;
+    id : Text;
+    var isPosted : Bool;
+    niche : Text;
+    postType : Text;
+    scheduledDay : Nat
+  };
 type ConversionScriptId__501624081 = Nat;
 type ConversionScript__191790185 =
   {
@@ -43,8 +287,20 @@ type ConversionScript__191790185 =
     serviceType : Text;
     valueProp : Text
   };
+type CopyType__695105049 = {#fomo; #money_visibility; #reward; #urgency};
 type Data__791452850<K, V> =
   {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DealSuggestion__456327300 =
+  {
+    bestContactTime : Text;
+    closeProbability : Nat;
+    createdAt : Int;
+    leadId : LeadId__1073473045;
+    pricingTier : Text;
+    suggestedPitch : Text;
+    suggestedPrice : Nat;
+    suggestionId : Text
+  };
 type DeliverabilityStatId__34542477 = Nat;
 type DeliveryStats__581523580 =
   {
@@ -57,6 +313,26 @@ type DeliveryStats__581523580 =
     optOutCount : Nat;
     repliedCount : Nat
   };
+type FeatureUnlockSession__498767496 =
+  {
+    expiresAt : Timestamp__301639476;
+    featureName : GatedFeatureName__521374464;
+    unlockedAt : Timestamp__301639476;
+    usageCount : Nat;
+    userId : Text
+  };
+type FixCategory__262755482 =
+  {#Content; #Cta; #Images; #Mobile; #Security; #Seo; #Speed; #WhatsApp};
+type FixDifficulty__983494799 = {#Easy; #Hard; #Medium};
+type FixType__252266450 = {#developer_needed; #guided; #one_click};
+type FrequencySettings__715532001 =
+  {
+    inactivityReductionEnabled : Bool;
+    maxPerDay : Nat;
+    quietHoursEnabled : Bool;
+    quietHoursEnd : Nat;
+    quietHoursStart : Nat
+  };
 type GA4Credentials__455003561 = {apiKey : Text; propertyId : Text};
 type GamificationState__501840896 =
   {
@@ -66,6 +342,19 @@ type GamificationState__501840896 =
     lastActionDate : Text;
     totalActions : Nat;
     unlockedFeatures : [Text]
+  };
+type GatedFeatureName__521374464 =
+  {#advanced_analytics; #bulk_send; #export_leads};
+type GrowthPlanItemEffort__643397375 = {#deep; #medium; #quick};
+type GrowthPlanItemStatus__530403412 = {#approved; #done; #pending};
+type GrowthPlanItem__266981361 =
+  {
+    description : Text;
+    effort : GrowthPlanItemEffort__643397375;
+    estimatedRevenue : Nat;
+    priorityScore : Nat;
+    status : GrowthPlanItemStatus__530403412;
+    title : Text
   };
 type GrowthReportId__463381436 = Nat;
 type GrowthReport__1073403200 =
@@ -97,6 +386,19 @@ type GrowthSuggestion__856852607 =
     title : Text;
     weekOf : Timestamp__301639476
   };
+type HeatmapEventKind__143773199 =
+  {#deadClick; #rageTap; #screenTime; #scrollDepth; #tap};
+type HeatmapEvent__205218960 =
+  {
+    elementId : Text;
+    eventKind : HeatmapEventKind__143773199;
+    id : Nat;
+    screenName : Text;
+    scrollDepth : Nat;
+    timeSpentMs : Nat;
+    timestamp : Int;
+    userId : Text
+  };
 type ImportId__236722804 = Nat;
 type ImportRecord__261884848 =
   {
@@ -112,6 +414,29 @@ type ImportRecord__261884848 =
   };
 type Internal__8484328<K, V> =
   {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type InvestorReport__1058831597 =
+  {
+    arr : Nat;
+    cac : Nat;
+    cacPaybackMonths : Float;
+    churnedCustomers : Nat;
+    churnedMrr : Nat;
+    cohortData : [Text];
+    disclaimers : [Text];
+    expansionMrr : Nat;
+    funnelData : [Text];
+    generatedAt : Int;
+    healthAlerts : [Text];
+    ltv : Nat;
+    ltvCacRatio : Float;
+    monthlyChurnRate : Float;
+    mrr : Nat;
+    newCustomers : Nat;
+    newMrr : Nat;
+    nrr : Float;
+    totalCustomers : Nat
+  };
+type IssueSeverity__746459159 = {#Critical; #Minor; #Warning};
 type LandingPageId__565845869 = Nat;
 type LandingPageNiche__802050688 =
   {
@@ -183,8 +508,70 @@ type Map__158565046<K, V> = Map__297112838<K, V>;
 type Map__297112838<K, V> =
   {var root : Node__46230540<K, V>; var size : Nat__490723111};
 type Map__605269027<K, V> = Map__158565046<K, V>;
+type MarketingSpend__558820285 =
+  {
+    amountRs : Nat;
+    channel : SpendChannel__373988999;
+    id : Nat;
+    month : Text;
+    recordedBy : Principal;
+    timestamp : Nat
+  };
+type MarketplaceListingType__220395100 =
+  {#buyLeads; #hireFreelancer; #sellService};
+type MarketplaceListing__122755833 =
+  {
+    avgRating : Nat;
+    createdAt : Int;
+    description : Text;
+    isActive : Bool;
+    listingId : Text;
+    listingType : MarketplaceListingType__220395100;
+    price : Nat;
+    reviewCount : Nat;
+    sellerId : Text;
+    sellerName : Text;
+    tags : [Text];
+    title : Text
+  };
+type MilestoneClaim__835247843 =
+  {
+    activatedAt : Timestamp__301639476;
+    expiresAt : Timestamp__301639476;
+    milestoneId : MilestoneId__992770115;
+    userId : Text
+  };
+type MilestoneId__992770115 = Text;
+type MonitorRecord__961769947 =
+  {
+    active : Bool;
+    frequency : Text;
+    lastScanAt : Int;
+    url : Text;
+    userId : Principal
+  };
 type Nat__490723111 = Nat__920180692;
 type Nat__920180692 = Nat;
+type NicheFunnelEventType__749919501 =
+  {
+    #audit_sent;
+    #call_booked;
+    #form_submit;
+    #landing_view;
+    #share_clicked;
+    #whatsapp_click;
+    #whatsapp_sent
+  };
+type NicheFunnelEvent__135760423 =
+  {
+    city : Text;
+    eventType : NicheFunnelEventType__749919501;
+    id : Nat;
+    metricValue : ?Nat;
+    niche : Text;
+    timestamp : Timestamp__301639476;
+    userId : Text
+  };
 type Node__46230540<K, V> =
   {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
 type NoteId__167160349 = Nat;
@@ -199,8 +586,66 @@ type Note__652354370 =
     leadId : LeadId__1073473045;
     noteType : NoteType__1027458193
   };
+type NotificationEvent__938955265 =
+  {
+    actionCompletedAt : ?Int;
+    copyType : CopyType__695105049;
+    id : Nat;
+    openedAt : ?Int;
+    sentAt : Int;
+    templateId : Text;
+    triggerType : TriggerType__864528132;
+    userId : Text
+  };
+type NotificationRecord__77827862 =
+  {
+    actionUrl : ?Text;
+    body : Text;
+    createdAt : Int;
+    id : Text;
+    isRead : Bool;
+    metadata : ?Text;
+    title : Text;
+    type_ : Text;
+    userId : Text
+  };
+type NudgeDelivery__444273575 =
+  {
+    actionTakenAt : ?Timestamp__301639476;
+    converted : Bool;
+    id : Nat;
+    nudgeType : NudgeType__476970239;
+    sentAt : Timestamp__301639476;
+    userId : Text;
+    userSegment : UserSegment__770003219
+  };
+type NudgeEvent__623351307 =
+  {
+    actedOnAt : ?Int;
+    id : Nat;
+    openedAt : ?Int;
+    segment : ActivitySegment__511203846;
+    sentAt : Int;
+    userId : Text;
+    variantId : Text;
+    variantType : NudgeVariantType__743353450
+  };
+type NudgeType__476970239 = {#fomo; #money_visibility; #reward; #urgency};
+type NudgeVariantType__743353450 = {#fomo; #reward; #urgency};
+type OfferType__675688821 =
+  {#bonus_credits; #free_trial_2d; #limited_discount};
 type OnboardingPrefs__193683229 =
   {city : Text; completedOnboarding : Bool; niche : Text; targetBudget : Nat};
+type OnboardingTourStateInternal__697195583 =
+  {
+    var completed : Bool;
+    var completedAt : ?Int;
+    var completedSteps : [Nat];
+    var currentStep : Nat;
+    var skipped : Bool;
+    startedAt : Int;
+    userId : Text
+  };
 type OutreachCampaign__732075605 =
   {
     businessName : Text;
@@ -234,6 +679,64 @@ type OutreachMessage__114678750 =
     status : Text;
     templateType : Text
   };
+type PageSpeedResult__828741368 =
+  {
+    cls : Float;
+    desktopScore : Nat;
+    diagnostics : [Text];
+    fcp : Float;
+    fetchedAt : Int;
+    fid : Float;
+    lcp : Float;
+    mobileScore : Nat;
+    opportunities : [Text];
+    tbt : Float;
+    tti : Float;
+    url : Text
+  };
+type PayoutRequest__615049892 =
+  {
+    amount : Nat;
+    bankDetails : Text;
+    createdAt : Int;
+    requestId : Text;
+    status : Text;
+    userId : Text
+  };
+type PaywallState__453963822 =
+  {
+    abVariant : PaywallTimingVariant__75864830;
+    hasExperiencedValueMoment : Bool;
+    paywallShownAfterValue : Bool;
+    paywallShownAt : ?Int;
+    userId : Text
+  };
+type PaywallTimingVariant__75864830 = {#after_value_moment; #immediate};
+type PerformanceScore__87830096 =
+  {
+    activityScore : Nat;
+    conversionRate : Nat;
+    estimatedMonthlyRevenue : Nat;
+    overallScore : Nat;
+    percentileRank : Nat;
+    rank : Text;
+    revenueScore : Nat;
+    updatedAt : Int;
+    userId : Text
+  };
+type PlanTier__311016776 = PlanTier__31398022;
+type PlanTier__31398022 = {#Agency; #Free; #Growth; #Pro; #Starter};
+type PricingRecommendation__39466780 =
+  {
+    acceptedAt : ?Int;
+    computedAt : Int;
+    currentPlan : Text;
+    offerLabel : Text;
+    recommendedOffer : OfferType__675688821;
+    segment : ActivitySegment__511203846;
+    shownAt : ?Int;
+    userId : Text
+  };
 type PriorityTag__246921455 = {#high; #low; #medium};
 type ProposalId__842800336 = Nat;
 type Proposal__270321676 =
@@ -247,6 +750,93 @@ type Proposal__270321676 =
     pricingBreakdown : Text;
     seoStrategy : Text;
     websiteStrategy : Text
+  };
+type RawMetrics__266154718 =
+  {
+    hasAddress : Bool;
+    hasBusinessName : Bool;
+    hasCTA : Bool;
+    hasCanonical : Bool;
+    hasContactForm : Bool;
+    hasGoogleMap : Bool;
+    hasH1 : Bool;
+    hasHSTS : Bool;
+    hasMediaQueries : Bool;
+    hasMetaDesc : Bool;
+    hasMixedContent : Bool;
+    hasOpeningHours : Bool;
+    hasPhoneNumber : Bool;
+    hasTestimonials : Bool;
+    hasTitle : Bool;
+    hasViewport : Bool;
+    hasWhatsAppLink : Bool;
+    hasXContentType : Bool;
+    hasXFrame : Bool;
+    httpsEnabled : Bool;
+    imageCount : Int;
+    imagesMissingAlt : Int;
+    internalLinkCount : Int;
+    metaDescLength : Int;
+    renderBlockingScripts : Int;
+    robotsTxtFound : Bool;
+    sitemapFound : Bool;
+    titleLength : Int
+  };
+type ReferralFunnelEventType__508732859 =
+  {
+    #landing_view;
+    #link_generated;
+    #reward_claimed;
+    #share_clicked;
+    #signup_completed;
+    #signup_started
+  };
+type ReferralFunnelEvent__802016442 =
+  {
+    cardId : ?Text;
+    eventType : ReferralFunnelEventType__508732859;
+    id : Nat;
+    platform : ?Text;
+    referralCode : Text;
+    timestamp : Timestamp__301639476;
+    userId : Text
+  };
+type ReferralRecord__502422660 =
+  {
+    completedAt : ?Timestamp__301639476;
+    createdAt : Timestamp__301639476;
+    id : Nat;
+    referralCode : Text;
+    referredUserId : ?Principal;
+    referrerId : Principal;
+    rewardClaimed : Bool;
+    status : ReferralStatus__1017026020
+  };
+type ReferralStatus__1017026020 = {#completed; #created; #signedUp};
+type ResultMetric__867793881 =
+  {after : Text; before : Text; metricLabel : Text};
+type RetentionData__290482975 =
+  {
+    churnRisk : ChurnRisk__806898674;
+    creditsEarned : Nat;
+    currentStreak : Nat;
+    lastActiveDate : Text;
+    lastCreditClaim : Int;
+    lastSessionAt : Int;
+    longestStreak : Nat;
+    userId : Text;
+    weeklyLeadsGenerated : Nat;
+    weeklyProposalsSent : Nat;
+    weeklyRepliesReceived : Nat
+  };
+type SavedCompetitorConfig__1064497063 =
+  {competitorUrls : [Text]; savedAt : Int; userId : Text; yourUrl : Text};
+type ScanLimitRecord__234662226 =
+  {
+    planTier : PlanTier__31398022;
+    scansThisWeek : Nat;
+    userId : Principal;
+    weekStartedAt : Timestamp__301639476
   };
 type ScraperJob__719149072 =
   {
@@ -302,7 +892,55 @@ type SeoAuditRecord__990467575 =
     titleScore : Nat;
     url : Text
   };
-type SubscriptionPlan__1033862359 = {#enterprise; #pro; #starter};
+type SeoPage__361111714 =
+  {
+    benefits : [Text];
+    caseExample : {after : Text; before : Text};
+    city : Text;
+    createdAt : Int;
+    headline : Text;
+    id : Text;
+    var isPublished : Bool;
+    niche : Text;
+    painPoints : [Text];
+    pricingHint : Text;
+    slug : Text;
+    subheadline : Text
+  };
+type SeoSignals__80891432 =
+  {
+    h1Count : Nat;
+    internalLinks : Nat;
+    metaPresent : Bool;
+    schemaPresent : Bool;
+    titlePresent : Bool
+  };
+type SocialProofActivityType__76354148 =
+  {#deal_closed; #leads_generated; #pitches_sent; #referral_signup};
+type SocialProofEntry__863485575 =
+  {
+    activityType : SocialProofActivityType__76354148;
+    city : Text;
+    id : Nat;
+    metricValue : Nat;
+    timestamp : Timestamp__301639476;
+    userDisplayName : Text
+  };
+type SpendChannel__373988999 = {#googleAds; #metaAds; #other; #referral};
+type SubscriptionEventKind__968844794 =
+  {#plan_cancelled; #plan_downgraded; #plan_purchased; #plan_upgraded};
+type SubscriptionEvent__1055321931 =
+  {
+    amountRs : Nat;
+    eventKind : SubscriptionEventKind__968844794;
+    id : Nat;
+    planTier : PlanTier__311016776;
+    prevAmountRs : ?Nat;
+    prevPlanTier : ?PlanTier__311016776;
+    timestamp : Nat;
+    userId : Principal
+  };
+type SubscriptionPlan__1033862359 = {#agency; #free; #growth; #pro; #starter};
 type SubscriptionStatus__820558383 =
   {#active; #canceled; #inactive; #pastDue; #trialing};
 type SuggestionId__416424447 = Nat;
@@ -317,15 +955,117 @@ type TemplateSections__196795382 =
     testimonials : Text
   };
 type Timestamp__301639476 = Int;
+type TrafficSourceAttribution__905073517 =
+  {
+    referralCode : ?Text;
+    signedUpAt : Timestamp__301639476;
+    source : TrafficSource__702610633;
+    userId : Text
+  };
+type TrafficSource__702610633 = {#ads; #direct; #organic; #referral};
+type TriggerType__864528132 =
+  {
+    #drip_day_0;
+    #drip_day_1;
+    #drip_day_10;
+    #drip_day_11;
+    #drip_day_12;
+    #drip_day_13;
+    #drip_day_14;
+    #drip_day_15;
+    #drip_day_16;
+    #drip_day_17;
+    #drip_day_18;
+    #drip_day_19;
+    #drip_day_2;
+    #drip_day_20;
+    #drip_day_21;
+    #drip_day_22;
+    #drip_day_23;
+    #drip_day_24;
+    #drip_day_25;
+    #drip_day_26;
+    #drip_day_27;
+    #drip_day_28;
+    #drip_day_3;
+    #drip_day_4;
+    #drip_day_5;
+    #drip_day_6;
+    #drip_day_7;
+    #drip_day_8;
+    #drip_day_9;
+    #on_followup_due;
+    #on_inactivity_24h;
+    #on_inactivity_48h;
+    #on_limit_reached;
+    #on_new_reply;
+    #on_streak_milestone
+  };
+type UserNotificationPrefs__271148136 =
+  {
+    enabledTriggers : [TriggerType__864528132];
+    frequencySettings : FrequencySettings__715532001;
+    lastNotificationDate : ?Int;
+    notificationsSentToday : Nat;
+    userId : Text;
+    whatsappConsentDate : ?Int;
+    whatsappOptIn : Bool;
+    whatsappOptOutDate : ?Int
+  };
+type UserPaymentRecord__515640160 =
+  {
+    cancelReason : ?Text;
+    cancelledAt : ?Int;
+    createdAt : Int;
+    currentPeriodEnd : ?Int;
+    planId : Text;
+    status : Text;
+    stripeCustomerId : ?Text;
+    tier : Text;
+    updatedAt : Int;
+    userId : Principal
+  };
 type UserRole__1073662873 = {#admin; #guest; #user};
+type UserSegment__770003219 = {#HighIntent; #LowActivity; #Medium};
 type UserSubscription__965824278 =
   {
+    billingCycle : BillingCycle__792607739;
     leadCredits : Nat;
+    monthlyPrice : Nat;
     plan : SubscriptionPlan__1033862359;
     stripeCustomerId : Text;
-    subscriptionStatus : SubscriptionStatus__820558383
+    subscriptionStatus : SubscriptionStatus__820558383;
+    trialExpiresAt : ?Int;
+    yearlyPrice : Nat
+  };
+type WHEvent__983821604 =
+  {
+    createdAt : Timestamp__301639476;
+    eventName : Text;
+    metadata : Text;
+    userId : Text
   };
 type WarmupPhase__685461550 = {#phase1; #phase2; #phase3; #unlimited};
+type WatiConfig__683192754 =
+  {apiKey : Text; baseUrl : Text; businessPhoneId : Text};
+type WatiConsent__476612724 =
+  {
+    consentAt : Int;
+    consentGiven : Bool;
+    optOutAt : ?Int;
+    phone : Text;
+    userId : Text
+  };
+type WatiMessage__417737459 =
+  {
+    id : Text;
+    params : [Text];
+    phone : Text;
+    sentAt : Int;
+    status : Text;
+    templateName : Text;
+    userId : Text
+  };
 type WebsiteTemplate__467128971 =
   {
     clientId : ClientId__724934594;
@@ -350,6 +1090,15 @@ type WeeklyAction__332271944 =
     estimatedImpact : Text;
     rationale : Text
   };
+type WeeklyChallengeRecord__460288585 =
+  {
+    city : Text;
+    displayName : Text;
+    isoWeek : Text;
+    leadsGenerated : Nat;
+    rewardClaimed : Bool;
+    userId : Text
+  };
 type WhatsAppTemplateCategory__854826755 =
   {#follow_up; #lead_outreach; #proposal_sharing};
 type WhatsAppTemplateId__1065158179 = Nat;
@@ -371,16 +1120,109 @@ type WhatsAppTemplate__843403371 =
     variables : [Text]
   };
 actor {
+  stable abAssignments :
+    {
+      var root : Node__46230540<Text, AbAssignment__924691690>;
+      var size : Nat__490723111
+    };
+  stable abResults :
+    {
+      var root : Node__46230540<Text, AbTestResult__756455281>;
+      var size : Nat__490723111
+    };
   stable accessControlState :
     {
       var adminAssigned : Bool;
       userRoles : Map__605269027<Principal, UserRole__1073662873>
+    };
+  stable accountability :
+    {
+      var currentStreak : Nat;
+      var dailyDealsClosed : Nat;
+      var dailyFollowupsDone : Nat;
+      var dailyLeadsContacted : Nat;
+      var lastTaskDate : Int;
+      var streakMilestones : [Nat];
+      var targetDeals : Nat;
+      var targetFollowups : Nat;
+      var targetLeads : Nat;
+      var todayComplete : Bool
+    };
+  stable agencyState :
+    {
+      var dailyFollowupsSent : Nat;
+      var dailyLeadsGenerated : Nat;
+      var dailyOutreachSent : Nat;
+      var lastActivityFeed : [AutoAgencyAction__432177164];
+      var lastRunTime : Int;
+      var nextRunTime : Int;
+      var runCount : Nat;
+      var toggleEnabled : Bool
+    };
+  stable analyticsCounters : {var nextEventId : Nat; var nextHeatmapId : Nat};
+  stable analyticsEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?AnalyticsEvent__903796698]];
+      var elementIndex : Nat__490723111
+    };
+  stable auditLeads :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?AuditLead__480331878]];
+      var elementIndex : Nat__490723111
+    };
+  stable autoAgencyCounters :
+    {
+      var nextAutoAgencyActionId : Nat;
+      var nextListingId : Nat;
+      var nextPlanId : Nat;
+      var nextReportId : Nat;
+      var nextSuggestionId : Nat
+    };
+  stable autoReports :
+    {
+      var root : Node__46230540<ClientId__724934594, AutoReport__266109071>;
+      var size : Nat__490723111
+    };
+  stable caseStudies :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?CaseStudy__802356290]];
+      var elementIndex : Nat__490723111
+    };
+  stable caseStudyCounters :
+    {
+      var nextCaseStudyId : Nat;
+      var nextCommissionId : Nat;
+      var nextPayoutId : Nat
+    };
+  stable challengeRecords :
+    {
+      var root : Node__46230540<Text, WeeklyChallengeRecord__460288585>;
+      var size : Nat__490723111
     };
   stable clients :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Client__72501839]];
       var elementIndex : Nat__490723111
+    };
+  stable commissions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?CommissionRecord__965547106]];
+      var elementIndex : Nat__490723111
+    };
+  stable competitorConfigs :
+    {
+      var root : Node__46230540<Text, SavedCompetitorConfig__1064497063>;
+      var size : Nat__490723111
+    };
+  stable competitorReports :
+    {
+      var root : Node__46230540<Text, CompetitorIntelReport__350404550>;
+      var size : Nat__490723111
     };
   stable complianceCounters :
     {
@@ -396,19 +1238,42 @@ actor {
       var blocks : [var [var ?ConsentLog__915081219]];
       var elementIndex : Nat__490723111
     };
+  stable contentCalendars :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ContentCalendar__25129094]];
+      var elementIndex : Nat__490723111
+    };
+  stable contentCounters : {var nextCalendarId : Nat};
   stable counters :
     {
+      var nextAutoAgencyActionId : Nat;
       var nextClientId : Nat;
       var nextLeadId : Nat;
+      var nextListingId : Nat;
       var nextNoteId : Nat;
+      var nextPlanId : Nat;
       var nextProposalId : Nat;
+      var nextReportId : Nat;
       var nextSuggestionId : Nat;
       var nextTemplateId : Nat
+    };
+  stable dealSuggestions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?DealSuggestion__456327300]];
+      var elementIndex : Nat__490723111
     };
   stable deliveryStats :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?DeliveryStats__581523580]];
+      var elementIndex : Nat__490723111
+    };
+  stable featureUnlockSessions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?FeatureUnlockSession__498767496]];
       var elementIndex : Nat__490723111
     };
   stable ga4Credentials : {var value : ?GA4Credentials__455003561};
@@ -439,6 +1304,12 @@ actor {
       var blocks : [var [var ?LandingPage__24423132]];
       var elementIndex : Nat__490723111
     };
+  stable growthPlans :
+    {
+      var root :
+        Node__46230540<ClientId__724934594, ClientGrowthPlan__188616888>;
+      var size : Nat__490723111
+    };
   stable growthReports :
     {
       var blockIndex : Nat__490723111;
@@ -457,22 +1328,81 @@ actor {
       var blocks : [var [var ?WhatsAppTemplate__843403371]];
       var elementIndex : Nat__490723111
     };
+  stable heatmapEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?HeatmapEvent__205218960]];
+      var elementIndex : Nat__490723111
+    };
   stable importRecords :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?ImportRecord__261884848]];
       var elementIndex : Nat__490723111
     };
+  stable latestReport : {var value : ?InvestorReport__1058831597};
   stable leads :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Lead__792210605]];
       var elementIndex : Nat__490723111
     };
+  stable marketingSpendCounter : {var value : Nat};
+  stable marketingSpendRecords :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?MarketingSpend__558820285]];
+      var elementIndex : Nat__490723111
+    };
+  stable marketplaceListings :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?MarketplaceListing__122755833]];
+      var elementIndex : Nat__490723111
+    };
+  stable milestoneClaims :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?MilestoneClaim__835247843]];
+      var elementIndex : Nat__490723111
+    };
+  stable monthNs : Nat;
+  stable nicheFunnelEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?NicheFunnelEvent__135760423]];
+      var elementIndex : Nat__490723111
+    };
   stable notes :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Note__652354370]];
+      var elementIndex : Nat__490723111
+    };
+  stable notifCounters : {var nextNotificationId : Nat};
+  stable notificationCounters : {var nextNotificationEventId : Nat};
+  stable notificationEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?NotificationEvent__938955265]];
+      var elementIndex : Nat__490723111
+    };
+  stable notificationPrefs :
+    {
+      var root : Node__46230540<Text, UserNotificationPrefs__271148136>;
+      var size : Nat__490723111
+    };
+  stable nudgeCounters : {var nextNudgeEventId : Nat};
+  stable nudgeDeliveries :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?NudgeDelivery__444273575]];
+      var elementIndex : Nat__490723111
+    };
+  stable nudgeEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?NudgeEvent__623351307]];
       var elementIndex : Nat__490723111
     };
   stable onboardingPrefs :
@@ -499,11 +1429,71 @@ actor {
       var elementIndex : Nat__490723111
     };
   stable var outreachSeeded : Bool;
+  stable pageSpeedHistory :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?PageSpeedResult__828741368]];
+      var elementIndex : Nat__490723111
+    };
+  stable paymentRecords :
+    {
+      var root : Node__46230540<Principal, UserPaymentRecord__515640160>;
+      var size : Nat__490723111
+    };
+  stable payoutRequests :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?PayoutRequest__615049892]];
+      var elementIndex : Nat__490723111
+    };
+  stable paywallStates :
+    {
+      var root : Node__46230540<Text, PaywallState__453963822>;
+      var size : Nat__490723111
+    };
+  stable performanceScores :
+    {
+      var root : Node__46230540<Text, PerformanceScore__87830096>;
+      var size : Nat__490723111
+    };
+  stable pnwNotifications :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?NotificationRecord__77827862]];
+      var elementIndex : Nat__490723111
+    };
+  stable pricingRecs :
+    {
+      var root : Node__46230540<Text, PricingRecommendation__39466780>;
+      var size : Nat__490723111
+    };
   stable proposals :
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?Proposal__270321676]];
       var elementIndex : Nat__490723111
+    };
+  stable razorpayKeyId : {var value : Text};
+  stable razorpayKeySecret : {var value : Text};
+  stable referralCounters : {var nextReferralId : Nat};
+  stable referralFunnelEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ReferralFunnelEvent__802016442]];
+      var elementIndex : Nat__490723111
+    };
+  stable referrals :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ReferralRecord__502422660]];
+      var elementIndex : Nat__490723111
+    };
+  stable retentionLastSessionMap :
+    {var root : Node__46230540<Text, Int>; var size : Nat__490723111};
+  stable retentionMap :
+    {
+      var root : Node__46230540<Text, RetentionData__290482975>;
+      var size : Nat__490723111
     };
   stable scraperJobs :
     {
@@ -516,6 +1506,26 @@ actor {
     {
       var blockIndex : Nat__490723111;
       var blocks : [var [var ?SenderIdentity__829923437]];
+      var elementIndex : Nat__490723111
+    };
+  stable seoCounters : {var nextSeoPageId : Nat};
+  stable seoPages :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?SeoPage__361111714]];
+      var elementIndex : Nat__490723111
+    };
+  stable socialProofFeed :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?SocialProofEntry__863485575]];
+      var elementIndex : Nat__490723111
+    };
+  stable subscriptionEventCounter : {var value : Nat};
+  stable subscriptionEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?SubscriptionEvent__1055321931]];
       var elementIndex : Nat__490723111
     };
   stable subscriptions :
@@ -533,6 +1543,73 @@ actor {
     {
       var root :
         Node__46230540<ClientId__724934594, WebsiteTemplate__467128971>;
+      var size : Nat__490723111
+    };
+  stable tourStates :
+    {
+      var root :
+        Node__46230540<Principal, OnboardingTourStateInternal__697195583>;
+      var size : Nat__490723111
+    };
+  stable trafficAttributions :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?TrafficSourceAttribution__905073517]];
+      var elementIndex : Nat__490723111
+    };
+  stable vgtChallengeParticipants :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?ChallengeParticipant__958060972]];
+      var elementIndex : Nat__490723111
+    };
+  stable viralGrowthCounters :
+    {var nextNudgeDeliveryId : Nat; var nextReferralFunnelEventId : Nat};
+  stable viralLoopCounters :
+    {
+      var nextAuditLeadId : Nat;
+      var nextNicheFunnelEventId : Nat;
+      var nextSocialProofId : Nat
+    };
+  stable watiConfigStore : {var value : ?WatiConfig__683192754};
+  stable watiConsents :
+    {
+      var root : Node__46230540<Text, WatiConsent__476612724>;
+      var size : Nat__490723111
+    };
+  stable watiCounters : {var nextWatiMessageId : Nat};
+  stable watiMessages :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?WatiMessage__417737459]];
+      var elementIndex : Nat__490723111
+    };
+  stable whAudits :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?AuditRecord__968680006]];
+      var elementIndex : Nat__490723111
+    };
+  stable whCounters : {var nextAuditId : Nat};
+  stable whEvents :
+    {
+      var blockIndex : Nat__490723111;
+      var blocks : [var [var ?WHEvent__983821604]];
+      var elementIndex : Nat__490723111
+    };
+  stable whMonitors :
+    {
+      var root : Node__46230540<Text, MonitorRecord__961769947>;
+      var size : Nat__490723111
+    };
+  stable whScanLimits :
+    {
+      var root : Node__46230540<Principal, ScanLimitRecord__234662226>;
+      var size : Nat__490723111
+    };
+  stable whSubscriptions :
+    {
+      var root : Node__46230540<Principal, {planTier : PlanTier__31398022}>;
       var size : Nat__490723111
     }
 };

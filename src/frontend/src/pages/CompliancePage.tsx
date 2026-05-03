@@ -17,6 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { PAGE_META } from "@/config/metaTags";
+import { useMetaTags } from "@/hooks/useMetaTags";
 import { cn } from "@/lib/utils";
 import {
   AlertTriangle,
@@ -133,6 +135,7 @@ function downloadCSV(logs: ConsentLog[]) {
 }
 
 export default function CompliancePage() {
+  useMetaTags(PAGE_META["/compliance"]);
   const { data: logs = [] } = useConsentLogs();
   const updateStatus = useUpdateConsentStatus();
   const recordLog = useRecordConsentLog();

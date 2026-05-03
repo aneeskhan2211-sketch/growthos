@@ -1,141 +1,219 @@
 import { cn } from "@/lib/utils";
-import { TrendingDown, TrendingUp } from "lucide-react";
-import type { ReactNode } from "react";
-import type { SparklinePoint } from "../../types";
+import { Minus, TrendingDown, TrendingUp } from "lucide-react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { Area, AreaChart, ResponsiveContainer, Tooltip } from "recharts";
 
-// ─── Mini sparkline SVG ───────────────────────────────────────────────────────
+// ─── Animated Counter ─────────────────────────────────────────────────────────
 
-function Sparkline({
+function useAnimatedNumber(
+  target: number,
+  duration = 1200,
+  enabled = true,
+): number {
+  const [current, setCurrent] = useState(0);
+  const rafRef = useRef<number | null>(null);
+  const startTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (!enabled || typeof target !== "number") return;
+    startTimeRef.current = null;
+
+    const animate = (now: number) => {
+      if (!startTimeRef.current) startTimeRef.current = now;
+      const elapsed = now - startTimeRef.current;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease-out cubic
+      const eased = 1 - (1 - progress) ** 3;
+      setCurrent(Math.round(target * eased));
+      if (progress < 1) rafRef.current = requestAnimationFrame(animate);
+    };
+
+    rafRef.current = requestAnimationFrame(animate);
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [target, duration, enabled]);
+
+  return current;
+}
+
+// ─── Sparkline Area Chart ─────────────────────────────────────────────────────
+
+function SparklineChart({
   data,
-  trend,
-}: { data: SparklinePoint[]; trend: "up" | "down" | "neutral" }) {
-  if (!data || data.length < 2) return null;
-  const W = 64;
-  const H = 24;
-  const min = Math.min(...data.map((d) => d.value));
-  const max = Math.max(...data.map((d) => d.value));
-  const range = max - min || 1;
-  const pts = data.map((d, i) => {
-    const x = (i / (data.length - 1)) * W;
-    const y = H - ((d.value - min) / range) * (H - 4) - 2;
-    return `${x},${y}`;
-  });
+  changeType,
+}: {
+  data: number[];
+  changeType: "up" | "down" | "neutral";
+}) {
+  const chartData = data.map((v, i) => ({ i, v }));
   const color =
-    trend === "up"
+    changeType === "up"
       ? "oklch(var(--success))"
-      : trend === "down"
+      : changeType === "down"
         ? "oklch(var(--destructive))"
         : "oklch(var(--muted-foreground))";
 
   return (
-    <svg
-      width={W}
-      height={H}
-      viewBox={`0 0 ${W} ${H}`}
-      className="sparkline-container shrink-0"
-      aria-hidden="true"
-    >
-      <polyline
-        points={pts.join(" ")}
-        fill="none"
-        stroke={color}
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        opacity="0.8"
-      />
-    </svg>
+    <div style={{ width: 150, height: 50 }}>
+      <ResponsiveContainer width="100%" height="100%">
+        <AreaChart
+          data={chartData}
+          margin={{ top: 2, right: 2, bottom: 2, left: 2 }}
+        >
+          <defs>
+            <linearGradient
+              id={`spark-${changeType}`}
+              x1="0"
+              y1="0"
+              x2="0"
+              y2="1"
+            >
+              <stop offset="5%" stopColor={color} stopOpacity={0.3} />
+              <stop offset="95%" stopColor={color} stopOpacity={0} />
+            </linearGradient>
+          </defs>
+          <Tooltip content={() => null} cursor={false} />
+          <Area
+            type="monotone"
+            dataKey="v"
+            stroke={color}
+            strokeWidth={1.8}
+            fill={`url(#spark-${changeType})`}
+            dot={false}
+            activeDot={false}
+          />
+        </AreaChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
+
+// ─── Skeleton ─────────────────────────────────────────────────────────────────
+
+function MetricCardSkeleton() {
+  return (
+    <div className="bg-card border border-border rounded-xl p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex-1 space-y-2">
+          <div className="skeleton-shimmer h-3 w-24 rounded" />
+          <div className="skeleton-shimmer h-7 w-32 rounded" />
+          <div className="skeleton-shimmer h-4 w-16 rounded" />
+        </div>
+        <div className="flex flex-col items-end gap-2">
+          <div className="skeleton-shimmer w-9 h-9 rounded-lg" />
+          <div className="skeleton-shimmer w-[150px] h-[50px] rounded" />
+        </div>
+      </div>
+    </div>
   );
 }
 
 // ─── MetricCard ───────────────────────────────────────────────────────────────
 
-interface MetricCardProps {
-  label: string;
-  value: string | number;
-  change?: number;
-  changeLabel?: string;
-  trend?: "up" | "down" | "neutral";
-  sparkline?: SparklinePoint[];
-  statusLabel?: string;
+export interface MetricCardProps {
+  title?: string;
+  value: number | string;
+  change: number;
+  changeType?: "up" | "down" | "neutral";
   icon?: ReactNode;
-  gradient?: string;
+  trendData?: number[];
+  prefix?: string;
+  suffix?: string;
+  isLoading?: boolean;
   className?: string;
+  /** @deprecated use title instead */
+  label?: string;
+  /** @deprecated use changeType instead */
+  trend?: "up" | "down" | "neutral";
+  /** @deprecated use trendData instead */
+  sparkline?: { value: number }[];
+  /** @deprecated */
+  changeLabel?: string;
+  /** @deprecated */
+  statusLabel?: string;
+  /** @deprecated */
+  gradient?: string;
   "data-ocid"?: string;
 }
 
 export function MetricCard({
-  label,
+  title,
   value,
   change,
-  changeLabel,
-  trend = "neutral",
-  sparkline,
-  statusLabel,
+  changeType,
   icon,
-  gradient,
+  trendData,
+  prefix = "",
+  suffix = "",
+  isLoading = false,
   className,
+  // legacy compat
+  label,
+  trend,
+  sparkline,
   "data-ocid": ocid,
 }: MetricCardProps) {
-  const trendColor =
-    trend === "up"
-      ? "text-success"
-      : trend === "down"
-        ? "text-destructive"
-        : "text-muted-foreground";
+  // Resolve legacy props
+  const resolvedTitle = title ?? label ?? "";
+  const resolvedChangeType = changeType ?? trend ?? "neutral";
+  const resolvedTrendData = trendData ?? sparkline?.map((s) => s.value) ?? [];
+
+  const numericValue = typeof value === "number" ? value : Number(value) || 0;
+  const animated = useAnimatedNumber(numericValue, 1200, !isLoading);
+  const displayValue =
+    typeof value === "string" && Number.isNaN(Number(value))
+      ? value
+      : `${prefix}${animated.toLocaleString("en-IN")}${suffix}`;
+
+  if (isLoading) return <MetricCardSkeleton />;
+
+  const changeColor =
+    resolvedChangeType === "up"
+      ? "text-success bg-success/10"
+      : resolvedChangeType === "down"
+        ? "text-destructive bg-destructive/10"
+        : "text-muted-foreground bg-muted/40";
 
   return (
     <div
       data-ocid={ocid}
       className={cn(
-        "group relative bg-card border border-border rounded-xl p-4 transition-smooth hover:shadow-card-hover hover:-translate-y-0.5 overflow-hidden",
+        "group relative bg-card border border-border rounded-xl p-4",
+        "transition-hover hover:-translate-y-[2px] hover:shadow-elevated cursor-default",
+        "overflow-hidden",
         className,
       )}
     >
-      {/* Background gradient tint */}
-      {gradient && (
-        <div
-          className={cn("absolute inset-0 rounded-xl opacity-60", gradient)}
-          aria-hidden="true"
-        />
-      )}
+      {/* Subtle tinted bg */}
+      <div
+        className="absolute inset-0 rounded-xl opacity-60 pointer-events-none kpi-background"
+        aria-hidden="true"
+      />
 
       <div className="relative flex items-start justify-between gap-3">
-        {/* Left: label + value + trend */}
+        {/* Left */}
         <div className="min-w-0 flex-1">
-          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1 truncate">
-            {label}
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1.5 truncate">
+            {resolvedTitle}
           </p>
-          <p className="text-2xl font-bold text-foreground tabular-nums leading-none mb-2 truncate">
-            {value}
+          <p className="text-2xl font-bold font-display text-foreground tabular-nums leading-none mb-3 truncate">
+            {displayValue}
           </p>
-
-          <div className="flex items-center gap-2 flex-wrap">
-            {change !== undefined && (
-              <span
-                className={cn(
-                  "flex items-center gap-0.5 text-xs font-semibold",
-                  trendColor,
-                )}
-              >
-                {trend === "up" && <TrendingUp className="w-3 h-3" />}
-                {trend === "down" && <TrendingDown className="w-3 h-3" />}
-                {change > 0 ? "+" : ""}
-                {change}%
-              </span>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full",
+              changeColor,
             )}
-            {changeLabel && (
-              <span className="text-xs text-muted-foreground">
-                {changeLabel}
-              </span>
+          >
+            {resolvedChangeType === "up" && <TrendingUp className="w-3 h-3" />}
+            {resolvedChangeType === "down" && (
+              <TrendingDown className="w-3 h-3" />
             )}
-          </div>
-
-          {statusLabel && (
-            <span className="mt-2 inline-flex items-center text-[10px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded bg-muted/60 text-muted-foreground">
-              {statusLabel}
-            </span>
-          )}
+            {resolvedChangeType === "neutral" && <Minus className="w-3 h-3" />}
+            {change > 0 ? "+" : ""}
+            {change}%
+          </span>
         </div>
 
         {/* Right: icon + sparkline */}
@@ -145,7 +223,12 @@ export function MetricCard({
               {icon}
             </div>
           )}
-          {sparkline && <Sparkline data={sparkline} trend={trend} />}
+          {resolvedTrendData.length >= 2 && (
+            <SparklineChart
+              data={resolvedTrendData}
+              changeType={resolvedChangeType}
+            />
+          )}
         </div>
       </div>
     </div>

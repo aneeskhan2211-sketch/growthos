@@ -12,20 +12,27 @@ import { Input } from "@/components/ui/input";
 import { useInternetIdentity } from "@caffeineai/core-infrastructure";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useRouterState } from "@tanstack/react-router";
+import { formatDistanceToNow } from "date-fns";
 import {
+  AlertTriangle,
   Bell,
   ChevronRight,
+  Clock,
   LogOut,
   Menu,
+  MessageCircle,
   Moon,
   Search,
   Settings,
   Sun,
+  TrendingUp,
   User,
+  UserPlus,
   Zap,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import { NotificationPanel } from "./notifications/NotificationPanel";
+import { useNotifications, useUnreadCount } from "../hooks/useNotifications";
+import type { AppNotification } from "../hooks/useNotifications";
 
 // ─── Route labels for breadcrumbs ────────────────────────────────────────────
 
@@ -73,6 +80,76 @@ const SEARCH_SUGGESTIONS = [
   { label: "Settings", path: "/settings" },
 ];
 
+// ─── Notification preview row ───────────────────────────────────────────────
+
+const PREVIEW_TYPE_ICON: Record<string, typeof Bell> = {
+  new_lead: UserPlus,
+  new_reply: MessageCircle,
+  follow_up_due: Clock,
+  upgrade_prompt: TrendingUp,
+  system_alert: Bell,
+  weekly_report: Bell,
+  limit_reached: AlertTriangle,
+  milestone_unlocked: Bell,
+  case_study_ready: Bell,
+  competitor_alert: AlertTriangle,
+  info: Bell,
+  success: Bell,
+  warning: AlertTriangle,
+  error: AlertTriangle,
+};
+
+const PREVIEW_TYPE_COLOR: Record<string, string> = {
+  new_lead: "text-emerald-500",
+  new_reply: "text-blue-500",
+  follow_up_due: "text-orange-500",
+  upgrade_prompt: "text-purple-500",
+  system_alert: "text-destructive",
+  weekly_report: "text-indigo-500",
+  limit_reached: "text-amber-500",
+  milestone_unlocked: "text-yellow-500",
+  case_study_ready: "text-teal-500",
+  competitor_alert: "text-destructive",
+  info: "text-primary",
+  success: "text-success",
+  warning: "text-warning",
+  error: "text-destructive",
+};
+
+interface NotifPreviewRowProps {
+  notif: AppNotification;
+  onNavigate: (path: string) => void;
+}
+
+function NotifPreviewRow({ notif, onNavigate }: NotifPreviewRowProps) {
+  const Icon = PREVIEW_TYPE_ICON[notif.type] ?? Bell;
+  const color = PREVIEW_TYPE_COLOR[notif.type] ?? "text-primary";
+  const link = notif.actionUrl ?? notif.link;
+
+  return (
+    <button
+      type="button"
+      className="flex gap-3 px-4 py-3 w-full text-left hover:bg-muted/40 transition-fast"
+      onClick={() => link && onNavigate(link)}
+    >
+      <Icon className={`w-4 h-4 mt-0.5 shrink-0 ${color}`} />
+      <div className="flex-1 min-w-0">
+        <p
+          className={`text-xs leading-snug text-foreground truncate ${!notif.read ? "font-semibold" : "font-medium"}`}
+        >
+          {notif.title}
+        </p>
+        <p className="text-[11px] text-muted-foreground mt-0.5 truncate">
+          {formatDistanceToNow(new Date(notif.createdAt), { addSuffix: true })}
+        </p>
+      </div>
+      {!notif.read && (
+        <span className="w-1.5 h-1.5 rounded-full bg-destructive shrink-0 mt-1.5" />
+      )}
+    </button>
+  );
+}
+
 // ─── Props ────────────────────────────────────────────────────────────────────
 
 interface HeaderProps {
@@ -89,6 +166,9 @@ export function Header({ darkMode, onToggleDark, onMenuOpen }: HeaderProps) {
   const { clear, identity } = useInternetIdentity();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: unreadCount = 0 } = useUnreadCount();
+  const { data: allNotifications = [] } = useNotifications();
+  const recentNotifs = allNotifications.slice(0, 3);
 
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -276,21 +356,88 @@ export function Header({ darkMode, onToggleDark, onMenuOpen }: HeaderProps) {
         </Button>
 
         {/* Notifications */}
-        <div ref={notifRef} className="relative">
+        <div
+          ref={notifRef}
+          className="relative"
+          onMouseEnter={() => setNotifOpen(true)}
+          onMouseLeave={() => setNotifOpen(false)}
+        >
           <Button
             variant="ghost"
             size="icon"
             data-ocid="header.notifications_button"
             className="w-8 h-8 text-muted-foreground hover:text-foreground relative"
             aria-label="Notifications"
-            onClick={() => setNotifOpen((o) => !o)}
+            onClick={() => navigate({ to: "/notifications" })}
           >
-            <Bell className="w-4 h-4" />
-            <span className="notification-dot absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-primary" />
+            <Bell
+              className={
+                unreadCount > 0 ? "w-4 h-4 notification-pulse" : "w-4 h-4"
+              }
+            />
+            {unreadCount > 0 ? (
+              <span
+                className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center px-1 shadow-sm"
+                data-ocid="header.notification_badge"
+              >
+                {unreadCount > 99 ? "99+" : unreadCount}
+              </span>
+            ) : null}
           </Button>
+
+          {/* Hover dropdown preview */}
           {notifOpen && (
-            <div className="absolute right-0 top-full mt-1 z-50">
-              <NotificationPanel onClose={() => setNotifOpen(false)} />
+            <div
+              className="absolute right-0 top-full mt-1 w-80 bg-card border border-border rounded-xl shadow-premium z-50 overflow-hidden animate-slide-in-up"
+              data-ocid="header.notification_preview"
+            >
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-border">
+                <span className="text-sm font-semibold text-foreground">
+                  Notifications
+                </span>
+                {unreadCount > 0 && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-destructive text-destructive-foreground">
+                    {unreadCount} unread
+                  </span>
+                )}
+              </div>
+
+              {recentNotifs.length === 0 ? (
+                <div className="py-6 text-center">
+                  <p className="text-xs text-muted-foreground">
+                    No notifications
+                  </p>
+                </div>
+              ) : (
+                <div className="divide-y divide-border">
+                  {recentNotifs.map((notif) => (
+                    <NotifPreviewRow
+                      key={notif.id}
+                      notif={notif}
+                      onNavigate={(path) => {
+                        navigate({
+                          to: path as Parameters<typeof navigate>[0]["to"],
+                        });
+                        setNotifOpen(false);
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+
+              <div className="px-4 py-2 border-t border-border">
+                <button
+                  type="button"
+                  className="text-xs font-medium text-primary hover:text-primary/80 transition-fast w-full text-center"
+                  onClick={() => {
+                    navigate({ to: "/notifications" });
+                    setNotifOpen(false);
+                  }}
+                  data-ocid="header.notification_preview.see_all"
+                >
+                  See all notifications →
+                </button>
+              </div>
             </div>
           )}
         </div>

@@ -74,6 +74,11 @@ export default {
           border: "oklch(var(--sidebar-border))",
           ring: "oklch(var(--sidebar-ring))",
         },
+        "trust-blue": "oklch(var(--trust-blue))",
+        "trust-blue-foreground": "oklch(var(--trust-blue-foreground))",
+        "insight-warning": "oklch(var(--insight-warning))",
+        "insight-urgent": "oklch(var(--insight-urgent))",
+        "insight-success": "oklch(var(--insight-success))",
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],
@@ -148,6 +153,70 @@ export default {
             transform: "translateY(0)",
           },
         },
+        "fab-pulse": {
+          "0%, 100%": {
+            boxShadow: "0 6px 20px oklch(var(--primary) / 0.4)",
+          },
+          "50%": {
+            boxShadow: "0 6px 28px oklch(var(--primary) / 0.6)",
+          },
+        },
+        "shimmer": {
+          "0%": {
+            backgroundPosition: "-200% 0",
+          },
+          "100%": {
+            backgroundPosition: "200% 0",
+          },
+        },
+        "splash-fade-in": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.95)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "splash-brand-slide": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(12px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "onboarding-slide-in": {
+          from: {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          to: {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "paywall-scale-in": {
+          from: {
+            opacity: "0",
+            transform: "scale(0.95)",
+          },
+          to: {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
+        "streak-glow": {
+          "0%, 100%": {
+            boxShadow: "0 0 8px oklch(var(--milestone-gold) / 0.4)",
+          },
+          "50%": {
+            boxShadow: "0 0 16px oklch(var(--milestone-gold) / 0.6)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -157,6 +226,14 @@ export default {
         "streak-pulse": "streak-pulse 1.5s ease-in-out infinite",
         "milestone-unlock": "milestone-unlock 0.6s cubic-bezier(0.34, 1.56, 0.64, 1)",
         "slide-in-up": "slide-in-up 0.4s ease-out",
+        "fab-pulse": "fab-pulse 2s ease-in-out infinite",
+        "shimmer": "shimmer 1.8s ease-in-out infinite",
+        "splash-fade-in": "splash-fade-in 0.8s cubic-bezier(0.34, 1.56, 0.64, 1)",
+        "splash-brand-slide": "splash-brand-slide 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.2s both",
+        "onboarding-slide-in": "onboarding-slide-in 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+        "paywall-scale-in": "paywall-scale-in 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) backwards",
+        "streak-glow": "streak-glow 2s ease-in-out infinite",
+        "agency-pulse": "agency-pulse 2s ease-in-out infinite",
       },
     },
   },

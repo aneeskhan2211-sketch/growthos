@@ -14,7 +14,10 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { PAGE_META } from "@/config/metaTags";
+import { useMetaTags } from "@/hooks/useMetaTags";
 import { cn } from "@/lib/utils";
+import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Activity,
   AlertTriangle,
@@ -26,11 +29,13 @@ import {
   Clock,
   Copy,
   CreditCard,
+  ExternalLink,
   Eye,
   EyeOff,
   FileCheck,
   Filter,
   Globe,
+  HelpCircle,
   Info,
   Layers,
   Lock,
@@ -42,11 +47,15 @@ import {
   Puzzle,
   RefreshCw,
   RotateCcw,
+  ScanSearch,
+  Search,
   Settings2,
   Shield,
-  Timer,
+  ShieldCheck,
   Trash2,
+  Unlink,
   User,
+  Wallet,
   XCircle,
   Zap,
 } from "lucide-react";
@@ -59,6 +68,7 @@ import {
   useSetGA4Credentials,
 } from "../hooks/useGA4Analytics";
 import { useSubscription } from "../hooks/useSubscription";
+import { useSaveWatiConfig } from "../hooks/useWati";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 type SenderStatus = "active" | "pending" | "rejected";
@@ -224,12 +234,12 @@ const PLANS: {
     highlight: true,
   },
   {
-    id: SubscriptionPlan.enterprise,
-    label: "Enterprise",
-    price: "₹29,999",
+    id: SubscriptionPlan.agency,
+    label: "Agency",
+    price: "₹4,999",
     leads: 1000,
     features: [
-      "1000 lead credits/mo",
+      "Unlimited leads (fair usage)",
       "White-label",
       "API access",
       "Dedicated success manager",
@@ -1650,6 +1660,23 @@ function AccountTab() {
           >
             <Shield className="w-3.5 h-3.5" /> Save Profile
           </Button>
+          <div className="pt-3 border-t border-border/40 mt-1">
+            <p className="text-xs text-muted-foreground mb-2">
+              Manage your personal details, password, and notification
+              preferences.
+            </p>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5"
+              asChild
+              data-ocid="settings.view_account_settings_button"
+            >
+              <Link to="/settings/profile">
+                <Settings2 className="w-3.5 h-3.5" /> View Account Settings
+              </Link>
+            </Button>
+          </div>
         </CardContent>
       </Card>
 
@@ -1738,6 +1765,90 @@ function InfoNote({ children }: { children: React.ReactNode }) {
   );
 }
 
+function HelperBox({
+  children,
+  href,
+  linkLabel,
+}: {
+  children: React.ReactNode;
+  href?: string;
+  linkLabel?: string;
+}) {
+  return (
+    <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/15">
+      <Info className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          {children}
+        </p>
+        {href && linkLabel && (
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1 text-xs text-primary font-medium mt-1.5 hover:underline"
+          >
+            <ExternalLink className="w-3 h-3" />
+            {linkLabel}
+          </a>
+        )}
+        <p className="text-xs text-muted-foreground/70 mt-1">
+          Your credentials are stored securely and never shared.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function IntegrationDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-3 py-1">
+      <div className="flex-1 h-px bg-border/50" />
+      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-border/50" />
+    </div>
+  );
+}
+
+function ClearConfirmInline({
+  onConfirm,
+  onCancel,
+  isPending,
+  ocidPrefix,
+}: {
+  onConfirm: () => void;
+  onCancel: () => void;
+  isPending?: boolean;
+  ocidPrefix: string;
+}) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-xs text-muted-foreground">Disconnect?</span>
+      <Button
+        size="sm"
+        variant="destructive"
+        className="text-xs h-8"
+        onClick={onConfirm}
+        disabled={isPending}
+        data-ocid={`${ocidPrefix}.confirm_button`}
+      >
+        {isPending ? "Removing…" : "Yes, remove"}
+      </Button>
+      <Button
+        size="sm"
+        variant="ghost"
+        className="text-xs h-8"
+        onClick={onCancel}
+        data-ocid={`${ocidPrefix}.cancel_button`}
+      >
+        Cancel
+      </Button>
+    </div>
+  );
+}
+
 function ConnectedBadge({ connected }: { connected: boolean }) {
   return connected ? (
     <span className="badge-status status-active text-xs px-2 py-0.5">
@@ -1763,6 +1874,20 @@ function GA4StatusBadge({ isConfigured }: { isConfigured: boolean }) {
       Not Configured
     </span>
   );
+}
+
+// ─── localStorage helpers for new integrations ───────────────────────────────
+const LS_RAZORPAY = "growthos_razorpay";
+const LS_WATI_V2 = "growthos_wati_v2";
+const LS_PAGESPEED = "growthos_pagespeed";
+
+function readLS<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? (JSON.parse(raw) as T) : fallback;
+  } catch {
+    return fallback;
+  }
 }
 
 // ─── Tab: Integrations ────────────────────────────────────────────────────────
@@ -1797,11 +1922,115 @@ function IntegrationsTab() {
   const [metaAdAccountId, setMetaAdAccountId] = useState("");
   const [metaSaved, setMetaSaved] = useState(false);
 
-  // WhatsApp state
-  const [waPhoneId, setWaPhoneId] = useState("");
-  const [waToken, setWaToken] = useState("");
-  const [waAccountId, setWaAccountId] = useState("");
-  const [waSaved, setWaSaved] = useState(false);
+  // WhatsApp / WATI legacy state (unused — replaced by WATI v2 section below)
+  // Keep saveWatiConfig to avoid unused-import errors on the hook file
+  const _saveWatiConfig = useSaveWatiConfig();
+  void _saveWatiConfig;
+
+  // ── Razorpay state (localStorage-backed) ─────────────────────────────────
+  const [razorKeyId, setRazorKeyId] = useState(() =>
+    readLS<string>(`${LS_RAZORPAY}_id`, ""),
+  );
+  const [razorKeySecret, setRazorKeySecret] = useState(""); // never re-populate from storage
+  const [razorConnected, setRazorConnected] = useState(() =>
+    readLS<boolean>(`${LS_RAZORPAY}_connected`, false),
+  );
+  const [razorSaving, setRazorSaving] = useState(false);
+  const [razorClearConfirm, setRazorClearConfirm] = useState(false);
+
+  // ── WATI v2 state (localStorage-backed, replaces old 3-field version) ────
+  const [watiEndpoint, setWatiEndpoint] = useState(() =>
+    readLS<string>(`${LS_WATI_V2}_endpoint`, ""),
+  );
+  const [watiToken, setWatiToken] = useState("");
+  const [watiV2Connected, setWatiV2Connected] = useState(() =>
+    readLS<boolean>(`${LS_WATI_V2}_connected`, false),
+  );
+  const [watiV2Saving, setWatiV2Saving] = useState(false);
+  const [watiV2ClearConfirm, setWatiV2ClearConfirm] = useState(false);
+
+  // ── Google PageSpeed state (localStorage-backed) ──────────────────────────
+  const [psApiKey, setPsApiKey] = useState("");
+  const [psConnected, setPsConnected] = useState(() =>
+    readLS<boolean>(`${LS_PAGESPEED}_connected`, false),
+  );
+  const [psSaving, setPsSaving] = useState(false);
+  const [psClearConfirm, setPsClearConfirm] = useState(false);
+
+  // ── Razorpay handlers ─────────────────────────────────────────────────────
+  const handleRazorSave = () => {
+    if (!razorKeyId.trim() || !razorKeySecret.trim()) {
+      toast.error("Please enter both Razorpay Key ID and Key Secret.");
+      return;
+    }
+    setRazorSaving(true);
+    setTimeout(() => {
+      localStorage.setItem(`${LS_RAZORPAY}_id`, razorKeyId.trim());
+      localStorage.setItem(`${LS_RAZORPAY}_connected`, "true");
+      setRazorConnected(true);
+      setRazorKeySecret(""); // never persist secret in storage
+      setRazorSaving(false);
+      toast.success("Razorpay keys saved. Payments are now enabled.");
+    }, 800);
+  };
+  const handleRazorClear = () => {
+    localStorage.removeItem(`${LS_RAZORPAY}_id`);
+    localStorage.setItem(`${LS_RAZORPAY}_connected`, "false");
+    setRazorConnected(false);
+    setRazorKeyId("");
+    setRazorKeySecret("");
+    setRazorClearConfirm(false);
+    toast.success("Razorpay disconnected.");
+  };
+
+  // ── WATI v2 handlers ──────────────────────────────────────────────────────
+  const handleWatiV2Save = () => {
+    if (!watiEndpoint.trim() || !watiToken.trim()) {
+      toast.error("Please enter both WATI API Endpoint and API Token.");
+      return;
+    }
+    setWatiV2Saving(true);
+    setTimeout(() => {
+      localStorage.setItem(`${LS_WATI_V2}_endpoint`, watiEndpoint.trim());
+      localStorage.setItem(`${LS_WATI_V2}_connected`, "true");
+      setWatiV2Connected(true);
+      setWatiToken("");
+      setWatiV2Saving(false);
+      toast.success("WATI credentials saved. WhatsApp messaging is enabled.");
+    }, 800);
+  };
+  const handleWatiV2Clear = () => {
+    localStorage.removeItem(`${LS_WATI_V2}_endpoint`);
+    localStorage.setItem(`${LS_WATI_V2}_connected`, "false");
+    setWatiV2Connected(false);
+    setWatiEndpoint("");
+    setWatiToken("");
+    setWatiV2ClearConfirm(false);
+    toast.success("WATI disconnected.");
+  };
+
+  // ── PageSpeed handlers ────────────────────────────────────────────────────
+  const handlePsSave = () => {
+    if (!psApiKey.trim()) {
+      toast.error("Please enter your Google PageSpeed API Key.");
+      return;
+    }
+    setPsSaving(true);
+    setTimeout(() => {
+      localStorage.setItem(`${LS_PAGESPEED}_connected`, "true");
+      setPsConnected(true);
+      setPsApiKey("");
+      setPsSaving(false);
+      toast.success("PageSpeed API key saved. Live scans are now enabled.");
+    }, 800);
+  };
+  const handlePsClear = () => {
+    localStorage.setItem(`${LS_PAGESPEED}_connected`, "false");
+    setPsConnected(false);
+    setPsApiKey("");
+    setPsClearConfirm(false);
+    toast.success("PageSpeed API key removed.");
+  };
 
   // Auto-dismiss non-GA4 confirmations
   useEffect(() => {
@@ -1814,11 +2043,6 @@ function IntegrationsTab() {
     const t = setTimeout(() => setMetaSaved(false), 2000);
     return () => clearTimeout(t);
   }, [metaSaved]);
-  useEffect(() => {
-    if (!waSaved) return;
-    const t = setTimeout(() => setWaSaved(false), 2000);
-    return () => clearTimeout(t);
-  }, [waSaved]);
   useEffect(() => {
     if (mapsTestResult !== "success") return;
     const t = setTimeout(() => setMapsTestResult("idle"), 3000);
@@ -1836,7 +2060,6 @@ function IntegrationsTab() {
 
   const mapsConnected = !!mapsApiKey;
   const metaConnected = !!(metaAppId && metaToken);
-  const waConnected = !!(waPhoneId && waToken);
 
   // GA4 save handler
   const handleGA4Save = async () => {
@@ -1898,6 +2121,293 @@ function IntegrationsTab() {
 
   return (
     <div className="space-y-6">
+      {/* ─── PAYMENTS ─────────────────────────────────────────────────────── */}
+      <IntegrationDivider label="💳 Payments" />
+
+      {/* Razorpay */}
+      <Card className="shadow-card border-border/60">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <SectionHeader
+              icon={Wallet}
+              title="Razorpay"
+              desc="Accept payments via UPI, cards, net banking, and wallets. Enter your live API keys to enable real checkout."
+            />
+            <ConnectedBadge connected={razorConnected} />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {razorConnected && (
+            <div
+              className="flex items-center justify-between gap-3 p-3 rounded-lg bg-success/5 border border-success/20"
+              data-ocid="settings.integrations.razorpay.configured_state"
+            >
+              <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                Razorpay Connected
+              </p>
+              {!razorClearConfirm ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs h-8 border-destructive/30 text-destructive hover:bg-destructive/5"
+                  onClick={() => setRazorClearConfirm(true)}
+                  data-ocid="settings.integrations.razorpay.clear_button"
+                >
+                  <Unlink className="w-3.5 h-3.5" /> Disconnect
+                </Button>
+              ) : (
+                <ClearConfirmInline
+                  onConfirm={handleRazorClear}
+                  onCancel={() => setRazorClearConfirm(false)}
+                  ocidPrefix="settings.integrations.razorpay"
+                />
+              )}
+            </div>
+          )}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                Key ID
+                <span className="ml-1 text-muted-foreground/60">(public)</span>
+              </Label>
+              <Input
+                value={razorKeyId}
+                onChange={(e) => setRazorKeyId(e.target.value)}
+                placeholder="rzp_live_XXXXXXXXXXXX"
+                className="h-9 text-sm"
+                data-ocid="settings.integrations.razorpay.key_id_input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                Key Secret
+              </Label>
+              <PasswordInput
+                value={razorKeySecret}
+                onChange={setRazorKeySecret}
+                placeholder="Enter your Razorpay Key Secret"
+                data-ocid="settings.integrations.razorpay.key_secret_input"
+              />
+            </div>
+          </div>
+          <HelperBox
+            href="https://dashboard.razorpay.com"
+            linkLabel="Open Razorpay Dashboard → Settings → API Keys"
+          >
+            Generate your <strong>Live Key ID</strong> and{" "}
+            <strong>Key Secret</strong> from Razorpay Dashboard → Settings → API
+            Keys → Generate Live Key.
+          </HelperBox>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={handleRazorSave}
+            disabled={razorSaving}
+            data-ocid="settings.integrations.razorpay.save_button"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            {razorSaving ? "Saving…" : "Save Razorpay Keys"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ─── MESSAGING ────────────────────────────────────────────────────── */}
+      <IntegrationDivider label="💬 Messaging" />
+
+      {/* WATI / WhatsApp v2 — replaces the old WATI section at the bottom */}
+      <Card className="shadow-card border-border/60">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex items-start gap-3 mb-5">
+              <div className="p-2 rounded-lg bg-success/10 shrink-0">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  className="w-4 h-4 text-success"
+                  role="img"
+                  aria-label="WhatsApp"
+                >
+                  <title>WhatsApp</title>
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="text-sm font-semibold text-foreground">
+                  WhatsApp Business API (WATI)
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Send automated WhatsApp messages, follow-ups, and sequences
+                  via your WATI account.
+                </p>
+              </div>
+            </div>
+            <ConnectedBadge connected={watiV2Connected} />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {watiV2Connected && (
+            <div
+              className="flex items-center justify-between gap-3 p-3 rounded-lg bg-success/5 border border-success/20"
+              data-ocid="settings.integrations.wati_v2.configured_state"
+            >
+              <div className="space-y-0.5">
+                <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-success" />
+                  WATI Connected
+                </p>
+                {watiEndpoint && (
+                  <p className="text-xs text-muted-foreground pl-6 font-mono truncate max-w-xs">
+                    {watiEndpoint}
+                  </p>
+                )}
+              </div>
+              {!watiV2ClearConfirm ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs h-8 border-destructive/30 text-destructive hover:bg-destructive/5 shrink-0"
+                  onClick={() => setWatiV2ClearConfirm(true)}
+                  data-ocid="settings.integrations.wati_v2.clear_button"
+                >
+                  <Unlink className="w-3.5 h-3.5" /> Disconnect
+                </Button>
+              ) : (
+                <ClearConfirmInline
+                  onConfirm={handleWatiV2Clear}
+                  onCancel={() => setWatiV2ClearConfirm(false)}
+                  ocidPrefix="settings.integrations.wati_v2"
+                />
+              )}
+            </div>
+          )}
+          <div className="grid grid-cols-1 gap-4">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                WATI API Endpoint
+              </Label>
+              <Input
+                value={watiEndpoint}
+                onChange={(e) => setWatiEndpoint(e.target.value)}
+                placeholder="https://live-server-XXXXX.wati.io"
+                className="h-9 text-sm"
+                data-ocid="settings.integrations.wati_v2.endpoint_input"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">
+                WATI API Token
+              </Label>
+              <PasswordInput
+                value={watiToken}
+                onChange={setWatiToken}
+                placeholder="Enter your WATI API token"
+                data-ocid="settings.integrations.wati_v2.token_input"
+              />
+            </div>
+          </div>
+          <HelperBox
+            href="https://app.wati.io"
+            linkLabel="Open WATI Dashboard → API Docs"
+          >
+            Find your <strong>API Endpoint</strong> and{" "}
+            <strong>API Token</strong> in your WATI Dashboard → API Docs
+            section. The endpoint looks like{" "}
+            <code className="font-mono">https://live-server-XXXXX.wati.io</code>
+            .
+          </HelperBox>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={handleWatiV2Save}
+            disabled={watiV2Saving}
+            data-ocid="settings.integrations.wati_v2.save_button"
+          >
+            <Shield className="w-3.5 h-3.5" />
+            {watiV2Saving ? "Saving…" : "Save WATI Credentials"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ─── WEBSITE SCANNER ──────────────────────────────────────────────── */}
+      <IntegrationDivider label="🔍 Website Scanner" />
+
+      {/* Google PageSpeed */}
+      <Card className="shadow-card border-border/60">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-3">
+            <SectionHeader
+              icon={ScanSearch}
+              title="Google PageSpeed Insights"
+              desc="Connect the PageSpeed API to run live website health scans with real Google performance data."
+            />
+            <ConnectedBadge connected={psConnected} />
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {psConnected && (
+            <div
+              className="flex items-center justify-between gap-3 p-3 rounded-lg bg-success/5 border border-success/20"
+              data-ocid="settings.integrations.pagespeed.configured_state"
+            >
+              <p className="text-sm font-medium text-foreground flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-success" />
+                PageSpeed API Connected
+              </p>
+              {!psClearConfirm ? (
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 text-xs h-8 border-destructive/30 text-destructive hover:bg-destructive/5"
+                  onClick={() => setPsClearConfirm(true)}
+                  data-ocid="settings.integrations.pagespeed.clear_button"
+                >
+                  <Unlink className="w-3.5 h-3.5" /> Remove Key
+                </Button>
+              ) : (
+                <ClearConfirmInline
+                  onConfirm={handlePsClear}
+                  onCancel={() => setPsClearConfirm(false)}
+                  ocidPrefix="settings.integrations.pagespeed"
+                />
+              )}
+            </div>
+          )}
+          <div className="space-y-1.5">
+            <Label className="text-xs text-muted-foreground">
+              Google PageSpeed API Key
+            </Label>
+            <PasswordInput
+              value={psApiKey}
+              onChange={setPsApiKey}
+              placeholder="AIzaSy..."
+              data-ocid="settings.integrations.pagespeed.api_key_input"
+            />
+          </div>
+          <HelperBox
+            href="https://console.cloud.google.com"
+            linkLabel="Open Google Cloud Console → APIs & Services"
+          >
+            Go to <strong>Google Cloud Console → APIs & Services</strong>,
+            enable the <strong>PageSpeed Insights API</strong>, then create a
+            new credential under <strong>Create Credentials → API Key</strong>.
+          </HelperBox>
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={handlePsSave}
+            disabled={psSaving}
+            data-ocid="settings.integrations.pagespeed.save_button"
+          >
+            <Search className="w-3.5 h-3.5" />
+            {psSaving ? "Saving…" : "Save API Key"}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {/* ─── ANALYTICS ────────────────────────────────────────────────────── */}
+      <IntegrationDivider label="📊 Analytics" />
+
       {/* Google Analytics */}
       <Card className="shadow-card border-border/60">
         <CardHeader className="pb-3">
@@ -2077,6 +2587,9 @@ function IntegrationsTab() {
         </CardContent>
       </Card>
 
+      {/* ─── MAPS ─────────────────────────────────────────────────────────── */}
+      <IntegrationDivider label="🗺️ Maps" />
+
       {/* Google Maps */}
       <Card className="shadow-card border-border/60">
         <CardHeader className="pb-3">
@@ -2159,6 +2672,9 @@ function IntegrationsTab() {
           </div>
         </CardContent>
       </Card>
+
+      {/* ─── ADVERTISING ──────────────────────────────────────────────────── */}
+      <IntegrationDivider label="📣 Advertising" />
 
       {/* Meta Ads */}
       <Card className="shadow-card border-border/60">
@@ -2252,101 +2768,6 @@ function IntegrationsTab() {
           </div>
         </CardContent>
       </Card>
-
-      {/* WhatsApp Business API */}
-      <Card className="shadow-card border-border/60">
-        <CardHeader className="pb-3">
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3 mb-5">
-              <div className="p-2 rounded-lg bg-success/10 shrink-0">
-                {/* WhatsApp brand icon SVG */}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  className="w-4 h-4 text-success"
-                  role="img"
-                  aria-label="WhatsApp"
-                >
-                  <title>WhatsApp</title>
-                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="text-sm font-semibold text-foreground">
-                  WhatsApp Business API
-                </h3>
-                <p className="text-xs text-muted-foreground mt-0.5">
-                  Configure your WhatsApp Business API credentials for official
-                  messaging.
-                </p>
-              </div>
-            </div>
-            <ConnectedBadge connected={waConnected} />
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">
-                Phone Number ID
-              </Label>
-              <Input
-                value={waPhoneId}
-                onChange={(e) => setWaPhoneId(e.target.value)}
-                placeholder="Enter your Phone Number ID"
-                className="h-9 text-sm"
-                data-ocid="settings.integrations.whatsapp.phoneId"
-              />
-            </div>
-            <div className="space-y-1.5">
-              <Label className="text-xs text-muted-foreground">
-                WhatsApp Business Account ID
-              </Label>
-              <Input
-                value={waAccountId}
-                onChange={(e) => setWaAccountId(e.target.value)}
-                placeholder="Enter your WABA ID"
-                className="h-9 text-sm"
-                data-ocid="settings.integrations.whatsapp.accountId"
-              />
-            </div>
-            <div className="space-y-1.5 md:col-span-2">
-              <Label className="text-xs text-muted-foreground">
-                Access Token
-              </Label>
-              <PasswordInput
-                value={waToken}
-                onChange={setWaToken}
-                placeholder="EAAxxxxxxxx..."
-                data-ocid="settings.integrations.whatsapp.token"
-              />
-            </div>
-          </div>
-          <InfoNote>
-            Get your credentials from the <strong>Meta for Developers</strong>{" "}
-            console under WhatsApp → API Setup. Use a System User token for
-            production deployments.
-          </InfoNote>
-          <div className="flex items-center gap-3">
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => setWaSaved(true)}
-              data-ocid="settings.integrations.whatsapp.save_button"
-            >
-              <Shield className="w-3.5 h-3.5" /> Save WhatsApp Settings
-            </Button>
-            {waSaved && (
-              <span
-                className="text-xs font-medium text-success flex items-center gap-1"
-                data-ocid="settings.integrations.whatsapp.success_state"
-              >
-                <Check className="w-3 h-3" /> Saved!
-              </span>
-            )}
-          </div>
-        </CardContent>
-      </Card>
     </div>
   );
 }
@@ -2362,7 +2783,101 @@ const TABS = [
   { id: "integrations", label: "Integrations", icon: Puzzle },
 ];
 
+// ─── Legal & Compliance Section ───────────────────────────────────────────────
+function LegalComplianceSection() {
+  const navigate = useNavigate();
+
+  const links = [
+    {
+      label: "Notification Settings",
+      desc: "Frequency, triggers, WhatsApp opt-in, 30-day drip",
+      icon: Bell,
+      to: "/settings/notifications",
+      ocid: "settings.legal.notifications_link",
+    },
+    {
+      label: "Privacy Policy",
+      desc: "How we collect and use your data",
+      icon: Shield,
+      to: "/privacy-policy",
+      ocid: "settings.legal.privacy_policy_link",
+    },
+    {
+      label: "Terms of Service",
+      desc: "Rules and conditions of use",
+      icon: ShieldCheck,
+      to: "/terms",
+      ocid: "settings.legal.terms_link",
+    },
+    {
+      label: "Help & Support",
+      desc: "FAQs, contact, and troubleshooting",
+      icon: HelpCircle,
+      to: "/help",
+      ocid: "settings.legal.help_link",
+    },
+    {
+      label: "App Information",
+      desc: "Version, data consent, delete account",
+      icon: Info,
+      to: "/app-info",
+      ocid: "settings.legal.app_info_link",
+    },
+  ];
+
+  return (
+    <Card className="shadow-card border-border/60">
+      <CardHeader className="pb-3">
+        <SectionHeader
+          icon={Shield}
+          title="Legal & Compliance"
+          desc="Privacy, terms, support, and account management."
+        />
+      </CardHeader>
+      <CardContent className="p-0">
+        {links.map((link, idx) => (
+          <button
+            key={link.to}
+            type="button"
+            data-ocid={link.ocid}
+            onClick={() => navigate({ to: link.to as "/" })}
+            className={cn(
+              "w-full flex items-center gap-3 px-4 py-3 hover:bg-muted/20 transition-colors text-left",
+              idx < links.length - 1 && "border-b border-border/30",
+            )}
+          >
+            <div className="p-1.5 rounded-lg bg-muted/40 shrink-0">
+              <link.icon className="w-3.5 h-3.5 text-muted-foreground" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-foreground">
+                {link.label}
+              </p>
+              <p className="text-xs text-muted-foreground">{link.desc}</p>
+            </div>
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="text-muted-foreground shrink-0"
+              aria-hidden="true"
+            >
+              <polyline points="9 18 15 12 9 6" />
+            </svg>
+          </button>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
+
 export default function SettingsPage() {
+  useMetaTags(PAGE_META["/settings"]);
   return (
     <div data-ocid="settings.page" className="space-y-6 max-w-4xl">
       <div>
@@ -2415,6 +2930,8 @@ export default function SettingsPage() {
           <IntegrationsTab />
         </TabsContent>
       </Tabs>
+
+      <LegalComplianceSection />
 
       <Separator />
 

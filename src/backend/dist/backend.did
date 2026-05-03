@@ -38,6 +38,30 @@ type WhatsAppTemplate =
    usageCount: nat;
    variables: vec text;
  };
+type WhatsAppStopCondition = 
+ variant {
+   sequence_completed;
+   user_opted_out;
+   user_replied;
+ };
+type WhatsAppMessage = 
+ record {
+   dayNumber: nat;
+   message: text;
+   stopConditions: vec WhatsAppStopCondition;
+ };
+type WeeklyReportData = 
+ record {
+   generatedAt: Timestamp;
+   latestScore: nat;
+   newIssueCount: nat;
+   previousScore: nat;
+   resolvedIssueCount: nat;
+   scoreDelta: int;
+   topRecommendation: text;
+   url: text;
+   userId: principal;
+ };
 type WeeklyAction = 
  record {
    action: text;
@@ -53,6 +77,13 @@ type WeeklyAction =
    estimatedImpact: text;
    rationale: text;
  };
+type WeekTheme = 
+ variant {
+   activation;
+   conversion;
+   habit_building;
+   scale_upgrade;
+ };
 type WebsiteTemplate = 
  record {
    clientId: ClientId;
@@ -62,6 +93,24 @@ type WebsiteTemplate =
    templateId: text;
    templateName: text;
  };
+type WatiMessage = 
+ record {
+   id: text;
+   params: vec text;
+   phone: text;
+   sentAt: int;
+   status: text;
+   templateName: text;
+   userId: text;
+ };
+type WatiConsent = 
+ record {
+   consentAt: int;
+   consentGiven: bool;
+   optOutAt: opt int;
+   phone: text;
+   userId: text;
+ };
 type WarmupPhase = 
  variant {
    phase1;
@@ -69,18 +118,98 @@ type WarmupPhase =
    phase3;
    unlimited;
  };
+type WHEvent = 
+ record {
+   createdAt: Timestamp;
+   eventName: text;
+   metadata: text;
+   userId: text;
+ };
 type UserSubscription = 
  record {
+   billingCycle: BillingCycle;
    leadCredits: nat;
+   monthlyPrice: nat;
    plan: SubscriptionPlan;
    stripeCustomerId: text;
    subscriptionStatus: SubscriptionStatus;
+   trialExpiresAt: opt int;
+   yearlyPrice: nat;
+ };
+type UserSegmentDistribution = 
+ record {
+   excludedChurned: nat;
+   highIntent: nat;
+   lowActivity: nat;
+   mediumActivity: nat;
+   scoredAt: nat;
+   totalScored: nat;
+ };
+type UserSegment = 
+ variant {
+   HighIntent;
+   LowActivity;
+   Medium;
  };
 type UserRole = 
  variant {
    admin;
    guest;
    user;
+ };
+type UserPricingRow = 
+ record {
+   currentPlan: text;
+   offerLabel: text;
+   recommendedOffer: OfferType;
+   segment: ActivitySegment;
+   shownAt: opt int;
+   userId: text;
+ };
+type UserNotificationPrefs = 
+ record {
+   enabledTriggers: vec TriggerType;
+   frequencySettings: FrequencySettings;
+   lastNotificationDate: opt int;
+   notificationsSentToday: nat;
+   userId: text;
+   whatsappConsentDate: opt int;
+   whatsappOptIn: bool;
+   whatsappOptOutDate: opt int;
+ };
+type UserJourneyTimeline = 
+ record {
+   events: vec UserJourneyEvent;
+   userId: text;
+ };
+type UserJourneyEvent = 
+ record {
+   eventId: nat;
+   eventType: text;
+   metadata: vec record {
+                   text;
+                   text;
+                 };
+   timeSincePrevMs: opt int;
+   timestamp: int;
+ };
+type UserChurnRiskRow = 
+ record {
+   daysSinceLastAction: nat;
+   lastEventType: text;
+   openPlan: PlanTier;
+   openPlanRevenue: nat;
+   risk: ChurnRisk;
+   userId: principal;
+ };
+type UserActivityScore = 
+ record {
+   computedAt: int;
+   lastMessageSentAt: opt int;
+   lastProposalCreatedAt: opt int;
+   lastReplyReceivedAt: opt int;
+   segment: ActivitySegment;
+   userId: text;
  };
 type UpdateLeadInput = 
  record {
@@ -102,6 +231,53 @@ type UpdateClientMetricsInput =
    metrics: ClientMetrics;
    reportDate: Timestamp;
  };
+type TriggerType = 
+ variant {
+   drip_day_0;
+   drip_day_1;
+   drip_day_10;
+   drip_day_11;
+   drip_day_12;
+   drip_day_13;
+   drip_day_14;
+   drip_day_15;
+   drip_day_16;
+   drip_day_17;
+   drip_day_18;
+   drip_day_19;
+   drip_day_2;
+   drip_day_20;
+   drip_day_21;
+   drip_day_22;
+   drip_day_23;
+   drip_day_24;
+   drip_day_25;
+   drip_day_26;
+   drip_day_27;
+   drip_day_28;
+   drip_day_3;
+   drip_day_4;
+   drip_day_5;
+   drip_day_6;
+   drip_day_7;
+   drip_day_8;
+   drip_day_9;
+   on_followup_due;
+   on_inactivity_24h;
+   on_inactivity_48h;
+   on_limit_reached;
+   on_new_reply;
+   on_streak_milestone;
+ };
+type TriggerStats = 
+ record {
+   actionCount: nat;
+   actionRate: float64;
+   count: nat;
+   openCount: nat;
+   openRate: float64;
+   triggerType: TriggerType;
+ };
 type TransformationOutput = 
  record {
    body: blob;
@@ -113,7 +289,41 @@ type TransformationInput =
    context: blob;
    response: http_request_result;
  };
+type TrafficSourceBreakdown = 
+ record {
+   adsCount: nat;
+   adsPct: float64;
+   directCount: nat;
+   directPct: float64;
+   organicCount: nat;
+   organicPct: float64;
+   periodDays: nat;
+   referralCount: nat;
+   referralPct: float64;
+ };
+type TrafficSourceAttribution = 
+ record {
+   referralCode: opt text;
+   signedUpAt: Timestamp;
+   source: TrafficSource;
+   userId: text;
+ };
+type TrafficSource = 
+ variant {
+   ads;
+   direct;
+   organic;
+   referral;
+ };
 type Timestamp = int;
+type TierLtv = 
+ record {
+   amountRs: nat;
+   avgRetentionMonths: float64;
+   ltv: nat;
+   tier: PlanTier;
+   userCount: nat;
+ };
 type TemplateSections = 
  record {
    cta: text;
@@ -130,6 +340,12 @@ type SuggestionPriority =
    medium;
  };
 type SuggestionId = nat;
+type SubscriptionStatus__1 = 
+ record {
+   currentPeriodEnd: opt int;
+   status: text;
+   tier: text;
+ };
 type SubscriptionStatus = 
  variant {
    active;
@@ -140,9 +356,105 @@ type SubscriptionStatus =
  };
 type SubscriptionPlan = 
  variant {
-   enterprise;
+   agency;
+   free;
+   growth;
    pro;
    starter;
+ };
+type SubscriptionEventKind = 
+ variant {
+   plan_cancelled;
+   plan_downgraded;
+   plan_purchased;
+   plan_upgraded;
+ };
+type SubscriptionEvent = 
+ record {
+   amountRs: nat;
+   eventKind: SubscriptionEventKind;
+   id: nat;
+   planTier: PlanTier;
+   prevAmountRs: opt nat;
+   prevPlanTier: opt PlanTier;
+   timestamp: nat;
+   userId: principal;
+ };
+type StripePlan = 
+ record {
+   amount: nat;
+   currency: text;
+   id: text;
+   interval: text;
+   name: text;
+ };
+type SpendChannel = 
+ variant {
+   googleAds;
+   metaAds;
+   other;
+   referral;
+ };
+type SocialProofEntry = 
+ record {
+   activityType: SocialProofActivityType;
+   city: text;
+   id: nat;
+   metricValue: nat;
+   timestamp: Timestamp;
+   userDisplayName: text;
+ };
+type SocialProofActivityType = 
+ variant {
+   deal_closed;
+   leads_generated;
+   pitches_sent;
+   referral_signup;
+ };
+type ShareableWin = 
+ record {
+   city: text;
+   date: text;
+   displayName: text;
+   metricValue: nat;
+   winType: ShareWinType;
+ };
+type ShareWinType = 
+ variant {
+   deal;
+   leads;
+   streak;
+ };
+type SeoSignals = 
+ record {
+   h1Count: nat;
+   internalLinks: nat;
+   metaPresent: bool;
+   schemaPresent: bool;
+   titlePresent: bool;
+ };
+type SeoPageRequest = 
+ record {
+   city: text;
+   niche: text;
+ };
+type SeoPagePublic = 
+ record {
+   benefits: vec text;
+   caseExample: record {
+                  after: text;
+                  before: text;
+                };
+   city: text;
+   createdAt: int;
+   headline: text;
+   id: text;
+   isPublished: bool;
+   niche: text;
+   painPoints: vec text;
+   pricingHint: text;
+   slug: text;
+   subheadline: text;
  };
 type SeoAuditRecord = 
  record {
@@ -197,6 +509,12 @@ type SenderIdentity =
    totalSent: nat;
    warmupPhase: WarmupPhase;
  };
+type Segment = 
+ variant {
+   HighIntent;
+   LowActivity;
+   Medium;
+ };
 type ScriptType = 
  variant {
    call_script;
@@ -216,12 +534,172 @@ type ScraperJob =
    status: text;
    totalFound: nat;
  };
+type ScanLimitRecord = 
+ record {
+   planTier: PlanTier;
+   scansThisWeek: nat;
+   userId: principal;
+   weekStartedAt: Timestamp;
+ };
 type SaveTemplateInput = 
  record {
    clientId: ClientId;
    sections: TemplateSections;
    templateId: text;
    templateName: text;
+ };
+type SaasMetricsResponse = 
+ record {
+   activeUsers: nat;
+   arr: nat;
+   cacByChannel: CacBreakdown;
+   cacPaybackMonths: float64;
+   churnedCustomers: nat;
+   churnedMrr: nat;
+   closingMrr: nat;
+   dateRange: record {
+                from: nat;
+                to: nat;
+              };
+   expansionMrr: nat;
+   ltv: LtvBreakdown;
+   ltvCacRatio: float64;
+   ltvCacStatus: HealthStatus;
+   monthlyChurnRate: float64;
+   monthlyGrowthRate: float64;
+   mrr: nat;
+   newCustomers: nat;
+   newMrr: nat;
+   nrr: float64;
+   revenueChurnRate: float64;
+   totalPayingCustomers: nat;
+ };
+type RevenuePrediction = 
+ record {
+   closingThisWeek: nat;
+   generatedAt: int;
+   hotLeadsCount: nat;
+   missedOppCount: nat;
+   monthlyEstimate: nat;
+   pipelineValue: nat;
+   predictionBasis: text;
+   weeklyEstimate: nat;
+ };
+type RetentionData = 
+ record {
+   churnRisk: ChurnRisk;
+   creditsEarned: nat;
+   currentStreak: nat;
+   lastActiveDate: text;
+   lastCreditClaim: int;
+   lastSessionAt: int;
+   longestStreak: nat;
+   userId: text;
+   weeklyLeadsGenerated: nat;
+   weeklyProposalsSent: nat;
+   weeklyRepliesReceived: nat;
+ };
+type RetentionAnalytics = 
+ record {
+   byCopyType: vec CopyTypeStats;
+   byTriggerType: vec TriggerStats;
+   cohortByDay: vec CohortDayStats;
+   conversionRate: float64;
+   openRate: float64;
+   returnRate: float64;
+   totalActionsCompleted: nat;
+   totalNotificationsSent: nat;
+   totalOpened: nat;
+ };
+type ResultMetric = 
+ record {
+   after: text;
+   before: text;
+   metricLabel: text;
+ };
+type ReferralStatus = 
+ variant {
+   completed;
+   created;
+   signedUp;
+ };
+type ReferralStats = 
+ record {
+   completed: nat;
+   creditsEarned: nat;
+   signedUp: nat;
+   totalInvited: nat;
+   trialDaysEarned: nat;
+ };
+type ReferralRecord = 
+ record {
+   completedAt: opt Timestamp;
+   createdAt: Timestamp;
+   id: nat;
+   referralCode: text;
+   referredUserId: opt principal;
+   referrerId: principal;
+   rewardClaimed: bool;
+   status: ReferralStatus;
+ };
+type ReferralFunnelStep = 
+ record {
+   conversionPct: float64;
+   count: nat;
+   stepName: text;
+ };
+type ReferralFunnelStats = 
+ record {
+   steps: vec ReferralFunnelStep;
+   totalLinksGenerated: nat;
+   totalRewardsClaimed: nat;
+ };
+type ReferralFunnelEventType = 
+ variant {
+   landing_view;
+   link_generated;
+   reward_claimed;
+   share_clicked;
+   signup_completed;
+   signup_started;
+ };
+type RazorpayOrder = 
+ record {
+   amount: nat;
+   currency: text;
+   orderId: text;
+   receipt: text;
+ };
+type RawMetrics = 
+ record {
+   hasAddress: bool;
+   hasBusinessName: bool;
+   hasCTA: bool;
+   hasCanonical: bool;
+   hasContactForm: bool;
+   hasGoogleMap: bool;
+   hasH1: bool;
+   hasHSTS: bool;
+   hasMediaQueries: bool;
+   hasMetaDesc: bool;
+   hasMixedContent: bool;
+   hasOpeningHours: bool;
+   hasPhoneNumber: bool;
+   hasTestimonials: bool;
+   hasTitle: bool;
+   hasViewport: bool;
+   hasWhatsAppLink: bool;
+   hasXContentType: bool;
+   hasXFrame: bool;
+   httpsEnabled: bool;
+   imageCount: int;
+   imagesMissingAlt: int;
+   internalLinkCount: int;
+   metaDescLength: int;
+   renderBlockingScripts: int;
+   robotsTxtFound: bool;
+   sitemapFound: bool;
+   titleLength: int;
  };
 type ProposalId = nat;
 type Proposal = 
@@ -241,6 +719,80 @@ type PriorityTag =
    high;
    low;
    medium;
+ };
+type PricingRecommendation = 
+ record {
+   acceptedAt: opt int;
+   computedAt: int;
+   currentPlan: text;
+   offerLabel: text;
+   recommendedOffer: OfferType;
+   segment: ActivitySegment;
+   shownAt: opt int;
+   userId: text;
+ };
+type PlanTier = 
+ variant {
+   Agency;
+   Free;
+   Growth;
+   Pro;
+   Starter;
+ };
+type PlanLimits = 
+ record {
+   advancedAnalytics: bool;
+   aiPitchGenerator: bool;
+   aiProposalGenerator: bool;
+   autoFollowUp: bool;
+   campaignBuilder: bool;
+   crmPipeline: bool;
+   dailyLeads: nat;
+   premiumAutomation: bool;
+   seoChecklist: bool;
+   teamAccess: bool;
+   unlimitedLeads: bool;
+   whiteLabelReports: bool;
+ };
+type PerformanceScore = 
+ record {
+   activityScore: nat;
+   conversionRate: nat;
+   estimatedMonthlyRevenue: nat;
+   overallScore: nat;
+   percentileRank: nat;
+   rank: text;
+   revenueScore: nat;
+   updatedAt: int;
+   userId: text;
+ };
+type PaywallTimingVariant = 
+ variant {
+   after_value_moment;
+   immediate;
+ };
+type PaywallState = 
+ record {
+   abVariant: PaywallTimingVariant;
+   hasExperiencedValueMoment: bool;
+   paywallShownAfterValue: bool;
+   paywallShownAt: opt int;
+   userId: text;
+ };
+type PageSpeedResult = 
+ record {
+   cls: float64;
+   desktopScore: nat;
+   diagnostics: vec text;
+   fcp: float64;
+   fetchedAt: int;
+   fid: float64;
+   lcp: float64;
+   mobileScore: nat;
+   opportunities: vec text;
+   tbt: float64;
+   tti: float64;
+   url: text;
  };
 type OutreachMessage = 
  record {
@@ -275,12 +827,106 @@ type OutreachCampaign =
    status: text;
    totalMessages: nat;
  };
+type OnboardingTourState = 
+ record {
+   completed: bool;
+   completedAt: opt int;
+   completedSteps: vec nat;
+   currentStep: nat;
+   skipped: bool;
+   startedAt: int;
+   userId: text;
+ };
 type OnboardingPrefs = 
  record {
    city: text;
    completedOnboarding: bool;
    niche: text;
    targetBudget: nat;
+ };
+type OfferType = 
+ variant {
+   bonus_credits;
+   free_trial_2d;
+   limited_discount;
+ };
+type NudgeVariantType = 
+ variant {
+   fomo;
+   reward;
+   urgency;
+ };
+type NudgeType = 
+ variant {
+   fomo;
+   money_visibility;
+   reward;
+   urgency;
+ };
+type NudgePerformanceStat = 
+ record {
+   actionCount: nat;
+   actionRatePct: float64;
+   conversionLiftPct: float64;
+   nudgeType: NudgeType;
+   sentCount: nat;
+   userSegment: UserSegment;
+ };
+type NudgePerformanceRow = 
+ record {
+   actionTaken: nat;
+   conversionRate: float64;
+   copyType: text;
+   isWinner: bool;
+   openRate: float64;
+   opened: nat;
+   segment: Segment;
+   sent: nat;
+   variantId: text;
+ };
+type NudgePerformanceMetrics = 
+ record {
+   actionRatePct: float64;
+   conversionLiftPct: float64;
+   openRatePct: float64;
+   totalActedOn: nat;
+   totalOpened: nat;
+   totalSent: nat;
+   variantId: text;
+   variantType: NudgeVariantType;
+ };
+type NudgeEvent = 
+ record {
+   actedOnAt: opt int;
+   id: nat;
+   openedAt: opt int;
+   segment: ActivitySegment;
+   sentAt: int;
+   userId: text;
+   variantId: text;
+   variantType: NudgeVariantType;
+ };
+type NudgeDelivery = 
+ record {
+   actionTakenAt: opt Timestamp;
+   converted: bool;
+   id: nat;
+   nudgeType: NudgeType;
+   sentAt: Timestamp;
+   userId: text;
+   userSegment: UserSegment;
+ };
+type NotificationRecord = 
+ record {
+   actionUrl: opt text;
+   body: text;
+   createdAt: int;
+   id: text;
+   isRead: bool;
+   metadata: opt text;
+   title: text;
+   "type": text;
+   userId: text;
  };
 type NoteType = 
  variant {
@@ -297,6 +943,106 @@ type Note =
    id: NoteId;
    leadId: LeadId;
    noteType: NoteType;
+ };
+type NicheFunnelMetrics = 
+ record {
+   city: text;
+   counts: vec record {
+                 text;
+                 nat;
+               };
+   niche: text;
+ };
+type NicheFunnelEventType = 
+ variant {
+   audit_sent;
+   call_booked;
+   form_submit;
+   landing_view;
+   share_clicked;
+   whatsapp_click;
+   whatsapp_sent;
+ };
+type MonitorRecord = 
+ record {
+   active: bool;
+   frequency: text;
+   lastScanAt: int;
+   url: text;
+   userId: principal;
+ };
+type MilestoneStatus = 
+ variant {
+   claimed;
+   locked;
+   unlocked;
+ };
+type MilestoneInfo = 
+ record {
+   activatedAt: opt Timestamp;
+   currentInvites: nat;
+   description: text;
+   expiresAt: opt Timestamp;
+   inviteThreshold: nat;
+   milestoneId: MilestoneId;
+   status: MilestoneStatus;
+   title: text;
+ };
+type MilestoneId = text;
+type MarketplaceListingType = 
+ variant {
+   buyLeads;
+   hireFreelancer;
+   sellService;
+ };
+type MarketplaceListing = 
+ record {
+   avgRating: nat;
+   createdAt: int;
+   description: text;
+   isActive: bool;
+   listingId: text;
+   listingType: MarketplaceListingType;
+   price: nat;
+   reviewCount: nat;
+   sellerId: text;
+   sellerName: text;
+   tags: vec text;
+   title: text;
+ };
+type MarketingSpend = 
+ record {
+   amountRs: nat;
+   channel: SpendChannel;
+   id: nat;
+   month: text;
+   recordedBy: principal;
+   timestamp: nat;
+ };
+type LtvBreakdown = 
+ record {
+   blendedLtv: nat;
+   byTier: vec TierLtv;
+ };
+type LiveEventEntry = 
+ record {
+   eventId: nat;
+   eventType: text;
+   metadata: vec record {
+                   text;
+                   text;
+                 };
+   timestamp: int;
+   userId: text;
+ };
+type LeaderboardEntry = 
+ record {
+   badge: ChallengeBadge;
+   city: text;
+   displayName: text;
+   leadsCount: nat;
+   rank: nat;
+   userId: text;
  };
 type LeadStatus = 
  variant {
@@ -388,6 +1134,34 @@ type LandingPage =
    status: LandingPageStatus;
    targetBudget: text;
  };
+type IssueSeverity = 
+ variant {
+   Critical;
+   Minor;
+   Warning;
+ };
+type InvestorReport = 
+ record {
+   arr: nat;
+   cac: nat;
+   cacPaybackMonths: float64;
+   churnedCustomers: nat;
+   churnedMrr: nat;
+   cohortData: vec text;
+   disclaimers: vec text;
+   expansionMrr: nat;
+   funnelData: vec text;
+   generatedAt: int;
+   healthAlerts: vec text;
+   ltv: nat;
+   ltvCacRatio: float64;
+   monthlyChurnRate: float64;
+   mrr: nat;
+   newCustomers: nat;
+   newMrr: nat;
+   nrr: float64;
+   totalCustomers: nat;
+ };
 type ImportRowStatus = 
  variant {
    duplicate;
@@ -419,6 +1193,30 @@ type ImportRecord =
    validCount: nat;
  };
 type ImportId = nat;
+type HeatmapEventKind = 
+ variant {
+   deadClick;
+   rageTap;
+   screenTime;
+   scrollDepth;
+   tap;
+ };
+type HealthStatus = 
+ variant {
+   healthy;
+   loss;
+   moderate;
+ };
+type HealthAlert = 
+ record {
+   actual: text;
+   alert: text;
+   alertId: text;
+   metric: text;
+   severity: AlertSeverity;
+   threshold: text;
+   timestamp: nat;
+ };
 type GrowthSuggestion = 
  record {
    category: text;
@@ -448,6 +1246,53 @@ type GrowthReport =
    revenueStrategies: vec text;
    weekOf: text;
    weeklyActions: vec WeeklyAction;
+ };
+type GrowthPlanItemStatus = 
+ variant {
+   approved;
+   done;
+   pending;
+ };
+type GrowthPlanItemEffort = 
+ variant {
+   deep;
+   medium;
+   quick;
+ };
+type GrowthPlanItem = 
+ record {
+   description: text;
+   effort: GrowthPlanItemEffort;
+   estimatedRevenue: nat;
+   priorityScore: nat;
+   status: GrowthPlanItemStatus;
+   title: text;
+ };
+type GrowthOverview = 
+ record {
+   computedAt: int;
+   dau: nat;
+   freeToPaidConversionPct: float64;
+   mau: nat;
+   mrrEstimatedInr: nat;
+   newSignupsLast30: nat;
+   newSignupsLast7: nat;
+   retentionD1: float64;
+   retentionD30: float64;
+   retentionD7: float64;
+   wau: nat;
+ };
+type GatedFeatureName = 
+ variant {
+   advanced_analytics;
+   bulk_send;
+   export_leads;
+ };
+type GatedFeatureAdminStat = 
+ record {
+   activeUserCount: nat;
+   featureName: text;
+   totalUsageCount: nat;
  };
 type GamificationState = 
  record {
@@ -480,6 +1325,113 @@ type GA4CredentialStatus =
    lastUpdated: opt int;
    propertyId: opt text;
  };
+type FunnelStepDetail = 
+ record {
+   avgSecondsToNextStep: opt nat;
+   conversions: nat;
+   dropoffPercent: float64;
+   step: text;
+   users: nat;
+ };
+type FunnelStep = 
+ record {
+   conversionRate: float64;
+   count: nat;
+   dropOffRate: float64;
+   stepName: text;
+ };
+type FunnelMetrics = 
+ record {
+   freeToPaidConversion: float64;
+   paidUsers: nat;
+   steps: vec FunnelStep;
+   totalUsers: nat;
+ };
+type FrequencySettings = 
+ record {
+   inactivityReductionEnabled: bool;
+   maxPerDay: nat;
+   quietHoursEnabled: bool;
+   quietHoursEnd: nat;
+   quietHoursStart: nat;
+ };
+type FixType = 
+ variant {
+   developer_needed;
+   guided;
+   one_click;
+ };
+type FixDifficulty = 
+ variant {
+   Easy;
+   Hard;
+   Medium;
+ };
+type FixCategory = 
+ variant {
+   Content;
+   Cta;
+   Images;
+   Mobile;
+   Security;
+   Seo;
+   Speed;
+   WhatsApp;
+ };
+type FinalizedChallengeResult = 
+ record {
+   badgeAwarded: text;
+   city: text;
+   creditsAwarded: nat;
+   displayName: text;
+   finalRank: nat;
+   isoWeek: text;
+   userId: text;
+ };
+type FeatureUnlockSession = 
+ record {
+   expiresAt: Timestamp;
+   featureName: GatedFeatureName;
+   unlockedAt: Timestamp;
+   usageCount: nat;
+   userId: text;
+ };
+type FeatureUnlockCheck = 
+ record {
+   currentInvites: nat;
+   expiresAt: opt Timestamp;
+   featureName: GatedFeatureName;
+   isUnlocked: bool;
+   requiredInvites: nat;
+   usageCount: nat;
+ };
+type EventDrillDown = 
+ record {
+   eventName: text;
+   nextEventBreakdown: vec record {
+                             text;
+                             nat;
+                             float64;
+                           };
+   totalCount: nat;
+ };
+type EnhancedFunnelMetrics = 
+ record {
+   avgDaysToFirstPayment: opt float64;
+   freeToPaidConversion: float64;
+   paidUsers: nat;
+   steps: vec FunnelStepDetail;
+   totalUsers: nat;
+ };
+type DripSequenceDay = 
+ record {
+   copyType: CopyType;
+   dayNumber: nat;
+   message: text;
+   personalizationTokens: vec text;
+   weekNumber: nat;
+   weekTheme: WeekTheme;
+ };
 type DeliveryStats = 
  record {
    blockedCount: nat;
@@ -492,6 +1444,17 @@ type DeliveryStats =
    repliedCount: nat;
  };
 type DeliverabilityStatId = nat;
+type DealSuggestion = 
+ record {
+   bestContactTime: text;
+   closeProbability: nat;
+   createdAt: int;
+   leadId: LeadId;
+   pricingTier: text;
+   suggestedPitch: text;
+   suggestedPrice: nat;
+   suggestionId: text;
+ };
 type CreateSuggestionInput = 
  record {
    category: text;
@@ -550,6 +1513,22 @@ type CreateClientInput =
    leadId: LeadId;
    startDate: Timestamp;
  };
+type CopyTypeStats = 
+ record {
+   actionCount: nat;
+   actionRate: float64;
+   copyType: CopyType;
+   count: nat;
+   openCount: nat;
+   openRate: float64;
+ };
+type CopyType = 
+ variant {
+   fomo;
+   money_visibility;
+   reward;
+   urgency;
+ };
 type ConversionScriptId = nat;
 type ConversionScript = 
  record {
@@ -569,6 +1548,31 @@ type ConversionScript =
    scriptType: ScriptType;
    serviceType: text;
    valueProp: text;
+ };
+type ContentPostPublic = 
+ record {
+   body: text;
+   callToAction: text;
+   caption: text;
+   city: text;
+   hashtags: vec text;
+   hook: text;
+   id: text;
+   isPosted: bool;
+   niche: text;
+   postType: text;
+   scheduledDay: nat;
+ };
+type ContentCalendarPublic = 
+ record {
+   city: text;
+   createdAt: int;
+   goal: text;
+   id: text;
+   monthYear: text;
+   niche: text;
+   posts: vec ContentPostPublic;
+   userId: text;
  };
 type ConsentType = 
  variant {
@@ -596,6 +1600,69 @@ type ConsentLog =
    timestamp: Timestamp;
    userId: text;
  };
+type CompetitorRecord = 
+ record {
+   competitorName: text;
+   conversionScore: nat;
+   mobileScore: nat;
+   overallScore: nat;
+   securityScore: nat;
+   seoScore: nat;
+   speedScore: nat;
+ };
+type CompetitorProfile = 
+ record {
+   ctaPresent: bool;
+   estimatedTraffic: text;
+   lastScannedAt: int;
+   name: opt text;
+   pageSpeed: opt nat;
+   seoSignals: SeoSignals;
+   socialLinks: vec text;
+   url: text;
+   whatsappPresent: bool;
+ };
+type CompetitorIntelReport = 
+ record {
+   adSpendEstimate: text;
+   competitors: vec CompetitorProfile;
+   keywordGaps: vec text;
+   lastUpdatedAt: int;
+   userId: text;
+   yourUrl: text;
+ };
+type CommissionRecord = 
+ record {
+   commissionAmount: nat;
+   commissionRate: float64;
+   createdAt: int;
+   id: text;
+   paidAt: opt int;
+   planAmount: nat;
+   planTier: text;
+   referredUserId: text;
+   referrerId: text;
+   status: text;
+ };
+type CohortRetentionRow = 
+ record {
+   cohortSize: nat;
+   d1: float64;
+   d30: float64;
+   d60: float64;
+   d7: float64;
+   retainedD1: nat;
+   retainedD30: nat;
+   retainedD60: nat;
+   retainedD7: nat;
+   week: text;
+ };
+type CohortDayStats = 
+ record {
+   day: nat;
+   returnedCount: nat;
+   usersNotified: nat;
+ };
 type ClientMetrics = 
  record {
    conversions: nat;
@@ -604,6 +1671,23 @@ type ClientMetrics =
    traffic: nat;
  };
 type ClientId = nat;
+type ClientGrowthPlanStatus = 
+ variant {
+   approved;
+   executing;
+   pending;
+ };
+type ClientGrowthPlan = 
+ record {
+   adsPlan: vec GrowthPlanItem;
+   approvalStatus: ClientGrowthPlanStatus;
+   clientId: ClientId;
+   contentIdeas: vec GrowthPlanItem;
+   generatedAt: int;
+   planId: text;
+   seoPlan: vec GrowthPlanItem;
+   weekOf: int;
+ };
 type Client = 
  record {
    businessName: text;
@@ -613,16 +1697,304 @@ type Client =
    reportDate: Timestamp;
    startDate: Timestamp;
  };
+type ChurnRisk = 
+ variant {
+   high;
+   medium;
+   none;
+ };
+type CheckoutSession = 
+ record {
+   sessionId: text;
+   url: text;
+ };
+type ChallengeParticipant = 
+ record {
+   city: text;
+   displayName: text;
+   isoWeek: text;
+   joinedAt: Timestamp;
+   leadsCount: nat;
+   rank: nat;
+   rewarded: bool;
+   userId: text;
+ };
+type ChallengeBadge = 
+ variant {
+   bronze;
+   gold;
+   none;
+   silver;
+ };
+type CategoryScores = 
+ record {
+   content: nat;
+   conversion: nat;
+   mobile: nat;
+   security: nat;
+   seo: nat;
+   speed: nat;
+ };
+type CaseStudyUpdate = 
+ record {
+   actionsToken: opt vec text;
+   clientCity: opt text;
+   clientName: opt text;
+   clientNiche: opt text;
+   problemStatement: opt text;
+   resultMetrics: opt vec ResultMetric;
+   testimonialQuote: opt text;
+ };
+type CaseStudy = 
+ record {
+   actionsToken: vec text;
+   clientCity: text;
+   clientName: text;
+   clientNiche: text;
+   createdAt: int;
+   id: text;
+   isPublished: bool;
+   problemStatement: text;
+   resultMetrics: vec ResultMetric;
+   shareToken: text;
+   testimonialQuote: opt text;
+   userId: text;
+ };
+type CacBreakdown = 
+ record {
+   cac: nat;
+   googleAds: nat;
+   metaAds: nat;
+   newPaidCustomers: nat;
+   other: nat;
+   referral: nat;
+   totalSpend: nat;
+ };
+type BillingCycle = 
+ variant {
+   monthly;
+   yearly;
+ };
+type AutoReportStatus = 
+ variant {
+   draft;
+   ready;
+   sent;
+ };
+type AutoReport = 
+ record {
+   clientId: ClientId;
+   conversions: nat;
+   generatedAt: int;
+   leadsGenerated: nat;
+   nextSteps: vec text;
+   reportId: text;
+   reportPeriod: text;
+   revenueImpact: nat;
+   roi: nat;
+   sentAt: opt int;
+   status: AutoReportStatus;
+   topChannel: text;
+ };
+type AutoAgencyStateView = 
+ record {
+   dailyFollowupsSent: nat;
+   dailyLeadsGenerated: nat;
+   dailyOutreachSent: nat;
+   lastActivityFeed: vec AutoAgencyAction;
+   lastRunTime: int;
+   nextRunTime: int;
+   runCount: nat;
+   toggleEnabled: bool;
+ };
+type AutoAgencyActionType = 
+ variant {
+   dealSuggested;
+   followupSent;
+   leadFound;
+   outreachSent;
+   reportGenerated;
+ };
+type AutoAgencyAction = 
+ record {
+   actionId: text;
+   actionType: AutoAgencyActionType;
+   description: text;
+   leadName: text;
+   outcome: text;
+   timestamp: int;
+ };
+type AuditRecord = 
+ record {
+   categoryScores: CategoryScores;
+   competitors: vec CompetitorRecord;
+   createdAt: Timestamp;
+   id: AuditId;
+   issues: vec AuditIssue;
+   lastMonitorScanAt: int;
+   monitorActive: bool;
+   overallScore: nat;
+   rawMetrics: opt RawMetrics;
+   scanDurationMs: int;
+   url: text;
+   userId: principal;
+ };
+type AuditLead = 
+ record {
+   budgetRange: text;
+   city: text;
+   id: nat;
+   leadName: text;
+   niche: text;
+   phone: text;
+   salonType: text;
+   submittedAt: Timestamp;
+   whatsappSentAt: opt Timestamp;
+ };
+type AuditIssue = 
+ record {
+   aiFixSuggestion: text;
+   businessImpact: text;
+   difficulty: FixDifficulty;
+   estimatedLossMax: nat;
+   estimatedLossMin: nat;
+   fixCategory: FixCategory;
+   fixType: FixType;
+   problem: text;
+   severity: IssueSeverity;
+ };
+type AuditId = nat;
+type AnalyticsEventType = 
+ variant {
+   app_opened;
+   city_selected;
+   feature_locked_clicked;
+   get_clients_clicked;
+   leads_generated;
+   niche_selected;
+   onboarding_completed;
+   onboarding_started;
+   payment_failed;
+   payment_started;
+   payment_success;
+   paywall_viewed;
+   pitch_sent;
+   plan_selected;
+   proposal_created;
+   reply_received;
+   user_churn_risk;
+ };
+type AnalyticsEvent = 
+ record {
+   eventType: AnalyticsEventType;
+   id: nat;
+   metadata: vec record {
+                   text;
+                   text;
+                 };
+   timestamp: int;
+   userId: text;
+ };
+type AlertSeverity = 
+ variant {
+   critical;
+   info;
+   warning;
+ };
+type AffiliateStats = 
+ record {
+   commissionHistory: vec CommissionRecord;
+   conversionRate: float64;
+   paidEarnings: nat;
+   pendingEarnings: nat;
+   totalEarnings: nat;
+   totalReferrals: nat;
+ };
+type ActivitySegment = 
+ variant {
+   HighIntent;
+   LowActivity;
+   Medium;
+ };
+type AccountabilityStateView = 
+ record {
+   currentStreak: nat;
+   dailyDealsClosed: nat;
+   dailyFollowupsDone: nat;
+   dailyLeadsContacted: nat;
+   lastTaskDate: int;
+   streakMilestones: vec nat;
+   targetDeals: nat;
+   targetFollowups: nat;
+   targetLeads: nat;
+   todayComplete: bool;
+ };
+type AbVariantStats = 
+ record {
+   conversionRatePct: float64;
+   conversions: nat;
+   impressions: nat;
+   variantId: AbVariantId;
+ };
+type AbVariantId = text;
+type AbTestResult = 
+ record {
+   isActive: bool;
+   lastResetAt: int;
+   testName: AbTestName;
+   variants: vec AbVariantStats;
+   winningVariant: opt AbVariantId;
+ };
+type AbTestName = 
+ variant {
+   nudge_copy_ab;
+   paywall_timing_ab;
+ };
 service : {
   _initializeAccessControl: () -> ();
+  activateFeatureUnlock: (featureName: GatedFeatureName) ->
+   (FeatureUnlockSession);
+  activateMilestone: (milestoneId: MilestoneId) -> (bool);
+  addMonitoredUrl: (url: text) -> ();
   addSenderIdentity: (identifier: text, senderType: SenderType) ->
    (SenderIdentity);
   assignCallerUserRole: (user: principal, role: UserRole) -> ();
+  awardCredits: (userId: text, amount: nat) -> ();
+  awardWeeklyRewards: (city: text, isoWeek: text) -> (vec record {
+                                                            text;
+                                                            nat;
+                                                          });
+  canSendNotification: (userId: text) -> (bool) query;
+  cancelSubscription: (reason: text) -> (variant {
+                                           err: text;
+                                           ok: text;
+                                         });
+  checkChurnRisk: (userId: text) -> (ChurnRisk) query;
+  checkFeatureUnlock: (featureName: GatedFeatureName) ->
+   (FeatureUnlockCheck) query;
   checkOptOutStatus: (leadId: LeadId) -> (bool) query;
+  checkValueMoment: (userId: text) -> (bool) query;
   claimMilestoneReward: (milestoneIndex: nat) -> (bool);
+  claimReferralByCode: (code: text) -> (bool);
   clearGA4Credentials: () -> ();
   completeNote: (id: NoteId) -> (bool);
   completeOnboarding: () -> ();
+  completeOnboardingTour: () -> (variant {
+                                   err: text;
+                                   ok: text;
+                                 });
+  createCaseStudy: (clientName: text, clientCity: text, clientNiche: 
+   text, problemStatement: text, actionsToken: vec text, resultMetrics:
+   vec ResultMetric, testimonialQuote: opt text) ->
+   (variant {
+      err: text;
+      ok: CaseStudy;
+    });
+  createCheckoutSession: (planId: text, successUrl: text, cancelUrl: 
+   text) -> (variant {
+               err: text;
+               ok: CheckoutSession;
+             });
   createClient: (input: CreateClientInput) -> (Client);
   createConversionScript: (serviceType: text, painPoint: text, budgetTier:
    text) -> (ConversionScript);
@@ -631,92 +2003,431 @@ service : {
   createLandingPage: (niche: LandingPageNiche, city: text, serviceDesc: 
    text, targetBudget: text) -> (LandingPage);
   createLead: (input: CreateLeadInput) -> (Lead);
+  createMarketplaceListing: (listingType: MarketplaceListingType, title:
+   text, description: text, price: nat, tags: vec text) ->
+   (MarketplaceListing);
   createNote: (input: CreateNoteInput) -> (Note);
+  createNotification: (title: text, body: text, "type": text, actionUrl:
+   opt text) -> (text);
   createOutreachCampaign: (input: CreateOutreachCampaignInput) ->
    (OutreachCampaign);
   createOutreachMessage: (input: CreateOutreachMessageInput) ->
    (OutreachMessage);
+  createRazorpayOrder: (planId: text) ->
+   (variant {
+      err: text;
+      ok: RazorpayOrder;
+    });
+  createReferral: () -> (ReferralRecord);
   createScraperJob: (niche: text, city: text) -> (ScraperJob);
   createWhatsAppTemplate: (name: text, category: WhatsAppTemplateCategory,
    body: text, variables: vec text) -> (WhatsAppTemplate);
+  deleteCaseStudy: (id: text) -> (variant {
+                                    err: text;
+                                    ok: text;
+                                  });
   deleteClient: (id: ClientId) -> (bool);
+  deleteContentCalendar: (id: text) -> (variant {
+                                          err: text;
+                                          ok: text;
+                                        });
   deleteLead: (id: LeadId) -> (bool);
   deleteNote: (id: NoteId) -> (bool);
+  deleteNotification: (notificationId: text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   deleteProposal: (id: ProposalId) -> (bool);
+  deleteSeoPage: (id: text) -> (variant {
+                                  err: text;
+                                  ok: text;
+                                });
   dismissSuggestion: (id: SuggestionId) -> (bool);
+  finalizeChallengeWeek: (isoWeek: text) -> (vec FinalizedChallengeResult);
+  generateAutoReport: (clientId: ClientId, reportPeriod: text) ->
+   (AutoReport);
+  generateClientGrowthPlan: (clientId: ClientId) -> (ClientGrowthPlan);
+  generateContentCalendar: (niche: text, city: text, goal: text) ->
+   (variant {
+      err: text;
+      ok: ContentCalendarPublic;
+    });
   generateGrowthReport: (clientId: nat, weekOf: text, monthOf: text,
    leadsGenerated: nat, conversionRate: nat, revenueImpact: nat) ->
    (GrowthReport);
+  generateInvestorReport: () -> (variant {
+                                   err: text;
+                                   ok: InvestorReport;
+                                 });
   generateProposal: (input: CreateProposalInput) -> (Proposal);
+  generateSeoPages: (requests: vec SeoPageRequest) ->
+   (variant {
+      err: text;
+      ok: vec SeoPagePublic;
+    });
+  generateShareableWin: (displayName: text, city: text, isoWeek: text,
+   currentStreak: nat) -> (ShareableWin) query;
+  getAbTestResult: (testName: AbTestName) -> (opt AbTestResult) query;
+  getAbVariant: (testName: AbTestName) -> (AbVariantId);
+  getAccountabilityState: () -> (AccountabilityStateView) query;
+  getAdminEvents: () -> (vec WHEvent) query;
+  getAffiliateStats: () -> (AffiliateStats) query;
+  getAnalyticsEvents: (userId: text) -> (vec AnalyticsEvent) query;
+  getAuditHistory: (url: text) -> (vec AuditRecord) query;
+  getAutoAgencyState: () -> (AutoAgencyStateView) query;
+  getAutoReport: (clientId: ClientId) -> (opt AutoReport) query;
   getCallerUserRole: () -> (UserRole) query;
   getCampaignsByLead: (leadId: LeadId) -> (vec OutreachCampaign) query;
+  getCaseStudy: (id: text) -> (opt CaseStudy) query;
+  getChallengeParticipants: (isoWeek: text) ->
+   (vec ChallengeParticipant) query;
+  getCheckoutConfig: () ->
+   (record {
+      plans: vec StripePlan;
+      publishableKey: text;
+    }) query;
+  getChurnRiskUsers: () -> (vec UserChurnRiskRow) query;
+  getChurnStatus: () ->
+   (record {
+      daysSinceLastSession: nat;
+      isAtRisk: bool;
+      pendingHotLeads: nat;
+    }) query;
+  getCityLeaderboard: (city: text, isoWeek: text) ->
+   (vec LeaderboardEntry) query;
   getClient: (id: ClientId) -> (opt Client) query;
+  getClientGrowthPlan: (clientId: ClientId) -> (opt ClientGrowthPlan) query;
+  getCohortRetention: (windowWeeks: opt nat) ->
+   (vec CohortRetentionRow) query;
+  getCompetitorComparison: (urls: vec text) -> (vec CompetitorRecord);
+  getCompetitorIntelReport: () -> (opt CompetitorIntelReport) query;
   getConsentLogs: () -> (vec ConsentLog) query;
+  getContentCalendar: (id: text) -> (opt ContentCalendarPublic) query;
+  getDealSuggestions: () -> (vec DealSuggestion) query;
   getDeliverabilityMetrics: (identityId: SenderIdentityId) ->
    (vec DeliveryStats) query;
+  getDripMessage: (onboardingDay: nat) -> (opt DripSequenceDay) query;
+  getEnhancedFunnelMetrics: () -> (EnhancedFunnelMetrics) query;
+  getEventDrillDown: (eventName: text) -> (EventDrillDown) query;
+  getFunnelMetrics: () -> (FunnelMetrics) query;
   getGA4CredentialStatus: () -> (GA4CredentialStatus) query;
   getGA4Dashboard: (days: nat) -> (variant {
                                      err: text;
                                      ok: GA4Dashboard;
                                    });
   getGamificationState: () -> (GamificationState) query;
+  getGrowthOverview: () -> (GrowthOverview) query;
+  getHeatmapSummary: () -> (vec record {
+                                  text;
+                                  nat;
+                                }) query;
   getImportHistory: () -> (vec ImportRecord) query;
   getLandingPage: (id: LandingPageId) -> (opt LandingPage) query;
+  getLatestAudit: (url: text) -> (opt AuditRecord) query;
+  getLatestReport: () -> (opt InvestorReport) query;
   getLead: (id: LeadId) -> (opt Lead) query;
+  getMarketingSpend: (month: opt text) -> (vec MarketingSpend) query;
+  getMarketplaceListings: () -> (vec MarketplaceListing) query;
+  getMilestoneStatus: () -> (vec MilestoneInfo) query;
+  getMonitoredUrls: () -> (vec MonitorRecord) query;
+  getMonitoredUrlsNeedingRescan: () -> (vec MonitorRecord) query;
+  getMyActivityScore: () -> (UserActivityScore);
+  getMyPricingRecommendation: () -> (PricingRecommendation);
   getMySubscription: () -> (opt UserSubscription) query;
+  getNicheFunnelMetrics: (niche: text, city: text) ->
+   (NicheFunnelMetrics) query;
   getNote: (id: NoteId) -> (opt Note) query;
+  getNudgeDeliveryStats: () -> (vec NudgePerformanceStat) query;
+  getNudgeMetricsBySegment: (segment: ActivitySegment) ->
+   (vec NudgePerformanceMetrics) query;
+  getNudgePerformanceBySegment: (segment: opt Segment) ->
+   (vec NudgePerformanceRow) query;
+  getNudgePerformanceMetrics: () -> (vec NudgePerformanceMetrics) query;
   getOnboardingPrefs: () -> (opt OnboardingPrefs) query;
+  getOnboardingState: () -> (OnboardingTourState);
   getOutreachMessagesByLead: (leadId: LeadId) -> (vec OutreachMessage) query;
+  getPageSpeedHistory: (url: text) -> (vec PageSpeedResult) query;
+  getPaywallState: (userId: text) -> (opt PaywallState) query;
+  getPerformanceScore: () -> (PerformanceScore) query;
+  getPlanLimits: (plan: SubscriptionPlan) -> (PlanLimits) query;
   getProposal: (id: ProposalId) -> (opt Proposal) query;
+  getPublicCaseStudy: (shareToken: text) -> (opt CaseStudy) query;
+  getRazorpayConfig: () ->
+   (variant {
+      err: text;
+      ok: record {
+            currency: text;
+            keyId: text;
+          };
+    }) query;
+  getRealTimeEventStream: () -> (vec LiveEventEntry) query;
+  getReferralFunnelStats: () -> (ReferralFunnelStats) query;
+  getReferralStats: () -> (ReferralStats) query;
+  getRetentionAnalytics: () -> (RetentionAnalytics) query;
+  getRetentionData: (userId: text) -> (opt RetentionData) query;
+  getRevenuePrediction: () -> (RevenuePrediction) query;
+  getSaasHealthAlerts: () -> (vec HealthAlert) query;
+  getSaasMetrics: (monthOffset: opt nat) -> (SaasMetricsResponse) query;
   getScraperJob: (id: nat) -> (opt ScraperJob) query;
   getSenderIdentities: () -> (vec SenderIdentity) query;
+  getSeoPage: (slug: text) -> (opt SeoPagePublic) query;
   getSubscriptionByUser: (userId: principal) -> (opt UserSubscription);
+  getSubscriptionHistory: (userId: opt principal) ->
+   (vec SubscriptionEvent) query;
+  getSubscriptionStatus: () -> (SubscriptionStatus__1) query;
+  getTrafficSourceBreakdown: (periodDays: nat) ->
+   (TrafficSourceBreakdown) query;
+  getUnreadCount: () -> (nat) query;
+  getUserActivityScore: (userId: text) -> (UserActivityScore);
+  getUserJourneyTimeline: (userId: text) -> (UserJourneyTimeline) query;
+  getUserNotificationPrefs: () -> (UserNotificationPrefs) query;
+  getUserSegments: () -> (UserSegmentDistribution) query;
+  getWatiConfig: () ->
+   (opt record {
+          baseUrl: text;
+          businessPhoneId: text;
+        }) query;
+  getWatiConsent: () -> (opt WatiConsent) query;
+  getWatiTemplates: () ->
+   (variant {
+      err: text;
+      ok: vec record {
+                category: text;
+                name: text;
+                status: text;
+              };
+    });
   getWebsiteTemplate: (clientId: ClientId) -> (opt WebsiteTemplate) query;
+  getWeeklyReportData: () -> (opt WeeklyReportData) query;
+  getWhatsAppSequence: () -> (vec WhatsAppMessage) query;
+  handleStripeWebhook: (payload: text, signature: text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   importCSVLeads: (rows: vec ImportRowResult, filename: text, userId:
    text) -> (ImportRecord);
   isCallerAdmin: () -> (bool) query;
+  joinChallenge: (displayName: text, city: text, isoWeek: text) -> ();
   listAllCampaigns: () -> (vec OutreachCampaign) query;
   listAllOutreachMessages: () -> (vec OutreachMessage) query;
+  listAuditLeads: () -> (vec AuditLead) query;
+  listCaseStudies: () -> (vec CaseStudy) query;
   listClients: () -> (vec Client) query;
+  listCommissions: (status: opt text) -> (vec CommissionRecord) query;
+  listContentCalendars: () -> (vec ContentCalendarPublic) query;
   listConversionScripts: () -> (vec ConversionScript) query;
+  listGatedFeatureAdminStats: () -> (vec GatedFeatureAdminStat) query;
   listGrowthReports: (clientId: nat) -> (vec GrowthReport) query;
   listGrowthSuggestions: (clientId: ClientId) -> (vec GrowthSuggestion) query;
   listLandingPages: () -> (vec LandingPage) query;
   listLeads: () -> (vec Lead) query;
   listLeadsByStatus: (status: LeadStatus) -> (vec Lead) query;
   listNotesByLead: (leadId: LeadId) -> (vec Note) query;
+  listNotifications: (limit: nat, onlyUnread: bool) ->
+   (vec NotificationRecord) query;
+  listPayoutRequests: () ->
+   (vec record {
+          amount: nat;
+          createdAt: int;
+          requestId: text;
+          status: text;
+        }) query;
   listProposalsByLead: (leadId: LeadId) -> (vec Proposal) query;
+  listRecentSocialProof: () -> (vec SocialProofEntry) query;
   listScraperJobs: () -> (vec ScraperJob) query;
   listSeoAudits: () -> (vec SeoAuditRecord) query;
+  listSeoPages: () -> (vec SeoPagePublic) query;
+  listTrafficAttributions: () -> (vec TrafficSourceAttribution) query;
+  listUserPricingRows: () -> (vec UserPricingRow) query;
+  listUserReferrals: () -> (vec ReferralRecord) query;
+  listWatiMessages: (limit: nat) -> (vec WatiMessage) query;
   listWhatsAppTemplates: () -> (vec WhatsAppTemplate) query;
+  markAllRead: () -> (variant {
+                        err: text;
+                        ok: text;
+                      });
+  markCommissionPaid: (commissionId: text) -> (variant {
+                                                 err: text;
+                                                 ok: text;
+                                               });
+  markNudgeActedOn: (nudgeEventId: nat) -> (bool);
+  markNudgeActionTaken: (deliveryId: nat, converted: bool) -> ();
+  markNudgeOpened: (nudgeEventId: nat) -> (bool);
+  markPostPosted: (calendarId: text, postId: text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
+  markRead: (notificationId: text) -> (variant {
+                                         err: text;
+                                         ok: text;
+                                       });
+  markReportSent: (clientId: ClientId) -> ();
   markSuggestionImplemented: (id: SuggestionId) -> (bool);
   moveLead: (id: LeadId, status: LeadStatus) -> (bool);
+  publishCaseStudy: (id: text) -> (variant {
+                                     err: text;
+                                     ok: text;
+                                   });
   publishLandingPage: (id: LandingPageId) -> (bool);
+  publishSeoPage: (id: text) -> (variant {
+                                   err: text;
+                                   ok: text;
+                                 });
+  razorpayTransform: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  recordAbConversion: (testName: AbTestName, variantId: AbVariantId) -> ();
+  recordAbImpression: (testName: AbTestName, variantId: AbVariantId) -> ();
+  recordActionCompleted: (notificationId: nat) -> (bool);
+  recordAnalyticsEvent: (userId: text, eventType: AnalyticsEventType,
+   metadata: vec record {
+                   text;
+                   text;
+                 }) -> (nat);
+  recordCommission: (referredUserId: text, planTier: text, planAmount:
+   nat) -> (variant {
+              err: text;
+              ok: CommissionRecord;
+            });
   recordConsentLog: (phone: text, email: text, consentType: ConsentType,
    template: text, userId: text, notes: text) -> (ConsentLogId);
   recordDailyAction: (actionType: text) -> (GamificationState);
   recordDeliveryStats: (identityId: SenderIdentityId, date: text, delivered:
    nat, replied: nat, bounced: nat, optOut: nat, blocked: nat) ->
    (DeliverabilityStatId);
+  recordFeatureUnlockUsed: (featureName: GatedFeatureName) -> ();
+  recordHeatmapEvent: (userId: text, screenName: text, elementId: text,
+   eventKind: HeatmapEventKind, scrollDepth: nat, timeSpentMs: nat) -> (
+   nat);
+  recordMarketingSpend: (month: text, channel: SpendChannel, amountRs:
+   nat) -> (nat);
+  recordNicheFunnelEvent: (userId: text, eventType: NicheFunnelEventType,
+   niche: text, city: text, metricValue: opt nat) -> ();
+  recordNotificationOpened: (notificationId: nat) -> (bool);
+  recordNudgeDelivery: (userId: text, nudgeType: NudgeType, userSegment:
+   UserSegment) -> (NudgeDelivery);
+  recordOfferShown: () -> ();
+  recordPaywallShown: (userId: text) -> (PaywallState);
+  recordShareClick: (platform: text, winType: text) -> ();
+  recordSocialProofEntry: (displayName: text, city: text, activityType:
+   SocialProofActivityType, metricValue: nat) -> (SocialProofEntry);
+  recordSubscriptionEvent: (kind: SubscriptionEventKind, planTier: PlanTier,
+   prevPlanTier: opt PlanTier) -> (nat);
+  recordTrafficSourceAttribution: (userId: text, source: TrafficSource,
+   referralCode: opt text) -> ();
+  refreshDealSuggestions: () -> ();
+  requestPayout: (bankDetails: text) ->
+   (variant {
+      err: text;
+      ok: record {requestId: text;};
+    });
+  resetAbTest: (testName: AbTestName) -> ();
+  resetOnboardingTour: () -> (variant {
+                                err: text;
+                                ok: text;
+                              });
+  runAgencyCycle: () -> ();
+  runCompetitorScan: (yourUrl: text, competitorUrls: vec text) ->
+   (variant {
+      err: text;
+      ok: CompetitorIntelReport;
+    });
+  runPageSpeedScan: (url: text) -> (variant {
+                                      err: text;
+                                      ok: PageSpeedResult;
+                                    });
   runSeoAudit: (url: text) -> (SeoAuditRecord);
+  saveCompetitorUrls: (yourUrl: text, competitorUrls: vec text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   saveOnboardingPrefs: (niche: text, city: text, targetBudget: nat) -> ();
+  saveWatiConfig: (apiKey: text, baseUrl: text, businessPhoneId: text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   saveWebsiteTemplate: (input: SaveTemplateInput) -> (WebsiteTemplate);
+  sendWatiTemplate: (phone: text, templateName: text, params: vec text) ->
+   (variant {
+      err: text;
+      ok: record {messageId: text;};
+    });
+  setAutoAgencyEnabled: (enabled: bool) -> ();
   setGA4Credentials: (propertyId: text, apiKey: text) -> ();
+  setUserNotificationPrefs: (frequencySettings: FrequencySettings,
+   enabledTriggers: vec TriggerType) -> ();
+  setWhatsAppConsent: (phone: text, optIn: bool) -> ();
+  skipOnboardingTour: () -> (variant {
+                               err: text;
+                               ok: text;
+                             });
+  submitAudit: (url: text) -> (AuditRecord);
+  submitAuditLead: (leadName: text, phone: text, salonType: text,
+   budgetRange: text) -> (AuditLead);
   submitTemplateForApproval: (id: WhatsAppTemplateId) -> (bool);
+  trackReferralFunnelEvent: (eventType: ReferralFunnelEventType,
+   referralCode: text, platform: opt text, cardId: opt text) -> ();
+  trackReferralLandingView: (referralCode: text) -> ();
+  trackShareClick: (referralCode: text, platform: text, cardId: opt text) ->
+   ();
+  trackWebsiteHealthEvent: (eventName: text, metadata: text) -> ();
   transform: (input: TransformationInput) -> (TransformationOutput) query;
+  transformCompetitorIntel: (input: TransformationInput) ->
+   (TransformationOutput) query;
   transformGA4: (input: TransformationInput) -> (TransformationOutput) query;
+  transformPageSpeed: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  transformPaymentsWhatsapp: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  transformWebsiteHealth: (input: TransformationInput) ->
+   (TransformationOutput) query;
+  triggerNudgeForUser: (userId: text) -> (opt NudgeEvent);
+  triggerSystemNotifications: () -> (nat);
+  updateAuditScanLimit: () -> (ScanLimitRecord);
   updateCampaignStats: (id: nat, deliveredCount: nat, repliedCount: nat,
    status: text) -> (OutreachCampaign);
+  updateCaseStudy: (id: text, updates: CaseStudyUpdate) ->
+   (variant {
+      err: text;
+      ok: CaseStudy;
+    });
+  updateChallengeLeadsCount: (isoWeek: text, leadsToAdd: nat) -> ();
+  updateChallengeProgress: (displayName: text, city: text, isoWeek: text,
+   leadsToAdd: nat) -> ();
   updateClientMetrics: (input: UpdateClientMetricsInput) -> (bool);
   updateConsentStatus: (id: ConsentLogId, status: ConsentStatus) -> (bool);
+  updateDailyProgress: (leadsContacted: nat, followupsDone: nat, dealsClosed:
+   nat) -> ();
+  updateLastSession: () -> ();
   updateLead: (input: UpdateLeadInput) -> (bool);
+  updateMonitoredUrl: (url: text, active: bool) -> ();
+  updateOnboardingStep: (step: nat) -> (variant {
+                                          err: text;
+                                          ok: text;
+                                        });
   updateOutreachMessageStatus: (id: nat, status: text, timestamp:
    opt Timestamp) -> (OutreachMessage);
+  updateRetentionData: (userId: text, weeklyLeads: nat, weeklyReplies: 
+   nat, weeklyProposals: nat) -> ();
   updateScraperJobProgress: (id: nat, processed: nat, progress: nat, status:
    text) -> (ScraperJob);
   updateSenderReputation: (id: SenderIdentityId, delivered: nat, replied:
    nat, bounced: nat, optOut: nat) -> (bool);
   updateTemplateApprovalStatus: (id: WhatsAppTemplateId, status:
    WhatsAppTemplateStatus, rejectionReason: opt text) -> (bool);
+  updateWatiConsent: (phone: text, consentGiven: bool) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
   upsertMySubscription: (sub: UserSubscription) -> ();
+  verifyRazorpayPayment: (paymentId: text, orderId: text, signature: 
+   text, planId: text) -> (variant {
+                             err: text;
+                             ok: text;
+                           });
 }
